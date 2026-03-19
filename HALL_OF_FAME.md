@@ -5,7 +5,7 @@
 
 > **Recognising the security researchers who make agentic AI safer.**
 >
-> *Auto-generated on 2026-03-19 08:31 UTC from AVE Database card data.*
+> *Auto-generated on 2026-03-19 11:15 UTC from AVE Database card data.*
 
 ---
 
@@ -25,10 +25,10 @@
 
 | Rank | Tier | Contributor | XP | Cards | Badges | Streak |
 |-----:|------|-------------|---:|------:|-------:|-------:|
-| #1 | 🏗️ architect | **dleigh** | 5,400⚡ | 10 | ☠️🎯💀🗺️🔥 +13 (18) | 3mo |
-| #2 | 🏗️ architect | **s.nakamura** | 5,050⚡ | 8 | 💀🗺️🔥⚡🖐️ +7 (12) | 2mo |
-| #3 | 🛡️ sentinel | **priya.r** | 3,550⚡ | 7 | 🗺️🔥🏰⚡🖐️ +8 (13) | 3mo |
-| #4 | 🛡️ sentinel | **m.torres** | 3,175⚡ | 6 | 🗺️🔥🏰⚡🖐️ +9 (14) | 3mo |
+| #1 | 🏗️ architect | **dleigh** | 4,900⚡ | 10 | ☠️🎯💀🗺️🔥 +12 (17) | 3mo |
+| #2 | 🏗️ architect | **s.nakamura** | 4,550⚡ | 8 | 💀🗺️🔥⚡🖐️ +6 (11) | 2mo |
+| #3 | 🛡️ sentinel | **priya.r** | 3,250⚡ | 7 | 🗺️🔥🏰⚡🖐️ +7 (12) | 3mo |
+| #4 | 🛡️ sentinel | **m.torres** | 2,975⚡ | 6 | 🗺️🔥🏰⚡🖐️ +8 (13) | 3mo |
 | #5 | 🛡️ sentinel | **j.okafor** | 1,760⚡ | 5 | 🗺️🏰🖐️🕸️💡 +5 (10) | 3mo |
 
 ---
@@ -37,49 +37,49 @@
 
 ### 🏗️ dleigh
 
-**Tier:** ARCHITECT · **XP:** 5,400⚡ · **Cards:** 10 · **Rank:** #1
+**Tier:** ARCHITECT · **XP:** 4,900⚡ · **Cards:** 10 · **Rank:** #1
 
-**Badges:** ☠️ Doomsday Prophet 🎯 Ten Ring 💀 Critical Hunter 🗺️ Category Pioneer 🔥 Trailblazer 🏰 Proved & Defended ⚡ Compound Threat 🖐️ Five Alive 🔴 Critical Finder 🐀 Lab Rat 🧪 Proof Positive 🕸️ Web Weaver 💡 Novel Discovery 🎩 Hat Trick 🩸 First Blood 📊 Show Your Work 🛡️ Shield Bearer 🔗 Connector
+**Badges:** ☠️ Doomsday Prophet 🎯 Ten Ring 💀 Critical Hunter 🗺️ Category Pioneer 🔥 Trailblazer 🏰 Proved & Defended ⚡ Compound Threat 🖐️ Five Alive 🔴 Critical Finder 🐀 Lab Rat 🕸️ Web Weaver 💡 Novel Discovery 🎩 Hat Trick 🩸 First Blood 📊 Show Your Work 🛡️ Shield Bearer 🔗 Connector
 
 **Cards:** `AVE-2025-0001`, `AVE-2025-0008`, `AVE-2025-0009`, `AVE-2025-0010`, `AVE-2025-0012`, `AVE-2025-0020`, `AVE-2025-0022`, `AVE-2025-0024`, `AVE-2025-0034`, `AVE-2025-0036`
 
-**Progress to FELLOW:** `[█████████████░░░░░░░]` 68% (2,600 XP needed)
+**Progress to FELLOW:** `[████████████░░░░░░░░]` 61% (3,100 XP needed)
 
 ---
 
 ### 🏗️ s.nakamura
 
-**Tier:** ARCHITECT · **XP:** 5,050⚡ · **Cards:** 8 · **Rank:** #2
+**Tier:** ARCHITECT · **XP:** 4,550⚡ · **Cards:** 8 · **Rank:** #2
 
-**Badges:** 💀 Critical Hunter 🗺️ Category Pioneer 🔥 Trailblazer ⚡ Compound Threat 🖐️ Five Alive 🔴 Critical Finder 🧪 Proof Positive 🕸️ Web Weaver 💡 Novel Discovery 🩸 First Blood 📊 Show Your Work 🔗 Connector
+**Badges:** 💀 Critical Hunter 🗺️ Category Pioneer 🔥 Trailblazer ⚡ Compound Threat 🖐️ Five Alive 🔴 Critical Finder 🕸️ Web Weaver 💡 Novel Discovery 🩸 First Blood 📊 Show Your Work 🔗 Connector
 
 **Cards:** `AVE-2025-0014`, `AVE-2025-0019`, `AVE-2025-0026`, `AVE-2025-0027`, `AVE-2025-0028`, `AVE-2025-0030`, `AVE-2025-0032`, `AVE-2025-0033`
 
-**Progress to FELLOW:** `[████████████░░░░░░░░]` 63% (2,950 XP needed)
+**Progress to FELLOW:** `[███████████░░░░░░░░░]` 57% (3,450 XP needed)
 
 ---
 
 ### 🛡️ priya.r
 
-**Tier:** SENTINEL · **XP:** 3,550⚡ · **Cards:** 7 · **Rank:** #3
+**Tier:** SENTINEL · **XP:** 3,250⚡ · **Cards:** 7 · **Rank:** #3
 
-**Badges:** 🗺️ Category Pioneer 🔥 Trailblazer 🏰 Proved & Defended ⚡ Compound Threat 🖐️ Five Alive 🧪 Proof Positive 🕸️ Web Weaver 💡 Novel Discovery 🎩 Hat Trick 🩸 First Blood 📊 Show Your Work 🛡️ Shield Bearer 🔗 Connector
+**Badges:** 🗺️ Category Pioneer 🔥 Trailblazer 🏰 Proved & Defended ⚡ Compound Threat 🖐️ Five Alive 🕸️ Web Weaver 💡 Novel Discovery 🎩 Hat Trick 🩸 First Blood 📊 Show Your Work 🛡️ Shield Bearer 🔗 Connector
 
 **Cards:** `AVE-2025-0002`, `AVE-2025-0005`, `AVE-2025-0007`, `AVE-2025-0015`, `AVE-2025-0021`, `AVE-2025-0023`, `AVE-2025-0025`
 
-**Progress to ARCHITECT:** `[█████████████████░░░]` 89% (450 XP needed)
+**Progress to ARCHITECT:** `[████████████████░░░░]` 81% (750 XP needed)
 
 ---
 
 ### 🛡️ m.torres
 
-**Tier:** SENTINEL · **XP:** 3,175⚡ · **Cards:** 6 · **Rank:** #4
+**Tier:** SENTINEL · **XP:** 2,975⚡ · **Cards:** 6 · **Rank:** #4
 
-**Badges:** 🗺️ Category Pioneer 🔥 Trailblazer 🏰 Proved & Defended ⚡ Compound Threat 🖐️ Five Alive 🔴 Critical Finder 🧪 Proof Positive 🕸️ Web Weaver 💡 Novel Discovery 🎩 Hat Trick 🩸 First Blood 📊 Show Your Work 🛡️ Shield Bearer 🔗 Connector
+**Badges:** 🗺️ Category Pioneer 🔥 Trailblazer 🏰 Proved & Defended ⚡ Compound Threat 🖐️ Five Alive 🔴 Critical Finder 🕸️ Web Weaver 💡 Novel Discovery 🎩 Hat Trick 🩸 First Blood 📊 Show Your Work 🛡️ Shield Bearer 🔗 Connector
 
 **Cards:** `AVE-2025-0003`, `AVE-2025-0011`, `AVE-2025-0013`, `AVE-2025-0017`, `AVE-2025-0029`, `AVE-2025-0035`
 
-**Progress to ARCHITECT:** `[███████████████░░░░░]` 79% (825 XP needed)
+**Progress to ARCHITECT:** `[██████████████░░░░░░]` 74% (1,025 XP needed)
 
 ---
 
