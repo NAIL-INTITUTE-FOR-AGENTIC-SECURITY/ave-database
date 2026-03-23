@@ -56,7 +56,7 @@ An AVE card documents a **repeatable failure mode, vulnerability, or emergent pa
 
 ### Option 1: GitHub Issue (Easiest)
 
-1. Go to [**New Issue → AVE Card Submission**](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=ave-submission.yml)
+1. Go to [**New Issue → AVE Card Submission**](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=ave-submission.yml)
 2. Fill in the structured form
 3. The NAIL team will triage, assign an AVE ID, and create the formal card
 
@@ -79,7 +79,7 @@ An AVE card documents a **repeatable failure mode, vulnerability, or emergent pa
 
 If your finding could be directly weaponized against production systems:
 
-1. Use the [**Private Disclosure**](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=private-disclosure.yml) issue template, OR
+1. Use the [**Private Disclosure**](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=private-disclosure.yml) issue template, OR
 2. Email **security@nailinstitute.org** directly
 
 See [SECURITY.md](./SECURITY.md) for our responsible disclosure policy.
@@ -235,7 +235,7 @@ We use a tiered evidence system:
 | Fabrication | `fabrication` | Hallucination weaponisation, data fabrication |
 | Emergent | `emergent` | Novel behaviours not fitting above categories |
 
-**Proposing a new category?** Open a [Discussion](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions) with your rationale. Categories are added when 3+ cards justify a new cluster.
+**Proposing a new category?** Open a [Discussion](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions) with your rationale. Categories are added when 3+ cards justify a new cluster.
 
 ---
 
@@ -319,4 +319,4 @@ See the live [**Hall of Fame**](./HALL_OF_FAME.md) for current standings.
 
 ---
 
-*Questions? Open a [Discussion](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions) or email contribute@nailinstitute.org.*
+*Questions? Open a [Discussion](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions) or email contribute@nailinstitute.org.*

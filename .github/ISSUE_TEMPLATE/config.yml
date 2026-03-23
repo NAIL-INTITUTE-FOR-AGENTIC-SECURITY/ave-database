@@ -1,10 +1,10 @@
 blank_issues_enabled: false
 contact_links:
   - name: "📖 Browse the AVE Database"
-    url: "https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database/tree/main/ave-database"
+    url: "https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/tree/main/ave-database"
     about: "View all documented agentic vulnerabilities before submitting."
   - name: "💬 Discussions"
-    url: "https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions"
+    url: "https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions"
     about: "Ask questions, propose new categories, or discuss findings."
   - name: "🔒 Email for Sensitive Findings"
     url: "mailto:security@nailinstitute.org"

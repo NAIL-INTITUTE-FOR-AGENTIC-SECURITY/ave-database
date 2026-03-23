@@ -58,7 +58,7 @@ REDACTED_FIELDS = {
 # Redaction notice
 REDACTION_NOTICE = (
     "[REDACTED — Available in NAIL SDK. "
-    "See https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database for access.]"
+    "See https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database for access.]"
 )
 
 REDACTION_NOTICE_SHORT = "[Available in NAIL SDK]"
@@ -153,7 +153,7 @@ def redact_card(card_data: dict, tier: str = "public") -> dict:
     meta = redacted.get("_meta", {})
     meta["access_tier"] = "public"
     meta["redacted_fields"] = sorted(REDACTED_FIELDS)
-    meta["full_access"] = "https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database"
+    meta["full_access"] = "https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database"
     redacted["_meta"] = meta
 
     return redacted
@@ -285,9 +285,9 @@ def generate_public_markdown(card_data: dict) -> str:
     lines.extend([
         "", "---", "",
         f"> 🔒 **Full details** (mechanism, evidence, PoC, defences, AVSS vector) "
-        f"available in the [NAIL SDK](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database).",
+        f"available in the [NAIL SDK](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database).",
         "",
-        f"*Maintained by the [NAIL Institute](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database)*",
+        f"*Maintained by the [NAIL Institute](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database)*",
     ])
 
     return "\n".join(lines)

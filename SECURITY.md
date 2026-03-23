@@ -11,7 +11,7 @@ If you discover a vulnerability that could enable **immediate exploitation** of 
 1. **DO NOT** submit it as a public GitHub Issue
 2. **DO** use one of these channels:
    - 📧 Email: **security@nailinstitute.org** (PGP key available on request)
-   - 🔒 GitHub: [Private Disclosure template](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=private-disclosure.yml)
+   - 🔒 GitHub: [Private Disclosure template](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=private-disclosure.yml)
 
 ### What Qualifies as "Severe"
 

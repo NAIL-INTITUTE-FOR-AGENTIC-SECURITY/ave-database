@@ -42,13 +42,13 @@ Each card contains:
 - **How to Defend** — Known mitigation strategies (names only in public tier)
 
 > 🔒 Full mechanism details, evidence data, PoC scripts, and defence implementations
-> are available through the [NAIL SDK](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY).
+> are available through the [NAIL SDK](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY).
 
 ## Quick Start
 
 ```bash
 # Clone the repo
-git clone https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database.git
+git clone https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database.git
 cd ave-database
 
 # Install the AVE toolkit
@@ -70,7 +70,7 @@ we want to hear about it.
 
 | Method | For |
 |--------|-----|
-| [**📝 Submit via Issue**](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=ave-submission.yml) | Easiest — fill out a form |
+| [**📝 Submit via Issue**](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=ave-submission.yml) | Easiest — fill out a form |
 | [**🔀 Submit via PR**](./CONTRIBUTING.md) | Experienced contributors |
 | [**🔒 Private Disclosure**](./SECURITY.md) | Severe / weaponizable findings |
 
@@ -114,6 +114,6 @@ Free to use, share, and build upon — with attribution.
 ---
 
 <p align="center">
-  <b>Built by the <a href="https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY">NAIL Institute</a></b><br>
+  <b>Built by the <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY">NAIL Institute</a></b><br>
   <i>Building the safety infrastructure for agentic AI.</i>
 </p>

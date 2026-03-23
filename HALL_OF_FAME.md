@@ -163,6 +163,6 @@
 
 ---
 
-*Want to see your name here? [Submit a vulnerability](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=ave-submission.yml) and start earning XP!*
+*Want to see your name here? [Submit a vulnerability](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=ave-submission.yml) and start earning XP!*
 
-*Maintained by the [NAIL Institute](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database) — Building the safety infrastructure for agentic AI.*
+*Maintained by the [NAIL Institute](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database) — Building the safety infrastructure for agentic AI.*

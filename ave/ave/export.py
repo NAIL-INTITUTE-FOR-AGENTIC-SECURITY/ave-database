@@ -11,7 +11,7 @@ Produces publishable artifacts from the AVE database:
   5. Bulk export  — Generate the entire public `ave-database/` directory
 
 This is how the private Python registry becomes the public
-NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database GitHub repository.
+NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database GitHub repository.
 """
 
 from __future__ import annotations
@@ -305,7 +305,7 @@ def card_to_markdown(card: AVECard) -> str:
     lines.extend([
         "---",
         "",
-        f"*Published by [NAIL Institute](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database) "
+        f"*Published by [NAIL Institute](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database) "
         f"| Generated: {time.strftime('%Y-%m-%d')} "
         f"| License: CC-BY-SA-4.0*",
     ])
@@ -374,7 +374,7 @@ def generate_index_table(cards: list[AVECard]) -> str:
     lines.extend([
         "---",
         "",
-        "*Maintained by [NAIL Institute](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database) "
+        "*Maintained by [NAIL Institute](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database) "
         "— The MITRE ATT&CK of the Agentic Era*",
     ])
 

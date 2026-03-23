@@ -138,7 +138,7 @@ def generate_skeleton(
         f.write(f"## Defences\n\n*[Add known mitigations, if any]*\n\n")
         f.write(f"## References\n\n*[Add links to papers, blog posts, or related work]*\n\n")
         f.write(f"---\n\n")
-        f.write(f"*Submitted via `ave submit` — [NAIL Institute](https://github.com/NAIL-INTITUTE-FOR-AGENTIC-SECURITY/ave-database)*\n")
+        f.write(f"*Submitted via `ave submit` — [NAIL Institute](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database)*\n")
 
     return ave_id, json_path, md_path
 
