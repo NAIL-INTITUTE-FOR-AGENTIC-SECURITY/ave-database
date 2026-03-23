@@ -1,0 +1,63 @@
+title: "Research: "
+labels:
+  - "research"
+  - "community"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🔬 Research Discussion
+
+        Share research findings, discuss papers, propose experiments, or
+        collaborate on agentic AI safety research.
+
+        The NAIL Institute publishes all validated findings openly.
+        Your contributions here may lead to co-authored publications.
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - 📄 Paper discussion — Discuss published or pre-print research
+        - 🧪 Experiment proposal — Propose a new experiment
+        - 📊 Results sharing — Share your own findings
+        - 🔗 Cross-reference — Link related work from other fields
+        - 💡 Theory / hypothesis — Propose a theoretical framework
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What do you want to discuss or share?
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links to papers, experiments, or related resources.
+      placeholder: |
+        - https://arxiv.org/abs/...
+        - AVE-2025-0026 (Confused Deputy)
+        - Experiment 20 (Pathology Collider)
+
+  - type: textarea
+    id: methodology
+    attributes:
+      label: Methodology (if proposing an experiment)
+      description: |
+        How would you run this experiment? What models, frameworks,
+        and metrics would you use?
+
+  - type: checkboxes
+    id: collaboration
+    attributes:
+      label: Collaboration Interest
+      options:
+        - label: I'd like to collaborate with others on this
+        - label: I have compute resources to contribute
+        - label: I'd like NAIL Institute review/feedback

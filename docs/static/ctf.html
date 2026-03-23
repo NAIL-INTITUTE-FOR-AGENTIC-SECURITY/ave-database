@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAIL CTF — Capture The Flag Events</title>
+<style>
+:root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --accent2: #f0883e;
+    --green: #3fb950;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --gold: #d29922;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+header {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a1e2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 0;
+    text-align: center;
+}
+header h1 { font-size: 2.8em; margin-bottom: 12px; }
+header h1 span.flag { color: var(--accent2); }
+header p { color: var(--text-muted); font-size: 1.2em; max-width: 700px; margin: 0 auto; }
+nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    margin: 0 16px;
+    font-size: 0.95em;
+    transition: color 0.2s;
+}
+nav a:hover, nav a.active { color: var(--accent); }
+section { padding: 48px 0; }
+h2 {
+    font-size: 1.8em;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+}
+h3 { font-size: 1.3em; margin-bottom: 12px; color: var(--accent); }
+
+/* Event cards */
+.event-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 24px; margin-top: 24px; }
+.event-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    transition: border-color 0.3s, transform 0.2s;
+}
+.event-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.event-card .status {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+.status.upcoming { background: #1f6feb33; color: var(--accent); border: 1px solid var(--accent); }
+.status.live { background: #f8514933; color: var(--red); border: 1px solid var(--red); animation: pulse 2s infinite; }
+.status.completed { background: #3fb95033; color: var(--green); border: 1px solid var(--green); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+.event-card h3 { color: var(--text); margin-bottom: 8px; }
+.event-card .meta { color: var(--text-muted); font-size: 0.9em; margin-bottom: 12px; }
+.event-card .meta span { margin-right: 16px; }
+.event-card .prize { color: var(--gold); font-weight: 700; font-size: 1.1em; }
+.event-card .description { color: var(--text-muted); margin-bottom: 16px; }
+.event-card .challenges { display: flex; flex-wrap: wrap; gap: 6px; }
+.challenge-tag {
+    background: #30363d;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    color: var(--text-muted);
+}
+
+/* How It Works */
+.steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 24px; }
+.step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+}
+.step .number {
+    width: 48px;
+    height: 48px;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+.step h4 { margin-bottom: 8px; }
+.step p { color: var(--text-muted); font-size: 0.9em; }
+
+/* Challenge categories */
+.categories { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 24px; }
+.category {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+}
+.category .icon { font-size: 2em; margin-bottom: 8px; }
+.category h4 { margin-bottom: 4px; }
+.category p { color: var(--text-muted); font-size: 0.9em; }
+.category .difficulty {
+    margin-top: 8px;
+    font-size: 0.85em;
+    color: var(--accent2);
+}
+
+/* Scoreboard */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 24px;
+}
+th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: #21262d; color: var(--text-muted); font-size: 0.85em; text-transform: uppercase; }
+td { font-size: 0.95em; }
+tr:hover { background: #1c2128; }
+.rank-1 { color: var(--gold); font-weight: 700; }
+.rank-2 { color: #c0c0c0; font-weight: 600; }
+.rank-3 { color: #cd7f32; font-weight: 600; }
+
+/* Rules */
+.rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+.rule-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+}
+.rule-section h4 { color: var(--accent); margin-bottom: 12px; }
+.rule-section ul { list-style: none; padding: 0; }
+.rule-section li { padding: 4px 0; color: var(--text-muted); }
+.rule-section li::before { content: "→ "; color: var(--accent); }
+
+/* CTA */
+.cta-section {
+    text-align: center;
+    padding: 48px 0;
+    margin-top: 32px;
+    background: linear-gradient(135deg, #161b22, #1a1e2e);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+.cta-section h2 { border: none; display: block; }
+.cta-section p { color: var(--text-muted); margin-bottom: 24px; max-width: 600px; margin-left: auto; margin-right: auto; }
+.btn {
+    display: inline-block;
+    padding: 12px 32px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    margin: 0 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.btn-primary { background: var(--accent); color: var(--bg); }
+.btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+footer {
+    text-align: center;
+    padding: 32px 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.85em;
+}
+footer a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 768px) {
+    header h1 { font-size: 2em; }
+    .event-grid { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    nav a { margin: 0 8px; font-size: 0.85em; }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>🏁 NAIL <span class="flag">CTF</span></h1>
+        <p>Capture-The-Flag events for agentic AI security. Exploit defended AI agents. Discover new vulnerabilities. Earn AVE credits and prizes.</p>
+    </div>
+</header>
+
+<nav>
+    <div class="container">
+        <a href="#events">Events</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#challenges">Challenges</a>
+        <a href="#past-results">Past Results</a>
+        <a href="#rules">Rules</a>
+        <a href="index.html">← AVE Database</a>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════ EVENTS ═══════════════════════════════════ -->
+<section id="events">
+    <div class="container">
+        <h2>📅 Events</h2>
+
+        <div class="event-grid">
+            <div class="event-card">
+                <span class="status upcoming">📅 UPCOMING</span>
+                <h3>NAIL Weekend Red Team CTF #1</h3>
+                <div class="meta">
+                    <span>📆 TBA 2026</span>
+                    <span>⏱️ 48 hours</span>
+                    <span>👥 50 teams max</span>
+                </div>
+                <div class="prize">💰 $10,000 Prize Pool</div>
+                <p class="description">
+                    The inaugural NAIL red team event. 48 hours to exploit defended AI agents
+                    across 5 challenge categories. Novel attacks become AVE entries.
+                    Top finishers earn NAIL Fellow nominations.
+                </p>
+                <div class="challenges">
+                    <span class="challenge-tag">🎭 Persona Hijack</span>
+                    <span class="challenge-tag">💸 EDoS Budget Burn</span>
+                    <span class="challenge-tag">🔐 Secret Extraction</span>
+                    <span class="challenge-tag">🧠 Memory Poisoning</span>
+                    <span class="challenge-tag">🔗 Chain Exploit</span>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <span class="status upcoming">📅 UPCOMING</span>
+                <h3>Arena-Seeded CTF — Collider Discoveries</h3>
+                <div class="meta">
+                    <span>📆 TBA 2026</span>
+                    <span>⏱️ 24 hours</span>
+                    <span>👥 30 teams max</span>
+                </div>
+                <div class="prize">💰 $8,000 Prize Pool</div>
+                <p class="description">
+                    Challenges auto-generated from Pathology Collider breakthrough discoveries.
+                    Can human red teamers reproduce what the GA-evolved Red Swarm found?
+                    A direct bridge from automated research to human validation.
+                </p>
+                <div class="challenges">
+                    <span class="challenge-tag">🧬 GA-Evolved Attacks</span>
+                    <span class="challenge-tag">🔬 Collider Breakthroughs</span>
+                    <span class="challenge-tag">🎭 Persona Hijack</span>
+                    <span class="challenge-tag">🔐 Secret Extraction</span>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <span class="status upcoming">📅 UPCOMING</span>
+                <h3>Quick Demo CTF — Open Practice</h3>
+                <div class="meta">
+                    <span>📆 Rolling — Always Open</span>
+                    <span>⏱️ 2 hours</span>
+                    <span>👥 20 teams max</span>
+                </div>
+                <div class="prize">💰 $1,000 Prize Pool</div>
+                <p class="description">
+                    A short, beginner-friendly event for testing and practice.
+                    2 challenges, fast turnaround. Perfect for getting started
+                    with NAIL CTF before the main events.
+                </p>
+                <div class="challenges">
+                    <span class="challenge-tag">🎭 Persona Hijack</span>
+                    <span class="challenge-tag">🔐 Secret Extraction</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ HOW IT WORKS ═══════════════════════════════ -->
+<section id="how-it-works" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+        <h2>⚙️ How It Works</h2>
+        <p style="color: var(--text-muted); max-width: 700px;">
+            NAIL CTF events pit human red teamers against defended AI agents.
+            You interact with an AI agent through a constrained terminal interface,
+            attempting to capture hidden flags by exploiting agentic vulnerabilities.
+        </p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="number">1</div>
+                <h4>Register</h4>
+                <p>Form a team (1-5 members) and register via the CTF API when an event opens.</p>
+            </div>
+            <div class="step">
+                <div class="number">2</div>
+                <h4>Choose Challenges</h4>
+                <p>Browse active challenges — each has a defended AI agent with hidden flags.</p>
+            </div>
+            <div class="step">
+                <div class="number">3</div>
+                <h4>Interact & Exploit</h4>
+                <p>Send messages to the agent through the terminal. Find creative ways past its defences.</p>
+            </div>
+            <div class="step">
+                <div class="number">4</div>
+                <h4>Capture Flags</h4>
+                <p>Extract flag values (format: <code>NAIL{...}</code>) and submit them for points.</p>
+            </div>
+            <div class="step">
+                <div class="number">5</div>
+                <h4>Earn Rewards</h4>
+                <p>Top scorers win prizes. Novel attacks become AVE entries. All participants earn XP.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ CHALLENGES ═══════════════════════════════ -->
+<section id="challenges">
+    <div class="container">
+        <h2>🎯 Challenge Categories</h2>
+
+        <div class="categories">
+            <div class="category">
+                <div class="icon">🎭</div>
+                <h4>Persona Hijack</h4>
+                <p>Override the agent's persona to extract system prompt contents or make it assume a different identity. Classic prompt injection meets agentic systems.</p>
+                <div class="difficulty">Beginner → Elite • 100-1000 pts</div>
+            </div>
+            <div class="category">
+                <div class="icon">💸</div>
+                <h4>EDoS Budget Burn</h4>
+                <p>Trick the agent into consuming excessive compute resources — recursive tool calls, infinite loops, or exponential token generation. Economic denial-of-service.</p>
+                <div class="difficulty">Intermediate → Elite • 250-1000 pts</div>
+            </div>
+            <div class="category">
+                <div class="icon">🔐</div>
+                <h4>Secret Extraction</h4>
+                <p>The agent has secrets embedded in its system prompt or tool configuration. Extract them without triggering leak detection. Confused deputy attacks welcome.</p>
+                <div class="difficulty">Beginner → Advanced • 100-500 pts</div>
+            </div>
+            <div class="category">
+                <div class="icon">🧠</div>
+                <h4>Memory Poisoning</h4>
+                <p>Inject false information into the agent's memory, then get it to cite the poisoned data as fact. Memory laundering in action.</p>
+                <div class="difficulty">Intermediate → Elite • 250-1000 pts</div>
+            </div>
+            <div class="category">
+                <div class="icon">🔗</div>
+                <h4>Chain Exploit</h4>
+                <p>Combine multiple vulnerabilities in sequence. Poison memory → trigger tool call → exfiltrate data. The most creative chains score highest.</p>
+                <div class="difficulty">Advanced → Elite • 500-1000 pts</div>
+            </div>
+            <div class="category">
+                <div class="icon">🏢</div>
+                <h4>Enterprise Scenarios</h4>
+                <p>Real-world enterprise attack vectors: PII exfiltration from customer service agents, sandbox escapes from DevOps assistants, DLP bypasses.</p>
+                <div class="difficulty">Advanced → Elite • 500-1000 pts</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ PAST RESULTS ═══════════════════════════════ -->
+<section id="past-results" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+        <h2>🏆 Past Results</h2>
+        <p style="color: var(--text-muted); margin-bottom: 16px;">
+            Results from completed CTF events. Novel attacks discovered during
+            events are catalogued as AVE database entries.
+        </p>
+
+        <div style="background: var(--bg); border: 1px dashed var(--border); border-radius: 8px; padding: 32px; text-align: center; color: var(--text-muted);">
+            <p style="font-size: 1.2em; margin-bottom: 8px;">🚀 No completed events yet</p>
+            <p>The first NAIL CTF event is coming soon. <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions" style="color: var(--accent); text-decoration: none;">Join the discussion</a> to get notified.</p>
+        </div>
+
+        <h3 style="margin-top: 32px;">📊 Sample Scoreboard Format</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team</th>
+                    <th>Flags</th>
+                    <th>Points</th>
+                    <th>Speed Bonus</th>
+                    <th>Total</th>
+                    <th>Novel AVEs</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="rank-1">🥇 1st</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td class="rank-2">🥈 2nd</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td class="rank-3">🥉 3rd</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════ RULES ═══════════════════════════════════ -->
+<section id="rules">
+    <div class="container">
+        <h2>📜 Rules & Scoring</h2>
+
+        <div class="rules-grid">
+            <div class="rule-section">
+                <h4>🏁 Flag Format</h4>
+                <ul>
+                    <li>All flags follow the format: <code>NAIL{...}</code></li>
+                    <li>Flags are case-sensitive</li>
+                    <li>Each flag can only be submitted once per team</li>
+                    <li>Duplicate submissions are silently ignored</li>
+                </ul>
+            </div>
+            <div class="rule-section">
+                <h4>⚡ Speed Bonus</h4>
+                <ul>
+                    <li>Capture a flag within 5 minutes → 1.5× point multiplier</li>
+                    <li>Speed bonus applies per-flag, not per-challenge</li>
+                    <li>Timer starts when you first interact with the challenge agent</li>
+                </ul>
+            </div>
+            <div class="rule-section">
+                <h4>✅ Allowed</h4>
+                <ul>
+                    <li>Any prompt engineering technique</li>
+                    <li>Multi-turn conversation strategies</li>
+                    <li>Social engineering the agent</li>
+                    <li>Combining vulnerabilities creatively</li>
+                    <li>Using the AVE database for research</li>
+                </ul>
+            </div>
+            <div class="rule-section">
+                <h4>🚫 Not Allowed</h4>
+                <ul>
+                    <li>Attacking the CTF infrastructure directly</li>
+                    <li>DDoS or resource exhaustion of the platform</li>
+                    <li>Sharing flags between teams</li>
+                    <li>Automated brute-force flag guessing</li>
+                    <li>Exploiting bugs in the CTF platform (report them instead!)</li>
+                </ul>
+            </div>
+            <div class="rule-section">
+                <h4>🏆 Prizes</h4>
+                <ul>
+                    <li>Weekend CTF: 🥇 $5,000 · 🥈 $3,000 · 🥉 $2,000</li>
+                    <li>Arena-Seeded: 🥇 $5,000 · 🥈 $3,000</li>
+                    <li>Quick Demo: 🏆 $1,000</li>
+                    <li>All participants earn AVE XP for the Hall of Fame</li>
+                </ul>
+            </div>
+            <div class="rule-section">
+                <h4>🎖️ Novel Attack Bonus</h4>
+                <ul>
+                    <li>Discover a new vulnerability? → Bonus XP + AVE credit</li>
+                    <li>Your attack becomes an AVE database entry</li>
+                    <li>You're credited as the discoverer on the card</li>
+                    <li>Top novel attacks may earn additional prizes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════ CTA ═══════════════════════════════════ -->
+<div class="container">
+    <div class="cta-section">
+        <h2>Ready to Hack AI?</h2>
+        <p>
+            Join the NAIL CTF community. Get notified about upcoming events,
+            form teams, and help make agentic AI safer through adversarial testing.
+        </p>
+        <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions/categories/ctf-events" class="btn btn-primary">💬 Join CTF Discussions</a>
+        <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database" class="btn btn-secondary">📖 Browse AVE Database</a>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <p>
+            NAIL Institute · Neuravant AI Limited · 2026<br>
+            <a href="index.html">AVE Docs</a> ·
+            <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database">GitHub</a> ·
+            <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions">Discussions</a> ·
+            <a href="contribute.html">Contribute</a>
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>

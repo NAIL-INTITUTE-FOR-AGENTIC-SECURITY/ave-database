@@ -1,0 +1,25 @@
+title: ""
+labels:
+  - "community"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 💬 General Discussion
+
+        This is a space for anything related to agentic AI security that
+        doesn't fit neatly into the other categories:
+
+        - **Questions** about AI agent security
+        - **Use cases** you'd like the community's input on
+        - **Tooling** — IDE integrations, CI/CD pipelines, scanners
+        - **Events** — meetups, workshops, conferences
+        - **Meta** — suggestions for improving the AVE Database itself
+
+  - type: textarea
+    id: message
+    attributes:
+      label: What's on your mind?
+      description: Share your thoughts, questions, or ideas.
+    validations:
+      required: true

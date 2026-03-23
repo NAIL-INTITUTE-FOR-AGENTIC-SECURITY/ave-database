@@ -1,0 +1,78 @@
+title: "Defence: "
+labels:
+  - "defence"
+  - "community"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🛡️ Defence Discussion
+
+        Propose, discuss, or share mitigation strategies for agentic AI
+        vulnerabilities. Every AVE card has a "mitigations" field —
+        community-contributed defences make the database stronger.
+
+  - type: textarea
+    id: target-vulnerability
+    attributes:
+      label: Target Vulnerability
+      description: Which AVE vulnerability does this defence address?
+      placeholder: |
+        AVE-2025-0001 (Memory Poisoning)
+        — or describe the attack pattern if no AVE ID exists yet.
+    validations:
+      required: true
+
+  - type: textarea
+    id: defence-description
+    attributes:
+      label: Defence Description
+      description: How does the defence work? Be as specific as possible.
+      placeholder: |
+        Implement a trust-decay function on stored memories, where each
+        memory's trust score decreases exponentially based on time since
+        last verification...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: defence-layer
+    attributes:
+      label: Defence Layer
+      description: Which layer of the defence stack does this target?
+      options:
+        - Layer 1 — Stochastic Monitoring (random sampling, out-of-band)
+        - Layer 2 — Pathology Detection (tensor networks, compound alerts)
+        - Layer 3 — Memory Protection (firewalls, taint tracking)
+        - Layer 4 — Tripwires (honeytokens, canary values)
+        - Layer 5 — Autonomic Response (startle, shutdown)
+        - Application — Framework/code-level mitigation
+        - Architecture — System design pattern
+        - Policy — Operational/governance control
+        - Other / Multiple layers
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence / Testing
+      description: Have you tested this defence? Share results.
+      placeholder: |
+        Tested on GPT-4 with 50 injection attempts:
+        - Block rate: 94%
+        - False positive rate: 2%
+        - Latency overhead: <50ms
+
+  - type: textarea
+    id: limitations
+    attributes:
+      label: Known Limitations
+      description: What doesn't this defence cover?
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I can provide a reference implementation
+        - label: I'd like this added to an AVE card's mitigations
+        - label: I'd like to co-author a defence write-up

@@ -1,0 +1,84 @@
+title: "AVE Proposal: "
+labels:
+  - "ave-proposal"
+  - "community"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🛡️ AVE Vulnerability Proposal
+
+        Use this template to propose a new vulnerability for the AVE Database.
+        For formal submissions, use the [Issue Template](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/issues/new?template=ave-submission.yml) instead.
+
+        This discussion space is for **early-stage ideas** — you don't need evidence yet.
+
+  - type: textarea
+    id: vulnerability-name
+    attributes:
+      label: Proposed Vulnerability Name
+      description: A short, descriptive name for the vulnerability.
+      placeholder: "e.g., Recursive Delegation Loop"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Which category best fits this vulnerability?
+      options:
+        - memory — Memory poisoning, pollution, laundering
+        - tool — Tool chain exploits, confused deputy
+        - alignment — Sycophantic collapse, deceptive alignment
+        - temporal — Sleeper payloads, chronological attacks
+        - resource — Token embezzlement, EDoS
+        - social — Collusion, consensus paralysis, bystander effect
+        - governance — Accountability failures, shadow delegation
+        - epistemic — Contagion, hallucination amplification
+        - other — Doesn't fit existing categories
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        Describe the vulnerability. What happens? Under what conditions?
+        Even rough observations are valuable.
+      placeholder: |
+        When an agent delegates a sub-task to another agent, and that agent
+        delegates back to the first one, they enter an infinite loop...
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed-in
+    attributes:
+      label: Where have you observed this?
+      description: |
+        Which frameworks, models, or configurations? Even anecdotal
+        observations are welcome at this stage.
+      placeholder: |
+        - LangGraph with GPT-4
+        - CrewAI multi-agent setup
+        - Custom orchestrator with Claude
+
+  - type: dropdown
+    id: severity-estimate
+    attributes:
+      label: Estimated Severity
+      description: Your gut feeling on how severe this is.
+      options:
+        - 🔴 Critical — Autonomous exploitation, data loss
+        - 🟠 High — Reliable exploit with significant impact
+        - 🟡 Medium — Exploitable under specific conditions
+        - 🟢 Low — Minor impact, edge case
+        - 🤷 Unknown — Not sure yet
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any links, screenshots, logs, or references.

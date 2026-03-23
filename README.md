@@ -88,6 +88,38 @@ Every accepted card earns **XP**, unlocks **badges**, and climbs the **leaderboa
 
 See the [**🏆 Hall of Fame**](./HALL_OF_FAME.md) for current standings.
 
+## 🔬 Research
+
+We publish our validated findings openly. 29 experiments across 5 model families:
+
+| Finding | Key Result |
+|---------|-----------|
+| **Confused Deputy Attack** | 100% exploit rate on Claude/Gemini (p=0.0002) |
+| **AI Bystander Effect** | 20% failure in multi-agent teams |
+| **GA-Evolved Defences** | 100% detection, 0% corruption |
+| **5-Layer Defence Stack** | Eliminates all tested attack vectors |
+
+📖 **[research/](./research/)** — Full findings, statistics, defence architecture, paper abstract
+
+## 🏁 CTF Events
+
+Capture-The-Flag competitions where human red teamers exploit defended AI agents.
+Novel attacks discovered during events become AVE database entries.
+
+🏁 **[CTF Portal](https://nail-institute-for-agentic-security.github.io/ave-database/ctf.html)** — Events, challenges, rules, and results
+
+## 🌐 Public API
+
+Read-only API for programmatic access to the AVE database.
+
+📡 **[api/](./api/)** — FastAPI server with search, filtering, and statistics
+
+## 💬 Community
+
+- [**Discussions**](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions) — AVE proposals, research, defences, CTF events
+- [**Hall of Fame**](./HALL_OF_FAME.md) — Contributor leaderboard with XP, badges, and tiers
+- [**Contributing Guide**](./CONTRIBUTING.md) — How to submit vulnerabilities
+
 ## Project Structure
 
 ```
@@ -97,7 +129,19 @@ See the [**🏆 Hall of Fame**](./HALL_OF_FAME.md) for current standings.
 │   └── README.md          #   Database documentation
 ├── ave/                   # Python toolkit
 │   └── ave/               #   CLI, validation, submission tools
-├── .github/               # Issue templates, PR templates, CI
+├── api/                   # Public read-only API (FastAPI)
+│   └── server.py          #   AVE lookup, search, stats endpoints
+├── research/              # Published research artifacts
+│   ├── FINDINGS.md        #   All validated findings (Tier 1-3)
+│   ├── STATISTICS.md      #   Statistical analysis summary
+│   ├── DEFENCE_ARCHITECTURE.md  # 5-layer defence stack
+│   ├── PAPER_ABSTRACT.md  #   Research paper abstract
+│   └── EBOOK_PREVIEW.md   #   Ebook chapter overview
+├── docs/                  # Documentation site (GitHub Pages)
+│   ├── _site/             #   Generated HTML (index, taxonomy, CTF, cards)
+│   └── generate.py        #   Docs site generator
+├── .github/               # Issue templates, PR templates, CI, Discussions
+│   └── DISCUSSION_TEMPLATE/  # Discussion category templates
 ├── CONTRIBUTING.md        # How to contribute
 ├── SECURITY.md            # Responsible disclosure
 ├── CODE_OF_CONDUCT.md     # Community standards

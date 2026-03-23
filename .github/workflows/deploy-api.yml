@@ -1,0 +1,47 @@
+name: Deploy Public API
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment target'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+# This workflow is a template — uncomment and configure for your hosting provider.
+# Supported: Railway, Fly.io, Render, or any Docker-capable host.
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install fastapi uvicorn
+
+      - name: Validate API imports
+        run: |
+          cd api
+          python -c "from server import create_app; print('✅ API imports OK')"
+
+  # Uncomment for Railway deployment:
+  # deploy:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Deploy to Railway
+  #       uses: bervProject/railway-deploy@main
+  #       with:
+  #         railway_token: ${{ secrets.RAILWAY_TOKEN }}
+  #         service: ave-public-api

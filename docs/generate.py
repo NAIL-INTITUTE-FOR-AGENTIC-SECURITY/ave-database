@@ -431,7 +431,10 @@ def generate_header(active: str = "database") -> str:
     <nav>
       <a href="index.html"{cls("database")}>Database</a>
       <a href="taxonomy.html"{cls("taxonomy")}>Taxonomy</a>
+      <a href="ctf.html"{cls("ctf")}>🏁 CTF</a>
+      <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/tree/main/research">🔬 Research</a>
       <a href="contribute.html"{cls("contribute")}>Contribute</a>
+      <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/discussions">💬 Discuss</a>
       <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database">GitHub</a>
     </nav>
   </div>
@@ -902,6 +905,14 @@ def main():
         card_html = generate_card_page(card)
         (SITE_DIR / "cards" / f"{ave_id}.html").write_text(card_html)
     print(f"  ✓ {len(cards)} card detail pages")
+
+    # Copy static pages (CTF portal, etc.)
+    static_dir = Path(__file__).parent / "static"
+    if static_dir.is_dir():
+        import shutil
+        for static_file in static_dir.glob("*.html"):
+            shutil.copy2(static_file, SITE_DIR / static_file.name)
+            print(f"  ✓ {static_file.name} (static)")
 
     print(f"\n  ✅ Site generated at: {SITE_DIR}")
     print(f"  📁 {sum(1 for _ in SITE_DIR.rglob('*.html'))} HTML files")

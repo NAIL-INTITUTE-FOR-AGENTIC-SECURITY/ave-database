@@ -1,0 +1,45 @@
+title: "CTF: "
+labels:
+  - "ctf"
+  - "community"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🏁 CTF Event Discussion
+
+        Discuss upcoming and past NAIL CTF events, share write-ups,
+        form teams, and propose challenge ideas.
+
+        The NAIL CTF platform pits human red teamers against defended
+        AI agents. Novel attacks discovered during events become
+        AVE database entries.
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - 📅 Upcoming event — Questions about a scheduled CTF
+        - 📝 Write-up — Sharing a solution or approach
+        - 🏗️ Challenge proposal — Suggest a new challenge type
+        - 👥 Team formation — Looking for teammates
+        - 🐛 Bug report — Issue with the CTF platform
+        - 💬 General CTF discussion
+    validations:
+      required: true
+
+  - type: textarea
+    id: content
+    attributes:
+      label: Details
+      description: Share your write-up, question, or proposal.
+    validations:
+      required: true
+
+  - type: textarea
+    id: related-aves
+    attributes:
+      label: Related AVE Cards
+      description: Any AVE vulnerabilities related to this discussion?
+      placeholder: "AVE-2025-0026, AVE-2025-0014"
