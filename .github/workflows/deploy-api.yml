@@ -34,12 +34,15 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install fastapi uvicorn
+        run: pip install fastapi uvicorn httpx
 
       - name: Validate API imports
         run: |
           cd api
           python -c "from server import create_app; print('✅ API imports OK')"
+
+      - name: Run hardening tests
+        run: python -m pytest api/tests/ -v --tb=short
 
   deploy:
     needs: test
