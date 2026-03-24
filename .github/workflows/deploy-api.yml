@@ -1,6 +1,14 @@
 name: Deploy Public API
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - 'ave-database/**'
+      - 'Dockerfile'
+      - 'fly.toml'
+
   workflow_dispatch:
     inputs:
       environment:
@@ -12,8 +20,8 @@ on:
           - staging
           - production
 
-# This workflow is a template — uncomment and configure for your hosting provider.
-# Supported: Railway, Fly.io, Render, or any Docker-capable host.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   test:
@@ -26,22 +34,24 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          pip install fastapi uvicorn
+        run: pip install fastapi uvicorn
 
       - name: Validate API imports
         run: |
           cd api
           python -c "from server import create_app; print('✅ API imports OK')"
 
-  # Uncomment for Railway deployment:
-  # deploy:
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Deploy to Railway
-  #       uses: bervProject/railway-deploy@main
-  #       with:
-  #         railway_token: ${{ secrets.RAILWAY_TOKEN }}
-  #         service: ave-public-api
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    concurrency: deploy-api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Fly.io CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

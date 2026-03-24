@@ -1,0 +1,39 @@
+# Git
+.git
+.github
+.gitignore
+
+# Documentation & static site
+docs/
+research/
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+
+# Editor
+.vscode
+.idea
+*.swp
+
+# Build artifacts
+docs/_site/
+
+# Non-essential files
+*.md
+LICENSE
+AWESOME.md
+CHANGELOG.md
+ROADMAP.md
+HALL_OF_FAME.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+SECURITY.md
+
+# Keep README for API reference (excluded by *.md above, re-include)
+!api/README.md
+
+# Scripts
+scripts/

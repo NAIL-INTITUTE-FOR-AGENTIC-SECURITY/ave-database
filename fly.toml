@@ -1,0 +1,42 @@
+# ─────────────────────────────────────────────────────────────
+# Fly.io configuration for AVE Public API
+# Docs: https://fly.io/docs/reference/configuration/
+# ─────────────────────────────────────────────────────────────
+
+app = "ave-public-api"
+primary_region = "iad"          # US East (Washington DC) — change as needed
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PUBLIC_API_HOST = "0.0.0.0"
+  PUBLIC_API_PORT = "8080"
+  PUBLIC_API_DB_PATH = "/app/ave-database"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"    # Scale to zero when idle (free tier friendly)
+  auto_start_machines = true     # Wake on incoming request
+  min_machines_running = 0       # Allow full scale-to-zero
+  processes = ["app"]
+
+  [http_service.concurrency]
+    type = "requests"
+    hard_limit = 250
+    soft_limit = 200
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1
+
+[checks]
+  [checks.health]
+    type = "http"
+    port = 8080
+    path = "/health"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
