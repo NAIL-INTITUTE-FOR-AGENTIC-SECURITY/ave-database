@@ -914,6 +914,13 @@ def main():
             shutil.copy2(static_file, SITE_DIR / static_file.name)
             print(f"  ✓ {static_file.name} (static)")
 
+    # Copy CNAME file for custom domain
+    cname_file = Path(__file__).parent / "CNAME"
+    if cname_file.exists():
+        import shutil
+        shutil.copy2(cname_file, SITE_DIR / "CNAME")
+        print(f"  ✓ CNAME ({cname_file.read_text().strip()})")
+
     print(f"\n  ✅ Site generated at: {SITE_DIR}")
     print(f"  📁 {sum(1 for _ in SITE_DIR.rglob('*.html'))} HTML files")
     print(f"{'═' * 60}\n")

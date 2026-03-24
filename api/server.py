@@ -302,7 +302,7 @@ def create_app(config: PublicAPIConfig | None = None) -> FastAPI:
                 "taxonomy": "/ave/taxonomy",
                 "recent": "/ave/recent",
                 "github": "https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database",
-                "docs_site": "https://nail-institute-for-agentic-security.github.io/ave-database/",
+                "docs_site": "https://nailinstitute.org",
             },
         }
 

@@ -10,7 +10,7 @@
 ## 📚 The AVE Database
 
 - **[AVE Database](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database)** — The MITRE ATT&CK of the Agentic Era. 36 documented AI agent vulnerabilities.
-- **[AVE Docs Site](https://nail-institute-for-agentic-security.github.io/ave-database/)** — Searchable browser with taxonomy visualization
+- **[AVE Docs Site](https://nailinstitute.org)** — Searchable browser with taxonomy visualization
 - **[NAIL Research Findings](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database/tree/main/research)** — 29 experiments, 5 model families, validated results
 
 ---
@@ -91,7 +91,7 @@
 
 | Event | Focus |
 |-------|-------|
-| [NAIL CTF](https://nail-institute-for-agentic-security.github.io/ave-database/ctf.html) | Red-teaming defended AI agents |
+| [NAIL CTF](https://nailinstitute.org/ctf.html) | Red-teaming defended AI agents |
 | [Gandalf](https://gandalf.lakera.ai/) | Prompt injection challenges |
 | [HackAPrompt](https://www.aicrowd.com/challenges/hackaprompt-2023) | LLM prompt hacking competition |
 | [AI Village @ DEF CON](https://aivillage.org/) | AI security village at DEF CON |
