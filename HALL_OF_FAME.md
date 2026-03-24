@@ -1,11 +1,11 @@
 # 🏆 AVE Database — Hall of Fame
 
 [![Contributors](https://img.shields.io/badge/Contributors-5-blue)](./CONTRIBUTING.md)
-[![Cards](https://img.shields.io/badge/AVE_Cards-36-green)](./ave-database/)
+[![Cards](https://img.shields.io/badge/AVE_Cards-50-green)](./ave-database/)
 
 > **Recognising the security researchers who make agentic AI safer.**
 >
-> *Auto-generated on 2026-03-23 17:00 UTC from AVE Database card data.*
+> *Auto-generated on 2026-03-24 19:27 UTC from AVE Database card data.*
 
 ---
 
@@ -25,7 +25,7 @@
 
 | Rank | Tier | Contributor | XP | Cards | Badges | Streak |
 |-----:|------|-------------|---:|------:|-------:|-------:|
-| #1 | 🏗️ architect | **dleigh** | 4,900⚡ | 10 | ☠️🎯💀🗺️🔥 +12 (17) | 3mo |
+| #1 | ⭐ fellow | **dleigh** | 10,650⚡ | 24 | ⭐🔭☠️📚🎯 +16 (21) | 3mo |
 | #2 | 🏗️ architect | **s.nakamura** | 4,550⚡ | 8 | 💀🗺️🔥⚡🖐️ +6 (11) | 2mo |
 | #3 | 🛡️ sentinel | **priya.r** | 3,250⚡ | 7 | 🗺️🔥🏰⚡🖐️ +7 (12) | 3mo |
 | #4 | 🛡️ sentinel | **m.torres** | 2,975⚡ | 6 | 🗺️🔥🏰⚡🖐️ +8 (13) | 3mo |
@@ -35,15 +35,13 @@
 
 ## 👤 Contributor Profiles
 
-### 🏗️ dleigh
+### ⭐ dleigh
 
-**Tier:** ARCHITECT · **XP:** 4,900⚡ · **Cards:** 10 · **Rank:** #1
+**Tier:** FELLOW · **XP:** 10,650⚡ · **Cards:** 24 · **Rank:** #1
 
-**Badges:** ☠️ Doomsday Prophet 🎯 Ten Ring 💀 Critical Hunter 🗺️ Category Pioneer 🔥 Trailblazer 🏰 Proved & Defended ⚡ Compound Threat 🖐️ Five Alive 🔴 Critical Finder 🐀 Lab Rat 🕸️ Web Weaver 💡 Novel Discovery 🎩 Hat Trick 🩸 First Blood 📊 Show Your Work 🛡️ Shield Bearer 🔗 Connector
+**Badges:** ⭐ NAIL Research Fellow 🔭 20/20 Vision ☠️ Doomsday Prophet 📚 Taxonomist 🎯 Ten Ring 💀 Critical Hunter 🎓 Polymath 🗺️ Category Pioneer 🔥 Trailblazer 🏰 Proved & Defended ⚡ Compound Threat 🖐️ Five Alive 🔴 Critical Finder 🐀 Lab Rat 🕸️ Web Weaver 💡 Novel Discovery 🎩 Hat Trick 🩸 First Blood 📊 Show Your Work 🛡️ Shield Bearer 🔗 Connector
 
-**Cards:** `AVE-2025-0001`, `AVE-2025-0008`, `AVE-2025-0009`, `AVE-2025-0010`, `AVE-2025-0012`, `AVE-2025-0020`, `AVE-2025-0022`, `AVE-2025-0024`, `AVE-2025-0034`, `AVE-2025-0036`
-
-**Progress to FELLOW:** `[████████████░░░░░░░░]` 61% (3,100 XP needed)
+**Cards:** `AVE-2025-0001`, `AVE-2025-0008`, `AVE-2025-0009`, `AVE-2025-0010`, `AVE-2025-0012`, `AVE-2025-0020`, `AVE-2025-0022`, `AVE-2025-0024`, `AVE-2025-0034`, `AVE-2025-0036`, `AVE-2025-0037`, `AVE-2025-0038`, `AVE-2025-0039`, `AVE-2025-0040`, `AVE-2025-0041`, `AVE-2025-0042`, `AVE-2025-0043`, `AVE-2025-0044`, `AVE-2025-0045`, `AVE-2025-0046`, `AVE-2025-0047`, `AVE-2025-0048`, `AVE-2025-0049`, `AVE-2025-0050`
 
 ---
 
