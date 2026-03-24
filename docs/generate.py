@@ -50,6 +50,29 @@ def severity_class(sev: str) -> str:
     }.get(sev, "")
 
 
+# ── OpenGraph Meta Tags ───────────────────────────────────────────────────
+
+SITE_URL = "https://nailinstitute.org"
+
+def og_meta(title: str, description: str, path: str = "") -> str:
+    """Generate OpenGraph + Twitter Card meta tags."""
+    url = f"{SITE_URL}/{path}" if path else SITE_URL
+    return f"""  <!-- OpenGraph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NAIL Institute">
+  <meta property="og:title" content="{title}">
+  <meta property="og:description" content="{description[:200]}">
+  <meta property="og:url" content="{url}">
+  <meta property="og:image" content="{SITE_URL}/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{title}">
+  <meta name="twitter:description" content="{description[:200]}">
+  <meta name="twitter:image" content="{SITE_URL}/og-image.png">"""
+
+
 # ── HTML Templates ─────────────────────────────────────────────────────────
 
 CSS = """
@@ -515,6 +538,7 @@ def generate_index_page(cards: list[dict]) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AVE Database — Agentic Vulnerabilities & Exposures</title>
   <meta name="description" content="The MITRE ATT&CK of the Agentic Era. {total} documented AI agent vulnerabilities.">
+{og_meta('AVE Database — Agentic Vulnerabilities & Exposures', f'The MITRE ATT&CK of the Agentic Era. {total} documented AI agent vulnerabilities.')}
   <style>{CSS}</style>
 </head>
 <body>
@@ -651,6 +675,7 @@ def generate_card_page(card: dict) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{ave_id} — {name} | AVE Database</title>
   <meta name="description" content="{summary[:160]}">
+{og_meta(f'{ave_id} — {name} | AVE Database', summary[:160], f'cards/{ave_id}.html')}
   <style>{CSS}</style>
 </head>
 <body>
@@ -726,6 +751,7 @@ def generate_taxonomy_page(cards: list[dict]) -> str:
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Taxonomy — AVE Database</title>
+{og_meta('AVE Taxonomy — Attack Categories', 'Every AI agent vulnerability classified by attack surface and failure domain.')}
   <style>{CSS}</style>
 </head>
 <body>
@@ -756,6 +782,7 @@ def generate_contribute_page() -> str:
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contribute — AVE Database</title>
+{og_meta('Contribute — AVE Database', 'Submit AI agent vulnerabilities to the AVE Database. Open, community-driven, backed by empirical research.', 'contribute.html')}
   <style>{CSS}</style>
 </head>
 <body>
@@ -906,13 +933,14 @@ def main():
         (SITE_DIR / "cards" / f"{ave_id}.html").write_text(card_html)
     print(f"  ✓ {len(cards)} card detail pages")
 
-    # Copy static pages (CTF portal, etc.)
+    # Copy static pages and assets (CTF portal, OG image, etc.)
     static_dir = Path(__file__).parent / "static"
     if static_dir.is_dir():
         import shutil
-        for static_file in static_dir.glob("*.html"):
-            shutil.copy2(static_file, SITE_DIR / static_file.name)
-            print(f"  ✓ {static_file.name} (static)")
+        for ext in ("*.html", "*.png", "*.svg", "*.jpg", "*.ico"):
+            for static_file in static_dir.glob(ext):
+                shutil.copy2(static_file, SITE_DIR / static_file.name)
+                print(f"  ✓ {static_file.name} (static)")
 
     # Copy CNAME file for custom domain
     cname_file = Path(__file__).parent / "CNAME"
