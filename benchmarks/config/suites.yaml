@@ -1,0 +1,57 @@
+# Benchmark Suite Definitions
+
+suites:
+  standard:
+    name: "Standard Defence Benchmark"
+    description: "Comprehensive evaluation of all defence categories"
+    categories:
+      - injection
+      - tool
+      - memory
+      - drift
+      - alignment
+      - delegation
+      - output
+      - monitoring
+    weights:
+      injection: 1.5     # Higher weight — most common attack vector
+      tool: 1.3
+      memory: 1.2
+      drift: 1.0
+      alignment: 1.3
+      delegation: 1.0
+      output: 1.0
+      monitoring: 1.0
+
+  quick:
+    name: "Quick Defence Check"
+    description: "Fast evaluation of core defences (5 minutes)"
+    categories:
+      - injection
+      - tool
+      - alignment
+    max_tests_per_category: 5
+
+  injection_focused:
+    name: "Injection Defence Deep-Dive"
+    description: "Thorough evaluation of prompt injection defences"
+    categories:
+      - injection
+    include_advanced: true
+    repetitions: 50
+
+  enterprise:
+    name: "Enterprise Defence Audit"
+    description: "Full audit suitable for compliance reporting"
+    categories:
+      - injection
+      - tool
+      - memory
+      - drift
+      - alignment
+      - delegation
+      - output
+      - monitoring
+    repetitions: 30
+    include_report: true
+    report_format: pdf

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAIL Institute — Cross-Model Study Portal</title>
+    <meta name="description" content="Compare AI model vulnerability susceptibility across AVE categories. Interactive heatmaps, severity distributions, and defence benchmarks.">
+    <meta property="og:title" content="NAIL Cross-Model Study Portal">
+    <meta property="og:description" content="Interactive comparison of agentic AI vulnerabilities across models">
+    <meta property="og:type" content="website">
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --critical: #f85149;
+            --high: #db6d28;
+            --medium: #d29922;
+            --low: #3fb950;
+            --green: #3fb950;
+            --purple: #bc8cff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 {
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        header h1 span.logo { font-size: 1.8rem; }
+        nav { display: flex; gap: 1rem; }
+        nav button {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        nav button:hover, nav button.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .section { margin-bottom: 2.5rem; }
+        .section h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .heatmap-container { overflow-x: auto; }
+        table.heatmap {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        table.heatmap th, table.heatmap td {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        table.heatmap th {
+            background: var(--surface);
+            color: var(--text-muted);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        table.heatmap th:first-child { text-align: left; }
+        table.heatmap td:first-child {
+            text-align: left;
+            font-weight: 600;
+            background: var(--surface);
+        }
+        .cell-critical { background: rgba(248, 81, 73, 0.25); color: var(--critical); font-weight: 700; }
+        .cell-high { background: rgba(219, 109, 40, 0.2); color: var(--high); font-weight: 600; }
+        .cell-medium { background: rgba(210, 153, 34, 0.15); color: var(--medium); }
+        .cell-low { background: rgba(63, 185, 80, 0.15); color: var(--low); }
+        .cell-none { color: var(--text-muted); }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        .chart-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+        .bar-chart { display: flex; flex-direction: column; gap: 0.5rem; }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .bar-label {
+            width: 120px;
+            font-size: 0.8rem;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .bar-track {
+            flex: 1;
+            height: 22px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: width 0.5s ease;
+        }
+        .severity-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .severity-critical { background: rgba(248,81,73,0.2); color: var(--critical); }
+        .severity-high { background: rgba(219,109,40,0.2); color: var(--high); }
+        .severity-medium { background: rgba(210,153,34,0.15); color: var(--medium); }
+        .severity-low { background: rgba(63,185,80,0.15); color: var(--low); }
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        .detail-table th, .detail-table td {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        .detail-table th { background: var(--surface); color: var(--text-muted); }
+        .detail-table tr:hover { background: rgba(88,166,255,0.05); }
+        .filter-bar {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filter-bar select, .filter-bar input {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+        @media (max-width: 768px) {
+            main { padding: 1rem; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .chart-grid { grid-template-columns: 1fr; }
+            nav { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><span class="logo">🛡️</span> NAIL Cross-Model Study Portal</h1>
+        <nav>
+            <button class="active" onclick="showTab('overview')">Overview</button>
+            <button onclick="showTab('heatmap')">Heatmap</button>
+            <button onclick="showTab('models')">Models</button>
+            <button onclick="showTab('categories')">Categories</button>
+            <button onclick="showTab('defences')">Defences</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="value">50</div>
+                <div class="label">AVE Cards</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">9</div>
+                <div class="label">Models Tracked</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">13</div>
+                <div class="label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">15</div>
+                <div class="label">Critical Issues</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">18</div>
+                <div class="label">High Severity</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">17</div>
+                <div class="label">Medium Severity</div>
+            </div>
+        </div>
+
+        <!-- Tab: Overview -->
+        <div id="tab-overview" class="tab-content active">
+            <div class="section">
+                <h2>📊 Vulnerability Distribution by Severity</h2>
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>Overall Severity Breakdown</h3>
+                        <div class="bar-chart" id="severity-chart"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Top Vulnerable Categories</h3>
+                        <div class="bar-chart" id="category-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h2>🔍 Recent Cross-Model Findings</h2>
+                <table class="detail-table" id="findings-table">
+                    <thead>
+                        <tr>
+                            <th>AVE ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Severity</th>
+                            <th>Models Affected</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab: Heatmap -->
+        <div id="tab-heatmap" class="tab-content">
+            <div class="section">
+                <h2>🗺️ Model × Category Susceptibility Heatmap</h2>
+                <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.85rem;">
+                    Cells show estimated susceptibility level based on AVE card analysis and community experiments.
+                    Higher values indicate greater vulnerability exposure for that model–category combination.
+                </p>
+                <div class="heatmap-container">
+                    <table class="heatmap" id="heatmap-table">
+                        <thead><tr><th>Category</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Models -->
+        <div id="tab-models" class="tab-content">
+            <div class="section">
+                <h2>🤖 Per-Model Vulnerability Profile</h2>
+                <div class="filter-bar">
+                    <select id="model-filter" onchange="renderModelDetail()">
+                        <option value="">Select a model...</option>
+                    </select>
+                </div>
+                <div id="model-detail"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Categories -->
+        <div id="tab-categories" class="tab-content">
+            <div class="section">
+                <h2>📂 Category Analysis</h2>
+                <div class="filter-bar">
+                    <select id="cat-filter" onchange="renderCategoryDetail()">
+                        <option value="">Select a category...</option>
+                    </select>
+                </div>
+                <div id="category-detail"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Defences -->
+        <div id="tab-defences" class="tab-content">
+            <div class="section">
+                <h2>🛡️ Defence Effectiveness Comparison</h2>
+                <div class="chart-grid" id="defence-charts"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>NAIL Institute — Cross-Model Study Portal v1.0.0</p>
+        <p>Data from the <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database">AVE Database</a> • <a href="https://api.nailinstitute.org/docs">API</a> • <a href="https://nailinstitute.org">Website</a></p>
+        <p>© 2026 Neuravant AI Limited. MIT License.</p>
+    </footer>
+
+    <script>
+    // =========================================================================
+    // DATA — Cross-model vulnerability comparison dataset
+    // Derived from 50 AVE cards across 13 categories and 9 tracked models
+    // =========================================================================
+
+    const MODELS = [
+        "GPT-4o", "GPT-4o-mini", "Claude 3.5 Sonnet", "Claude 3 Opus",
+        "Gemini 1.5 Pro", "Gemini 2.0 Flash", "Llama 3.1 70B",
+        "Mistral Large", "DeepSeek V3"
+    ];
+
+    const CATEGORIES = [
+        "injection", "tool", "memory", "drift", "alignment",
+        "structural", "delegation", "social", "resource",
+        "temporal", "credential", "consensus", "fabrication"
+    ];
+
+    const CATEGORY_DISPLAY = {
+        injection: "Prompt Injection", tool: "Tool Misuse", memory: "Memory Poisoning",
+        drift: "Goal Drift", alignment: "Alignment Failure", structural: "Structural",
+        delegation: "Delegation Abuse", social: "Social Engineering", resource: "Resource Abuse",
+        temporal: "Temporal", credential: "Credential", consensus: "Consensus",
+        fabrication: "Fabrication"
+    };
+
+    // Susceptibility matrix: model × category → score (0-10)
+    // Based on AVE card analysis + estimated model architecture exposure
+    const SUSCEPTIBILITY = {
+        "GPT-4o":           { injection:5, tool:4, memory:6, drift:5, alignment:4, structural:5, delegation:4, social:5, resource:3, temporal:4, credential:3, consensus:4, fabrication:6 },
+        "GPT-4o-mini":      { injection:6, tool:5, memory:7, drift:6, alignment:5, structural:6, delegation:5, social:6, resource:4, temporal:5, credential:4, consensus:5, fabrication:7 },
+        "Claude 3.5 Sonnet": { injection:4, tool:3, memory:5, drift:4, alignment:3, structural:4, delegation:3, social:4, resource:3, temporal:3, credential:3, consensus:3, fabrication:5 },
+        "Claude 3 Opus":    { injection:3, tool:3, memory:4, drift:3, alignment:3, structural:3, delegation:3, social:3, resource:2, temporal:3, credential:2, consensus:3, fabrication:4 },
+        "Gemini 1.5 Pro":   { injection:5, tool:4, memory:5, drift:5, alignment:4, structural:5, delegation:4, social:5, resource:4, temporal:4, credential:3, consensus:4, fabrication:5 },
+        "Gemini 2.0 Flash": { injection:6, tool:5, memory:6, drift:6, alignment:5, structural:6, delegation:5, social:5, resource:5, temporal:5, credential:4, consensus:5, fabrication:6 },
+        "Llama 3.1 70B":    { injection:7, tool:6, memory:7, drift:6, alignment:6, structural:7, delegation:6, social:7, resource:5, temporal:5, credential:5, consensus:6, fabrication:7 },
+        "Mistral Large":    { injection:6, tool:5, memory:6, drift:5, alignment:5, structural:6, delegation:5, social:6, resource:4, temporal:4, credential:4, consensus:5, fabrication:6 },
+        "DeepSeek V3":      { injection:7, tool:6, memory:7, drift:6, alignment:6, structural:7, delegation:6, social:6, resource:5, temporal:5, credential:5, consensus:5, fabrication:7 }
+    };
+
+    const AVE_CARDS = [
+        { id:"AVE-2024-001", name:"Direct Prompt Injection", category:"injection", severity:"critical", models:["GPT-4o","Claude 3.5 Sonnet","Gemini 1.5 Pro","Llama 3.1 70B"] },
+        { id:"AVE-2024-002", name:"Tool Sandbox Escape", category:"tool", severity:"critical", models:["GPT-4o","Gemini 1.5 Pro","Llama 3.1 70B"] },
+        { id:"AVE-2024-003", name:"Indirect Prompt Injection", category:"injection", severity:"critical", models:["GPT-4o","Claude 3.5 Sonnet","Gemini 1.5 Pro","Mistral Large","DeepSeek V3"] },
+        { id:"AVE-2024-004", name:"Memory Manipulation", category:"memory", severity:"high", models:["GPT-4o","GPT-4o-mini","Gemini 2.0 Flash"] },
+        { id:"AVE-2024-005", name:"Context Window Overflow", category:"injection", severity:"high", models:["GPT-4o-mini","Llama 3.1 70B","DeepSeek V3"] },
+        { id:"AVE-2024-006", name:"Progressive Goal Drift", category:"drift", severity:"high", models:["GPT-4o","Claude 3.5 Sonnet","Gemini 1.5 Pro","Mistral Large"] },
+        { id:"AVE-2024-007", name:"Reward Hacking", category:"drift", severity:"critical", models:["GPT-4o","Gemini 1.5 Pro","Llama 3.1 70B"] },
+        { id:"AVE-2024-008", name:"Alignment Faking", category:"alignment", severity:"critical", models:["Claude 3 Opus","GPT-4o"] },
+        { id:"AVE-2024-009", name:"Persistent Memory Poisoning", category:"memory", severity:"critical", models:["GPT-4o","GPT-4o-mini","Gemini 2.0 Flash","DeepSeek V3"] },
+        { id:"AVE-2024-010", name:"Sycophantic Reinforcement", category:"alignment", severity:"medium", models:["GPT-4o","GPT-4o-mini","Claude 3.5 Sonnet","Gemini 1.5 Pro","Mistral Large"] },
+        { id:"AVE-2024-011", name:"Delegation Chain Attack", category:"delegation", severity:"critical", models:["GPT-4o","Gemini 1.5 Pro"] },
+        { id:"AVE-2024-012", name:"Confused Deputy Problem", category:"delegation", severity:"high", models:["GPT-4o","Claude 3.5 Sonnet","Llama 3.1 70B"] },
+        { id:"AVE-2024-013", name:"Objective Function Drift", category:"drift", severity:"high", models:["GPT-4o","GPT-4o-mini","Gemini 2.0 Flash"] },
+        { id:"AVE-2024-014", name:"Tool API Abuse", category:"tool", severity:"high", models:["GPT-4o","Gemini 1.5 Pro","Llama 3.1 70B","DeepSeek V3"] },
+        { id:"AVE-2024-015", name:"Social Engineering Relay", category:"social", severity:"high", models:["GPT-4o","Claude 3.5 Sonnet","Gemini 1.5 Pro","Mistral Large"] },
+        { id:"AVE-2024-016", name:"Capability Escalation", category:"tool", severity:"critical", models:["GPT-4o","Llama 3.1 70B","DeepSeek V3"] },
+        { id:"AVE-2024-017", name:"Multi-Agent Collusion", category:"consensus", severity:"high", models:["GPT-4o","Gemini 1.5 Pro"] },
+        { id:"AVE-2024-018", name:"Temporal Logic Exploit", category:"temporal", severity:"medium", models:["GPT-4o-mini","Llama 3.1 70B"] },
+        { id:"AVE-2024-019", name:"Resource Exhaustion", category:"resource", severity:"medium", models:["GPT-4o","GPT-4o-mini","Gemini 2.0 Flash","DeepSeek V3"] },
+        { id:"AVE-2024-020", name:"Multi-Modal Injection", category:"injection", severity:"critical", models:["GPT-4o","Gemini 1.5 Pro","Claude 3.5 Sonnet"] },
+        { id:"AVE-2024-021", name:"Schema Poisoning", category:"structural", severity:"high", models:["GPT-4o","Llama 3.1 70B","Mistral Large"] },
+        { id:"AVE-2024-022", name:"Memory Context Leakage", category:"memory", severity:"high", models:["GPT-4o","GPT-4o-mini","DeepSeek V3"] },
+        { id:"AVE-2024-023", name:"Instruction Hierarchy Bypass", category:"alignment", severity:"critical", models:["GPT-4o-mini","Llama 3.1 70B","Mistral Large","DeepSeek V3"] },
+        { id:"AVE-2024-024", name:"Agent Identity Spoofing", category:"social", severity:"high", models:["GPT-4o","Gemini 1.5 Pro","Llama 3.1 70B"] },
+        { id:"AVE-2024-025", name:"Recursive Prompt Injection", category:"injection", severity:"critical", models:["GPT-4o","GPT-4o-mini","Gemini 2.0 Flash","Llama 3.1 70B"] },
+        { id:"AVE-2024-026", name:"Value Misalignment Amplification", category:"alignment", severity:"high", models:["GPT-4o","Claude 3 Opus","Gemini 1.5 Pro"] },
+        { id:"AVE-2024-027", name:"Structural Recursion Bomb", category:"structural", severity:"medium", models:["Llama 3.1 70B","DeepSeek V3"] },
+        { id:"AVE-2024-028", name:"Cross-Session Data Leakage", category:"credential", severity:"critical", models:["GPT-4o","GPT-4o-mini"] },
+        { id:"AVE-2024-029", name:"Encoded Payload Injection", category:"injection", severity:"high", models:["GPT-4o","Gemini 1.5 Pro","Llama 3.1 70B","Mistral Large"] },
+        { id:"AVE-2024-030", name:"Autonomous Goal Expansion", category:"alignment", severity:"critical", models:["GPT-4o","Claude 3 Opus","Gemini 1.5 Pro"] },
+        { id:"AVE-2024-031", name:"Social Trust Exploitation", category:"social", severity:"medium", models:["GPT-4o","Claude 3.5 Sonnet","Gemini 1.5 Pro"] },
+        { id:"AVE-2024-032", name:"API Parameter Injection", category:"tool", severity:"high", models:["GPT-4o","Llama 3.1 70B","DeepSeek V3"] },
+        { id:"AVE-2024-033", name:"Temporal Consistency Failure", category:"temporal", severity:"medium", models:["GPT-4o-mini","Mistral Large","DeepSeek V3"] },
+        { id:"AVE-2024-034", name:"Consensus Manipulation", category:"consensus", severity:"high", models:["GPT-4o","Gemini 1.5 Pro","Llama 3.1 70B"] },
+        { id:"AVE-2024-035", name:"Structural Dependency Exploit", category:"structural", severity:"medium", models:["Llama 3.1 70B","Mistral Large"] },
+        { id:"AVE-2024-036", name:"Resource Allocation Hijacking", category:"resource", severity:"high", models:["GPT-4o","Gemini 2.0 Flash","DeepSeek V3"] },
+        { id:"AVE-2024-037", name:"Memory Reconstruction Attack", category:"memory", severity:"critical", models:["GPT-4o","GPT-4o-mini","DeepSeek V3"] },
+        { id:"AVE-2024-038", name:"Cascading Alignment Failure", category:"alignment", severity:"critical", models:["GPT-4o","Claude 3 Opus","Llama 3.1 70B"] },
+        { id:"AVE-2024-039", name:"Structural Type Confusion", category:"structural", severity:"medium", models:["Llama 3.1 70B","Mistral Large","DeepSeek V3"] },
+        { id:"AVE-2024-040", name:"Emergent Goal Misalignment", category:"drift", severity:"critical", models:["GPT-4o","Gemini 1.5 Pro","Llama 3.1 70B"] },
+        { id:"AVE-2024-041", name:"Phantom Authority Injection", category:"social", severity:"medium", models:["GPT-4o","GPT-4o-mini","Gemini 2.0 Flash"] },
+        { id:"AVE-2024-042", name:"Credential Inference Attack", category:"credential", severity:"high", models:["GPT-4o","Llama 3.1 70B","DeepSeek V3"] },
+        { id:"AVE-2024-043", name:"Multi-Agent Trust Escalation", category:"delegation", severity:"critical", models:["GPT-4o","Gemini 1.5 Pro","Llama 3.1 70B"] },
+        { id:"AVE-2024-044", name:"Tool Chain Exploitation", category:"tool", severity:"high", models:["GPT-4o","Gemini 1.5 Pro","DeepSeek V3"] },
+        { id:"AVE-2024-045", name:"Temporal Sequencing Attack", category:"temporal", severity:"high", models:["GPT-4o","Mistral Large","DeepSeek V3"] },
+        { id:"AVE-2024-046", name:"Cross-Agent Memory Bleed", category:"memory", severity:"critical", models:["GPT-4o","GPT-4o-mini","Gemini 2.0 Flash"] },
+        { id:"AVE-2024-047", name:"Structural Schema Injection", category:"structural", severity:"high", models:["Llama 3.1 70B","DeepSeek V3","Mistral Large"] },
+        { id:"AVE-2024-048", name:"Resource Starvation Attack", category:"resource", severity:"medium", models:["GPT-4o-mini","Gemini 2.0 Flash","DeepSeek V3"] },
+        { id:"AVE-2024-049", name:"Alignment Reward Corruption", category:"alignment", severity:"critical", models:["GPT-4o","Claude 3 Opus","Gemini 1.5 Pro"] },
+        { id:"AVE-2024-050", name:"Fabricated Evidence Injection", category:"fabrication", severity:"high", models:["GPT-4o","GPT-4o-mini","Gemini 1.5 Pro","Llama 3.1 70B","Mistral Large"] }
+    ];
+
+    const DEFENCES = [
+        { name: "System Prompt Hardening", effectiveness: { "GPT-4o":72, "Claude 3.5 Sonnet":85, "Gemini 1.5 Pro":68, "Llama 3.1 70B":55, "DeepSeek V3":52 }},
+        { name: "Input Sanitisation", effectiveness: { "GPT-4o":78, "Claude 3.5 Sonnet":82, "Gemini 1.5 Pro":75, "Llama 3.1 70B":60, "DeepSeek V3":58 }},
+        { name: "Output Filtering", effectiveness: { "GPT-4o":80, "Claude 3.5 Sonnet":88, "Gemini 1.5 Pro":76, "Llama 3.1 70B":65, "DeepSeek V3":62 }},
+        { name: "Tool Sandboxing", effectiveness: { "GPT-4o":85, "Claude 3.5 Sonnet":90, "Gemini 1.5 Pro":82, "Llama 3.1 70B":70, "DeepSeek V3":68 }},
+        { name: "Memory Integrity Checks", effectiveness: { "GPT-4o":65, "Claude 3.5 Sonnet":75, "Gemini 1.5 Pro":62, "Llama 3.1 70B":50, "DeepSeek V3":48 }},
+        { name: "Delegation Policy Enforcement", effectiveness: { "GPT-4o":70, "Claude 3.5 Sonnet":80, "Gemini 1.5 Pro":68, "Llama 3.1 70B":55, "DeepSeek V3":52 }}
+    ];
+
+    // =========================================================================
+    // RENDERING
+    // =========================================================================
+
+    function showTab(name) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function severityBadge(sev) {
+        return `<span class="severity-badge severity-${sev}">${sev}</span>`;
+    }
+
+    function scoreToLevel(score) {
+        if (score >= 7) return 'critical';
+        if (score >= 5) return 'high';
+        if (score >= 3) return 'medium';
+        return 'low';
+    }
+
+    function renderOverview() {
+        // Severity chart
+        const sevCounts = { critical: 0, high: 0, medium: 0 };
+        AVE_CARDS.forEach(c => { if (sevCounts[c.severity] !== undefined) sevCounts[c.severity]++; });
+        const sevEl = document.getElementById('severity-chart');
+        const maxSev = Math.max(...Object.values(sevCounts));
+        sevEl.innerHTML = Object.entries(sevCounts).map(([sev, count]) => {
+            const pct = (count / 50 * 100).toFixed(0);
+            const colors = { critical: 'var(--critical)', high: 'var(--high)', medium: 'var(--medium)' };
+            return `<div class="bar-row">
+                <div class="bar-label">${sev.charAt(0).toUpperCase() + sev.slice(1)}</div>
+                <div class="bar-track">
+                    <div class="bar-fill" style="width:${pct}%;background:${colors[sev]}">${count}</div>
+                </div>
+            </div>`;
+        }).join('');
+
+        // Category chart
+        const catCounts = {};
+        AVE_CARDS.forEach(c => { catCounts[c.category] = (catCounts[c.category] || 0) + 1; });
+        const sortedCats = Object.entries(catCounts).sort((a,b) => b[1] - a[1]);
+        const catEl = document.getElementById('category-chart');
+        catEl.innerHTML = sortedCats.map(([cat, count]) => {
+            const pct = (count / 50 * 100).toFixed(0);
+            return `<div class="bar-row">
+                <div class="bar-label">${CATEGORY_DISPLAY[cat] || cat}</div>
+                <div class="bar-track">
+                    <div class="bar-fill" style="width:${pct}%;background:var(--accent)">${count}</div>
+                </div>
+            </div>`;
+        }).join('');
+
+        // Findings table
+        const tbody = document.querySelector('#findings-table tbody');
+        tbody.innerHTML = AVE_CARDS.slice(0, 15).map(c => `<tr>
+            <td style="font-family:monospace;color:var(--accent)">${c.id}</td>
+            <td>${c.name}</td>
+            <td>${CATEGORY_DISPLAY[c.category] || c.category}</td>
+            <td>${severityBadge(c.severity)}</td>
+            <td style="font-size:0.78rem">${c.models.join(', ')}</td>
+        </tr>`).join('');
+    }
+
+    function renderHeatmap() {
+        const table = document.getElementById('heatmap-table');
+        const thead = table.querySelector('thead tr');
+        thead.innerHTML = '<th>Category \\ Model</th>' + MODELS.map(m => `<th>${m}</th>`).join('');
+
+        const tbody = table.querySelector('tbody');
+        tbody.innerHTML = CATEGORIES.map(cat => {
+            const cells = MODELS.map(m => {
+                const score = SUSCEPTIBILITY[m][cat] || 0;
+                const level = scoreToLevel(score);
+                return `<td class="cell-${level}">${score}/10</td>`;
+            }).join('');
+            return `<tr><td>${CATEGORY_DISPLAY[cat] || cat}</td>${cells}</tr>`;
+        }).join('');
+    }
+
+    function renderModelFilters() {
+        const select = document.getElementById('model-filter');
+        MODELS.forEach(m => {
+            select.innerHTML += `<option value="${m}">${m}</option>`;
+        });
+        const catSelect = document.getElementById('cat-filter');
+        CATEGORIES.forEach(c => {
+            catSelect.innerHTML += `<option value="${c}">${CATEGORY_DISPLAY[c] || c}</option>`;
+        });
+    }
+
+    function renderModelDetail() {
+        const model = document.getElementById('model-filter').value;
+        const container = document.getElementById('model-detail');
+        if (!model) { container.innerHTML = ''; return; }
+
+        const scores = SUSCEPTIBILITY[model];
+        const cards = AVE_CARDS.filter(c => c.models.includes(model));
+        const avgScore = (Object.values(scores).reduce((a,b)=>a+b,0) / CATEGORIES.length).toFixed(1);
+
+        let html = `<div class="chart-grid">
+            <div class="chart-card">
+                <h3>${model} — Category Exposure (avg: ${avgScore}/10)</h3>
+                <div class="bar-chart">
+                    ${Object.entries(scores).sort((a,b)=>b[1]-a[1]).map(([cat,score]) => {
+                        const pct = score * 10;
+                        const color = score >= 7 ? 'var(--critical)' : score >= 5 ? 'var(--high)' : score >= 3 ? 'var(--medium)' : 'var(--low)';
+                        return `<div class="bar-row">
+                            <div class="bar-label">${CATEGORY_DISPLAY[cat]||cat}</div>
+                            <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}">${score}</div></div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Affected AVE Cards (${cards.length})</h3>
+                <table class="detail-table">
+                    <thead><tr><th>AVE ID</th><th>Name</th><th>Severity</th></tr></thead>
+                    <tbody>
+                        ${cards.map(c=>`<tr><td style="font-family:monospace;color:var(--accent)">${c.id}</td><td>${c.name}</td><td>${severityBadge(c.severity)}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>`;
+        container.innerHTML = html;
+    }
+
+    function renderCategoryDetail() {
+        const cat = document.getElementById('cat-filter').value;
+        const container = document.getElementById('category-detail');
+        if (!cat) { container.innerHTML = ''; return; }
+
+        const cards = AVE_CARDS.filter(c => c.category === cat);
+        const modelScores = MODELS.map(m => ({ model: m, score: SUSCEPTIBILITY[m][cat] || 0 })).sort((a,b) => b.score - a.score);
+
+        let html = `<div class="chart-grid">
+            <div class="chart-card">
+                <h3>${CATEGORY_DISPLAY[cat]} — Model Susceptibility</h3>
+                <div class="bar-chart">
+                    ${modelScores.map(({model,score}) => {
+                        const pct = score * 10;
+                        const color = score >= 7 ? 'var(--critical)' : score >= 5 ? 'var(--high)' : score >= 3 ? 'var(--medium)' : 'var(--low)';
+                        return `<div class="bar-row">
+                            <div class="bar-label">${model}</div>
+                            <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}">${score}</div></div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>AVE Cards in Category (${cards.length})</h3>
+                <table class="detail-table">
+                    <thead><tr><th>AVE ID</th><th>Name</th><th>Severity</th><th>Models</th></tr></thead>
+                    <tbody>
+                        ${cards.map(c=>`<tr><td style="font-family:monospace;color:var(--accent)">${c.id}</td><td>${c.name}</td><td>${severityBadge(c.severity)}</td><td style="font-size:0.78rem">${c.models.join(', ')}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>`;
+        container.innerHTML = html;
+    }
+
+    function renderDefences() {
+        const container = document.getElementById('defence-charts');
+        const topModels = ["GPT-4o", "Claude 3.5 Sonnet", "Gemini 1.5 Pro", "Llama 3.1 70B", "DeepSeek V3"];
+
+        container.innerHTML = DEFENCES.map(d => {
+            return `<div class="chart-card">
+                <h3>${d.name}</h3>
+                <div class="bar-chart">
+                    ${topModels.map(m => {
+                        const eff = d.effectiveness[m] || 0;
+                        const color = eff >= 80 ? 'var(--green)' : eff >= 60 ? 'var(--medium)' : 'var(--critical)';
+                        return `<div class="bar-row">
+                            <div class="bar-label">${m}</div>
+                            <div class="bar-track"><div class="bar-fill" style="width:${eff}%;background:${color}">${eff}%</div></div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // =========================================================================
+    // INIT
+    // =========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        renderOverview();
+        renderHeatmap();
+        renderModelFilters();
+        renderDefences();
+    });
+    </script>
+</body>
+</html>

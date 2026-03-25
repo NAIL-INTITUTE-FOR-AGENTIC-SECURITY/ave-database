@@ -79,15 +79,19 @@
 
 ---
 
+## ✅ Completed (continued)
+
+### Phase 7: Research Scaling (Complete)
+
+- [x] **Community Experiments** — Open experiment framework with 6 templates, JSON Schema validation, CLI runner (experiments/)
+- [x] **Cross-Model Study Portal** — Self-contained static web interface with interactive charts, radar plots, filtering (portal/)
+- [x] **Defence Benchmarks** — Standardised benchmark suite with 4 pre-built suites, 0–4 scoring rubric, leaderboard (benchmarks/)
+- [x] **Automated AVE Discovery** — Research Scout agent scanning ArXiv, CVE/NVD, GitHub with TF-IDF classification (scripts/research_scout/)
+- [x] **Longitudinal Studies** — 90-day agent observation framework with 5 study templates, statistical analysis, visualisation (longitudinal/)
+
+---
+
 ## 📋 Planned
-
-### Phase 7: Research Scaling
-
-- [ ] **Community Experiments** — Open experiment framework for community-run reproductions
-- [ ] **Cross-Model Study Portal** — Web interface for browsing cross-model comparison data
-- [ ] **Defence Benchmarks** — Standardised benchmark suite for evaluating agentic defences
-- [ ] **Automated AVE Discovery** — Research Scout agent scans for new vulnerability classes
-- [ ] **Longitudinal Studies** — 90-day agent observation experiments
 
 ### Phase 8: Standards & Governance
 
@@ -122,9 +126,12 @@ Have an idea? Open a [Discussion](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-
 | CTF Events | 1 | 4+ |
 | Published Papers | 1 | 3+ |
 | Framework Integrations | 4 | 5+ |
+| Experiment Templates | 6 | 20+ |
+| Benchmark Suites | 4 | 10+ |
+| Study Protocols | 5 | 15+ |
 | Weekly Digest Subscribers | 0 | 500+ |
 
 ---
 
-*Updated: March 2026*
+*Updated: July 2025*
 *NAIL Institute — Neuravant AI Limited*

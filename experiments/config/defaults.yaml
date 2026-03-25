@@ -1,0 +1,33 @@
+# Default experiment parameters
+# Override per-template or via CLI flags
+
+experiment:
+  repetitions: 10
+  seed: 42
+  timeout_minutes: 30
+  max_cost_usd: 25.00
+
+model:
+  temperature: 0.7
+  max_tokens: 4096
+  top_p: 1.0
+
+safety:
+  sandboxed: true
+  require_human_review: false
+  max_retries: 3
+  rate_limit_rpm: 30
+
+reporting:
+  format: json          # json | csv | markdown
+  include_raw_logs: false
+  statistical_tests:
+    - chi_squared
+    - fisher_exact
+    - mann_whitney_u
+  confidence_level: 0.95
+
+output:
+  directory: results/
+  timestamp_suffix: true
+  compress: false

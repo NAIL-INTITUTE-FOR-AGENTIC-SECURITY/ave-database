@@ -1,0 +1,123 @@
+# Research Scout Configuration
+
+sources:
+  arxiv:
+    enabled: true
+    base_url: "http://export.arxiv.org/api/query"
+    categories:
+      - "cs.CR"    # Cryptography and Security
+      - "cs.AI"    # Artificial Intelligence
+      - "cs.CL"    # Computation and Language
+      - "cs.MA"    # Multi-Agent Systems
+      - "cs.LG"    # Machine Learning
+    max_results: 100
+    rate_limit_seconds: 3
+
+  cve:
+    enabled: true
+    base_url: "https://services.nvd.nist.gov/rest/json/cves/2.0"
+    keywords:
+      - "artificial intelligence"
+      - "machine learning"
+      - "large language model"
+      - "LLM"
+      - "AI agent"
+      - "chatbot"
+    rate_limit_seconds: 6
+    max_results: 50
+
+  github:
+    enabled: true
+    api_url: "https://api.github.com/graphql"
+    api_key_env: "GITHUB_TOKEN"
+    ecosystems:
+      - "pip"
+      - "npm"
+    packages:
+      - "langchain"
+      - "openai"
+      - "anthropic"
+      - "transformers"
+      - "autogen"
+      - "crewai"
+      - "llamaindex"
+    rate_limit_seconds: 1
+
+  blogs:
+    enabled: true
+    feeds:
+      - name: "OpenAI Blog"
+        url: "https://openai.com/blog/rss.xml"
+      - name: "Anthropic Research"
+        url: "https://www.anthropic.com/feed"
+      - name: "Google AI Blog"
+        url: "https://blog.google/technology/ai/rss/"
+      - name: "Meta AI"
+        url: "https://ai.meta.com/blog/rss/"
+    rate_limit_seconds: 2
+
+  aiaaic:
+    enabled: false  # Requires scraper setup
+    base_url: "https://www.aiaaic.org/aiaaic-repository"
+    rate_limit_seconds: 5
+
+# Search keywords for vulnerability discovery
+keywords:
+  primary:
+    - "prompt injection"
+    - "jailbreak"
+    - "adversarial attack"
+    - "agent vulnerability"
+    - "AI safety failure"
+    - "alignment failure"
+    - "reward hacking"
+    - "goal drift"
+    - "tool misuse"
+    - "memory poisoning"
+    - "delegation attack"
+
+  secondary:
+    - "red teaming"
+    - "AI security"
+    - "LLM attack"
+    - "chatbot exploit"
+    - "multi-agent security"
+    - "agentic AI risk"
+    - "model manipulation"
+    - "context injection"
+    - "token smuggling"
+    - "instruction hierarchy"
+
+# Novelty assessment
+novelty:
+  threshold: 0.5          # Minimum novelty score to flag
+  similarity_method: "tfidf_cosine"  # or "embedding"
+  max_similar_score: 0.7  # Above this = likely duplicate
+
+# Severity estimation
+severity:
+  keywords_critical:
+    - "remote code execution"
+    - "data exfiltration"
+    - "full bypass"
+    - "autonomous exploit"
+  keywords_high:
+    - "privilege escalation"
+    - "data leakage"
+    - "safety bypass"
+    - "persistent compromise"
+  keywords_medium:
+    - "information disclosure"
+    - "partial bypass"
+    - "denial of service"
+
+# Output
+output:
+  directory: "findings/"
+  format: "json"
+  include_raw: false
+
+# Scheduling
+schedule:
+  cron: "0 6 * * *"  # Daily at 6 AM UTC
+  lookback_days: 7

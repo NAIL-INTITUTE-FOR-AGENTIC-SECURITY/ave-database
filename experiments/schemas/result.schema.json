@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NAIL Experiment Result",
+  "description": "Schema for experiment result submissions",
+  "type": "object",
+  "required": ["experiment_id", "template", "date", "configuration", "results"],
+  "properties": {
+    "experiment_id": {
+      "type": "string",
+      "pattern": "^EXP-"
+    },
+    "template": {
+      "type": "string"
+    },
+    "template_name": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "dry_run": {
+      "type": "boolean"
+    },
+    "configuration": {
+      "type": "object",
+      "required": ["model", "repetitions"],
+      "properties": {
+        "model": { "type": "string" },
+        "repetitions": { "type": "integer", "minimum": 1 },
+        "temperature": { "type": "number" },
+        "seed": { "type": "integer" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "os": { "type": "string" },
+        "python": { "type": "string" },
+        "hardware": { "type": "string" },
+        "runner_version": { "type": "string" }
+      }
+    },
+    "results": {
+      "type": "object",
+      "required": ["total_trials", "vulnerability_rate"],
+      "properties": {
+        "total_trials": { "type": "integer", "minimum": 0 },
+        "successful_attacks": { "type": "integer", "minimum": 0 },
+        "failed_attacks": { "type": "integer", "minimum": 0 },
+        "vulnerability_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "avg_severity": { "type": "string" },
+        "p_value": { "type": "number" },
+        "confidence_interval": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "total_tokens": {
+          "type": "object",
+          "properties": {
+            "input": { "type": "integer" },
+            "output": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "target_aves": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "aves_confirmed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "aves_not_reproduced": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "novel_findings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "trials": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  }
+}
