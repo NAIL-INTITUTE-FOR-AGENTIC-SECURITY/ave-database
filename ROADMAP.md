@@ -52,11 +52,15 @@
 
 ### Phase 5: Ecosystem Expansion
 
+- [x] **arXiv Pre-print** — Full research paper published (publications/arxiv/)
+- [x] **API Deployment** — Public API live at api.nailinstitute.org (Fly.io)
+- [x] **API Hardening** — Rate limiting, security headers, metrics, input validation (v2.1.0)
+- [x] **Database Expansion** — 50 AVE cards across 13 categories
+- [x] **Companion Ebook** — 13-chapter accessible guide (publications/ebook/)
+- [x] **First CTF Event Design** — "Breaking the Hive" event defined (research/CTF_EVENT_001.md)
+- [x] **Test Coverage Expansion** — 76 tests (30 API hardening + 46 AVE toolkit + DB integrity)
 - [ ] **AVE-to-MITRE Mapping** — Formal mapping between AVE cards and MITRE ATT&CK / ATLAS techniques
 - [ ] **Framework Integration Guides** — Step-by-step hardening guides for LangChain, CrewAI, AutoGen, LlamaIndex
-- [ ] **First Public CTF Event** — Weekend Red Team CTF with $10K prize pool
-- [ ] **arXiv Pre-print** — Publish the NAIL research paper
-- [ ] **API Deployment** — Host the public API on Railway/Fly.io
 
 ---
 

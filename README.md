@@ -1,6 +1,6 @@
 # 🛡️ NAIL Institute — AVE Database
 
-[![AVE Cards](https://img.shields.io/badge/AVE_Cards-36-blue)](./ave-database/)
+[![AVE Cards](https://img.shields.io/badge/AVE_Cards-50-blue)](./ave-database/)
 [![License](https://img.shields.io/badge/License-CC--BY--SA--4.0-green)](https://creativecommons.org/licenses/by-sa/4.0/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-orange)](./CONTRIBUTING.md)
 [![Hall of Fame](https://img.shields.io/badge/Hall_of_Fame-🏆-gold)](./HALL_OF_FAME.md)
@@ -34,7 +34,7 @@ known failure mode of autonomous AI agents:
 
 ## Browse the Database
 
-📖 **[ave-database/](./ave-database/)** — All 36 vulnerability cards
+📖 **[ave-database/](./ave-database/)** — All 50 vulnerability cards
 
 Each card contains:
 - **What** — Name, category, severity, blast radius
