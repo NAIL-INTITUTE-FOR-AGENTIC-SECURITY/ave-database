@@ -1,0 +1,187 @@
+# Partner Evaluation Criteria
+# NAIL Institute — International Partnerships Framework
+# Version: 1.0.0
+#
+# Partners are scored 0–100 across 4 dimensions (25 points each).
+# Minimum scores by tier: Observer=60, Collaborator=70, Strategic=80, Treaty=90
+
+evaluation:
+  dimensions:
+    mission_alignment:
+      weight: 25
+      description: "Alignment with NAIL Institute mission and values"
+      criteria:
+        - name: "AI Safety Commitment"
+          max_score: 7
+          description: "Demonstrated commitment to AI safety through publications, policy, or practice"
+          scoring:
+            7: "Published AI safety research or active safety programme"
+            5: "Formal AI safety policy and dedicated resources"
+            3: "Stated commitment to AI safety with some evidence"
+            1: "General technology ethics statement only"
+            0: "No discernible AI safety commitment"
+
+        - name: "Open Science Alignment"
+          max_score: 6
+          description: "Support for open research, open data, and open standards"
+          scoring:
+            6: "Strong track record of open publications and open-source contributions"
+            4: "Regular open publications, some open-source"
+            2: "Occasional open publications"
+            0: "Primarily closed/proprietary approach"
+
+        - name: "Community Values"
+          max_score: 6
+          description: "Alignment with NAIL community values (inclusivity, transparency, rigour)"
+          scoring:
+            6: "Demonstrably inclusive, transparent, and rigorous"
+            4: "Good track record with minor gaps"
+            2: "Reasonable but with notable concerns"
+            0: "Significant misalignment with community values"
+
+        - name: "Independence Preservation"
+          max_score: 6
+          description: "Willingness to respect NAIL's independence and governance"
+          scoring:
+            6: "No conflicts of interest, full support for independent governance"
+            4: "Minor potential conflicts, willing to manage"
+            2: "Moderate conflicts requiring mitigation"
+            0: "Significant conflicts that threaten independence"
+
+    technical_capability:
+      weight: 25
+      description: "Technical expertise and resources relevant to AVE mission"
+      criteria:
+        - name: "AI/ML Expertise"
+          max_score: 7
+          description: "Depth of AI/ML technical expertise"
+          scoring:
+            7: "World-class AI/ML research team"
+            5: "Strong AI/ML team with published research"
+            3: "Competent AI/ML practitioners"
+            1: "Basic AI/ML understanding"
+            0: "No AI/ML expertise"
+
+        - name: "Security Expertise"
+          max_score: 7
+          description: "Cybersecurity and AI security capabilities"
+          scoring:
+            7: "Leading security research organisation"
+            5: "Dedicated security team with AI focus"
+            3: "General security team, some AI security awareness"
+            1: "Basic security practices"
+            0: "No security expertise"
+
+        - name: "Infrastructure & Tools"
+          max_score: 6
+          description: "Technical infrastructure for testing and research"
+          scoring:
+            6: "Advanced testing infrastructure (GPU clusters, sandboxes, red team tools)"
+            4: "Moderate infrastructure suitable for AI testing"
+            2: "Basic infrastructure, willing to invest"
+            0: "No relevant infrastructure"
+
+        - name: "Data Assets"
+          max_score: 5
+          description: "Relevant data that could enhance AVE database"
+          scoring:
+            5: "Extensive AI incident data, vulnerability databases"
+            3: "Moderate relevant data holdings"
+            1: "Limited but potentially useful data"
+            0: "No relevant data"
+
+    community_reputation:
+      weight: 25
+      description: "Standing in the AI safety and security communities"
+      criteria:
+        - name: "Track Record"
+          max_score: 8
+          description: "History of meaningful contributions to AI safety"
+          scoring:
+            8: "Long-standing leader in AI safety with significant impact"
+            6: "Established contributor with recognised impact"
+            4: "Growing reputation with solid early contributions"
+            2: "New to AI safety but credible in adjacent fields"
+            0: "Unknown or negative track record"
+
+        - name: "Collaboration History"
+          max_score: 6
+          description: "Track record of successful partnerships"
+          scoring:
+            6: "Extensive successful multi-stakeholder collaborations"
+            4: "Several successful partnerships"
+            2: "Limited but positive collaboration experience"
+            0: "No collaboration track record or negative history"
+
+        - name: "Community Trust"
+          max_score: 6
+          description: "Level of trust within relevant communities"
+          scoring:
+            6: "Widely trusted by researchers, practitioners, and policymakers"
+            4: "Generally trusted with minor reservations"
+            2: "Mixed reputation"
+            0: "Low trust or controversial reputation"
+
+        - name: "Geographic Diversity"
+          max_score: 5
+          description: "Value added through geographic/jurisdictional diversity"
+          scoring:
+            5: "Represents underrepresented region, adds significant diversity"
+            3: "Adds moderate geographic diversity"
+            1: "Similar jurisdiction to existing partners"
+            0: "Redundant with existing partner geography"
+
+    resource_commitment:
+      weight: 25
+      description: "Resources the partner is willing to contribute"
+      criteria:
+        - name: "Staff Commitment"
+          max_score: 8
+          description: "Dedicated personnel for partnership activities"
+          scoring:
+            8: "Full-time liaison + dedicated technical team"
+            6: "Part-time liaison + accessible technical staff"
+            4: "Named liaison with periodic availability"
+            2: "Ad-hoc point of contact"
+            0: "No identified personnel"
+
+        - name: "Financial/In-Kind"
+          max_score: 7
+          description: "Financial or in-kind resource commitment"
+          scoring:
+            7: "Significant funding or equivalent in-kind contribution"
+            5: "Moderate funding or substantial in-kind"
+            3: "Limited funding or moderate in-kind"
+            1: "Minimal in-kind only"
+            0: "No resource commitment"
+
+        - name: "Duration Commitment"
+          max_score: 5
+          description: "Willingness to commit for required partnership duration"
+          scoring:
+            5: "Committed for full tier duration + expressed renewal interest"
+            3: "Committed for full tier duration"
+            1: "Uncertain about full duration"
+            0: "Short-term only"
+
+        - name: "Engagement Quality"
+          max_score: 5
+          description: "Expected quality and depth of engagement"
+          scoring:
+            5: "Executive sponsorship, strategic priority"
+            3: "Senior management support, operational priority"
+            1: "Working-level engagement, limited priority"
+            0: "Low organisational priority"
+
+  thresholds:
+    observer: 60
+    collaborator: 70
+    strategic: 80
+    treaty: 90
+
+  process:
+    evaluator_count: 3
+    scoring_method: "average"
+    tie_breaking: "partnerships_lead_decision"
+    appeal_window_days: 14
+    re_evaluation_cooldown_months: 6

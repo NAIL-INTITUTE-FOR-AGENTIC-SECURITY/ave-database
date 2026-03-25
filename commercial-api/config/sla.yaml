@@ -1,0 +1,133 @@
+# SLA Definitions
+# NAIL Institute — Commercial API Platform
+# Version: 2.0.0
+
+sla:
+  definitions:
+    uptime:
+      description: |
+        "Uptime" is measured as the percentage of time the API responds
+        to authenticated requests with a non-5xx status code within
+        the specified response time, excluding scheduled maintenance.
+      measurement_period: "calendar month"
+      measurement_method: "synthetic monitoring from 3+ geographic regions"
+      excluded:
+        - "Scheduled maintenance (announced 48h in advance)"
+        - "Force majeure events"
+        - "Client-side errors (4xx)"
+        - "Rate-limited requests (429)"
+        - "DDoS attacks beyond commercially reasonable mitigation"
+
+    response_time:
+      p50_target_ms: 100
+      p95_target_ms: 500
+      p99_target_ms: 2000
+      timeout_ms: 30000
+
+  tiers:
+    professional:
+      uptime_sla: 99.5
+      response_time_p95_ms: 500
+      support_response_hours: 48
+      support_hours: "business_hours"
+      business_hours: "09:00–17:00 UTC, Monday–Friday"
+      incident_communication: "email"
+      rto_hours: 4
+      rpo_hours: 1
+
+    enterprise:
+      uptime_sla: 99.9
+      response_time_p95_ms: 200
+      support_response_hours: 4
+      critical_response_hours: 1
+      support_hours: "24x7"
+      incident_communication: "email + slack + phone"
+      rto_hours: 1
+      rpo_minutes: 15
+      dedicated_engineer: true
+      quarterly_review: true
+
+  credits:
+    description: |
+      Service credits are applied as a percentage of the monthly fee
+      when uptime falls below the SLA target.
+    professional:
+      - threshold: 99.5
+        credit_percent: 0
+        description: "SLA met"
+      - threshold: 99.0
+        credit_percent: 10
+        description: "Minor breach"
+      - threshold: 95.0
+        credit_percent: 25
+        description: "Moderate breach"
+      - threshold: 0
+        credit_percent: 50
+        description: "Major breach"
+
+    enterprise:
+      - threshold: 99.9
+        credit_percent: 0
+        description: "SLA met"
+      - threshold: 99.5
+        credit_percent: 10
+        description: "Minor breach"
+      - threshold: 99.0
+        credit_percent: 25
+        description: "Moderate breach"
+      - threshold: 95.0
+        credit_percent: 50
+        description: "Major breach"
+      - threshold: 0
+        credit_percent: 100
+        description: "Critical breach"
+
+  credit_process:
+    claim_window_days: 30
+    claim_method: "Submit support ticket with affected time period"
+    credit_application: "Applied to next billing cycle"
+    maximum_credit_percent: 100
+    cash_refund: false
+
+  maintenance:
+    scheduled:
+      notice_hours: 48
+      preferred_window: "Sunday 02:00–06:00 UTC"
+      max_duration_hours: 4
+      frequency: "Monthly (if needed)"
+    emergency:
+      notification: "Immediate via status page and email"
+      post_mortem: "Published within 5 business days"
+
+  status_page:
+    url: "https://status.nailinstitute.org"
+    provider: "Self-hosted"
+    components:
+      - "API Gateway"
+      - "Card Database"
+      - "Authentication Service"
+      - "Webhook Delivery"
+      - "Export Pipeline"
+      - "Analytics Engine"
+
+  incident_severity:
+    critical:
+      description: "API completely unavailable"
+      response_time_enterprise: "1 hour"
+      response_time_professional: "4 hours"
+      communication_frequency: "Every 30 minutes"
+    high:
+      description: "Major feature unavailable or severe performance degradation"
+      response_time_enterprise: "2 hours"
+      response_time_professional: "8 hours"
+      communication_frequency: "Every 2 hours"
+    medium:
+      description: "Minor feature unavailable or moderate performance degradation"
+      response_time_enterprise: "4 hours"
+      response_time_professional: "24 hours"
+      communication_frequency: "Every 4 hours"
+    low:
+      description: "Cosmetic issues or minor inconvenience"
+      response_time_enterprise: "8 hours"
+      response_time_professional: "48 hours"
+      communication_frequency: "Daily"

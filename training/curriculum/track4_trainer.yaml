@@ -1,0 +1,132 @@
+# Track 4: Train-the-Trainer — Curriculum Plan
+# NAIL Institute Training Programme
+# Duration: 2 days (14 hours)
+
+track:
+  id: "track-4"
+  name: "Train-the-Trainer"
+  code: "NAIL-T4"
+  version: "1.0.0"
+  duration_days: 2
+  total_hours: 14
+  audience:
+    - "Training providers and consultants"
+    - "Internal corporate trainers"
+    - "Academic instructors"
+  prerequisites:
+    - "NAIL Certified Assessor (NCA)"
+    - "2+ years training delivery experience"
+  certification: "NAIL Authorised Instructor (NAI)"
+  max_class_size: 12
+  delivery_modes: ["in-person"]
+
+modules:
+  # Day 1
+  - id: "T4-M1"
+    day: 1
+    title: "NAIL Training Standards & Quality Framework"
+    duration_minutes: 90
+    type: "lecture"
+    objectives:
+      - "Understand NAIL quality standards for training delivery"
+      - "Apply consistent assessment and grading practices"
+      - "Maintain certification programme integrity"
+    topics:
+      - "Training quality framework and audit process"
+      - "Standardised learning objectives and outcomes"
+      - "Assessment integrity and anti-cheating measures"
+      - "Instructor performance metrics and evaluation"
+
+  - id: "T4-M2"
+    day: 1
+    title: "Curriculum Design & Delivery Methods"
+    duration_minutes: 90
+    type: "workshop"
+    objectives:
+      - "Deliver NAIL curriculum effectively"
+      - "Adapt content for different audiences"
+      - "Use active learning techniques"
+      - "Handle diverse skill levels in class"
+    topics:
+      - "Adult learning principles (Kolb, Bloom's taxonomy)"
+      - "Adapting content for technical vs. executive audiences"
+      - "Interactive techniques: labs, discussions, scenarios"
+      - "Managing mixed-skill classrooms"
+
+  - id: "T4-M3"
+    day: 1
+    title: "Lab Environment Setup & Management"
+    duration_minutes: 90
+    type: "hands_on"
+    objectives:
+      - "Set up and maintain NAIL lab environments"
+      - "Troubleshoot common lab issues"
+      - "Customise labs for specific scenarios"
+    topics:
+      - "Docker-based lab infrastructure"
+      - "Agent system configuration for training"
+      - "Network and access management"
+      - "Backup and reset procedures"
+
+  - id: "T4-M4"
+    day: 1
+    title: "Assessment & Exam Administration"
+    duration_minutes: 90
+    type: "lecture"
+    objectives:
+      - "Administer certification exams correctly"
+      - "Grade practical assessments fairly"
+      - "Handle exam irregularities"
+      - "Submit results to NAIL registry"
+    topics:
+      - "Exam security and integrity protocols"
+      - "Practical assessment scoring rubrics"
+      - "Handling edge cases and appeals"
+      - "Results submission and certification issuance"
+
+  # Day 2
+  - id: "T4-M5"
+    day: 2
+    title: "Practice: Deliver a Module to Peers"
+    duration_minutes: 180
+    type: "practical"
+    objectives:
+      - "Deliver a complete training module"
+      - "Receive structured peer feedback"
+      - "Demonstrate mastery of content and delivery"
+    format:
+      - "Each participant delivers a 20-minute module segment"
+      - "Peer evaluation using standard rubric"
+      - "Instructor feedback and coaching"
+      - "Video recording for self-review"
+
+  - id: "T4-M6"
+    day: 2
+    title: "Feedback, Evaluation, and Improvement"
+    duration_minutes: 90
+    type: "workshop"
+    objectives:
+      - "Collect and analyse student feedback"
+      - "Implement continuous improvement"
+      - "Report training metrics to NAIL"
+    topics:
+      - "Kirkpatrick's evaluation model"
+      - "Post-training surveys and NPS"
+      - "Instructor self-assessment"
+      - "Reporting requirements for authorised instructors"
+
+  - id: "T4-M7"
+    day: 2
+    title: "Business Operations & Partnership Model"
+    duration_minutes: 90
+    type: "lecture"
+    objectives:
+      - "Understand the NAI licensing model"
+      - "Market and sell NAIL training"
+      - "Manage training operations"
+    topics:
+      - "NAI licensing terms and fees"
+      - "Revenue sharing model"
+      - "Marketing guidelines and brand usage"
+      - "Scheduling, logistics, and student management"
+      - "Annual renewal requirements"

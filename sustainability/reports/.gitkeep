@@ -1,0 +1,12 @@
+# Sustainability Reports
+
+This directory stores annual sustainability and financial reports.
+
+## Naming Convention
+
+```
+YYYY_annual_report.md
+```
+
+Reports are published within 90 days of fiscal year end.
+See `financial/reporting_schedule.md` for the full reporting cadence.

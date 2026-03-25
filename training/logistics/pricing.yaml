@@ -1,0 +1,143 @@
+# Training Pricing
+# NAIL Institute Training Programme
+# Version: 1.0.0
+
+pricing:
+  currency: "USD"
+
+  tracks:
+    track_1_foundations:
+      name: "AVE Foundations (Track 1)"
+      duration: "1 day"
+      formats:
+        public:
+          price: 495
+          includes:
+            - "Full-day instruction"
+            - "Lab access"
+            - "Course materials (digital)"
+            - "NAIL Associate exam attempt"
+            - "Lunch and refreshments"
+        on_site:
+          price: 8000
+          max_attendees: 20
+          includes:
+            - "Instructor travel and expenses"
+            - "All course materials"
+            - "Lab environment setup"
+            - "Exam administration"
+          note: "Client provides venue and catering"
+        virtual:
+          price: 395
+          includes:
+            - "Full-day virtual instruction"
+            - "Cloud lab access"
+            - "Course materials (digital)"
+            - "NAIL Associate exam attempt"
+
+    track_2_assessor:
+      name: "NAIL Assessor Certification (Track 2)"
+      duration: "3 days"
+      formats:
+        public:
+          price: 2495
+          includes:
+            - "3-day instruction"
+            - "All lab exercises"
+            - "Course materials (digital + printed)"
+            - "NCA exam attempt"
+            - "Lunch and refreshments (all 3 days)"
+        on_site:
+          price: 35000
+          max_attendees: 15
+          includes:
+            - "Instructor travel and expenses"
+            - "All course materials"
+            - "Lab environment setup and support"
+            - "Exam administration"
+            - "Post-training report"
+          note: "Client provides venue and catering"
+        virtual:
+          price: 1995
+          includes:
+            - "3-day virtual instruction"
+            - "Cloud lab access"
+            - "Course materials (digital)"
+            - "NCA exam attempt"
+
+    track_3_enterprise:
+      name: "Enterprise Workshop (Track 3)"
+      duration: "1 day"
+      formats:
+        on_site:
+          price: 15000
+          max_attendees: 30
+          includes:
+            - "Customised content for your industry"
+            - "Pre-event stakeholder interviews"
+            - "All workshop materials"
+            - "Post-workshop report with action plan"
+            - "30-day follow-up call"
+        virtual:
+          price: 12000
+          max_attendees: 30
+          includes:
+            - "Customised virtual workshop"
+            - "Pre-event stakeholder interviews"
+            - "Digital materials"
+            - "Post-workshop report"
+            - "30-day follow-up call"
+
+    track_4_trainer:
+      name: "Train-the-Trainer (Track 4)"
+      duration: "2 days"
+      formats:
+        public:
+          price: 3995
+          includes:
+            - "2-day instructor training"
+            - "Full curriculum materials"
+            - "NAI certification"
+            - "1-year instructor license"
+            - "Marketing materials"
+            - "Ongoing support"
+
+  discounts:
+    academic:
+      percent: 50
+      description: "Verified .edu email or institutional letter required"
+      applies_to: ["track_1_foundations", "track_2_assessor"]
+      formats: ["public", "virtual"]
+
+    non_profit:
+      percent: 40
+      description: "501(c)(3) or equivalent required"
+      applies_to: ["track_1_foundations", "track_2_assessor"]
+      formats: ["public", "virtual"]
+
+    group:
+      tiers:
+        - min_attendees: 5
+          percent: 10
+        - min_attendees: 10
+          percent: 15
+        - min_attendees: 20
+          percent: 20
+      applies_to: ["track_1_foundations", "track_2_assessor"]
+      formats: ["public", "virtual"]
+
+    early_bird:
+      percent: 15
+      description: "Book 60+ days in advance"
+      applies_to: ["track_1_foundations", "track_2_assessor"]
+      formats: ["public", "virtual"]
+
+  exam_retakes:
+    nail_associate:
+      fee: 99
+      wait_period_days: 30
+
+    nail_certified_assessor:
+      fee: 299
+      wait_period_days: 60
+      partial_retake_fee: 199

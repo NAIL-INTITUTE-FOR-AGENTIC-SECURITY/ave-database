@@ -1,0 +1,99 @@
+# Pricing Models
+# NAIL Institute — Commercial API Platform
+# Version: 2.0.0
+
+pricing:
+  currency: "USD"
+  billing_cycles:
+    monthly:
+      description: "Billed monthly, cancel anytime"
+      discount: 0
+    annual:
+      description: "Billed annually, ~17% savings"
+      discount_percent: 17
+
+  plans:
+    community:
+      monthly: 0
+      annual: 0
+      description: "Free forever — perfect for individual researchers"
+      ideal_for:
+        - "Individual researchers"
+        - "Academic projects"
+        - "Proof of concept"
+        - "Open source tools"
+
+    professional:
+      monthly: 299
+      annual: 2990
+      description: "For teams building AI safety into their products"
+      ideal_for:
+        - "Security teams (5-50 people)"
+        - "AI product companies"
+        - "Consulting firms"
+        - "GRC/compliance teams"
+      add_ons:
+        extra_api_keys:
+          price_per_key: 25
+          description: "Additional API keys beyond included 5"
+        extra_webhooks:
+          price_per_webhook: 15
+          description: "Additional webhook endpoints beyond included 5"
+
+    enterprise:
+      monthly: null
+      annual: null
+      description: "Custom pricing for large organisations"
+      starting_at: 2500
+      ideal_for:
+        - "Fortune 500 companies"
+        - "Government agencies"
+        - "Large financial institutions"
+        - "AI platform providers"
+      includes:
+        - "Dedicated support engineer"
+        - "Custom SLA"
+        - "SSO/SAML integration"
+        - "Custom API domain"
+        - "On-premise deployment option"
+        - "Quarterly business reviews"
+
+  volume_discounts:
+    description: "For multi-year or multi-seat commitments"
+    tiers:
+      - seats: "10+"
+        discount_percent: 10
+      - seats: "25+"
+        discount_percent: 15
+      - seats: "50+"
+        discount_percent: 20
+      - seats: "100+"
+        discount_percent: 25
+
+  academic_discount:
+    discount_percent: 50
+    description: "50% off Professional plan for verified academic institutions"
+    verification: "Requires .edu email or institutional letter"
+
+  non_profit_discount:
+    discount_percent: 75
+    description: "75% off Professional plan for registered non-profits"
+    verification: "Requires 501(c)(3) or equivalent documentation"
+
+  trial:
+    professional:
+      days: 14
+      description: "14-day free trial of Professional plan"
+      credit_card_required: false
+      auto_downgrade: true
+
+  payment_methods:
+    - "Credit/debit card (Stripe)"
+    - "ACH bank transfer (US)"
+    - "SEPA bank transfer (EU)"
+    - "Wire transfer (Enterprise only)"
+    - "Invoice/PO (Enterprise only)"
+
+  refund_policy:
+    monthly: "No refunds — cancel anytime for next billing cycle"
+    annual: "Pro-rated refund within first 30 days"

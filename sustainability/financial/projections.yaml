@@ -1,0 +1,204 @@
+# NAIL Institute — Financial Projections
+# Machine-readable financial model (all amounts in USD)
+
+projections:
+  year_1:
+    period: "2025-07-01 to 2026-06-30"
+    revenue:
+      api_subscriptions:
+        community: { customers: 400, price: 0, total: 0 }
+        professional: { customers: 50, price: 999, total: 49950 }     # annual pricing
+        enterprise: { customers: 10, price: 4999, total: 49990 }
+        custom: { customers: 2, price: 10000, total: 20000 }          # avg estimate
+        subtotal: 119940
+      certification_training:
+        nca_associate: { students: 100, price: 500, total: 50000 }
+        ncap_assessor: { students: 30, price: 2500, total: 75000 }
+        ncmp_master: { students: 5, price: 5000, total: 25000 }
+        enterprise_workshop: { days: 10, price: 5000, total: 50000 }
+        subtotal: 200000
+      partnerships:
+        founding: { count: 1, fee: 100000, total: 100000 }
+        strategic: { count: 2, fee: 50000, total: 100000 }
+        contributor: { count: 5, fee: 10000, total: 50000 }
+        observer: { count: 20, fee: 0, total: 0 }
+        subtotal: 250000
+      grants:
+        active_grants: 2
+        average_value: 50000
+        subtotal: 100000
+      consulting:
+        assessment_days: 15
+        avg_day_rate: 2500
+        retainer_months: 3
+        retainer_rate: 5000
+        subtotal: 52500
+      total_revenue: 722440
+
+    expenses:
+      personnel:
+        headcount: 5
+        avg_salary: 70000
+        benefits_multiplier: 1.25
+        subtotal: 437500
+      infrastructure:
+        cloud_hosting: 18000
+        api_platform: 6000
+        monitoring: 3000
+        domain_dns: 500
+        email_comms: 1500
+        subtotal: 29000
+      research:
+        compute_gpu: 25000
+        experiment_costs: 15000
+        publications: 5000
+        subtotal: 45000
+      travel_conferences:
+        events: 4
+        avg_cost_per_event: 7500
+        subtotal: 30000
+      legal_compliance:
+        legal_counsel: 12000
+        insurance: 5000
+        accounting: 3000
+        subtotal: 20000
+      marketing_community:
+        website: 3000
+        content: 5000
+        swag: 5000
+        community_tools: 2000
+        subtotal: 15000
+      office_admin:
+        coworking: 6000
+        supplies: 2000
+        software_licenses: 4000
+        subtotal: 12000
+      contingency:
+        rate: 0.10
+        subtotal: 58850
+      total_expenses: 647350
+
+    summary:
+      total_revenue: 722440
+      total_expenses: 647350
+      net_surplus: 75090
+      reserve_balance: 75090
+
+  year_2:
+    period: "2026-07-01 to 2027-06-30"
+    revenue:
+      api_subscriptions:
+        community: { customers: 1500, price: 0, total: 0 }
+        professional: { customers: 150, price: 999, total: 149850 }
+        enterprise: { customers: 30, price: 4999, total: 149970 }
+        custom: { customers: 5, price: 15000, total: 75000 }
+        subtotal: 374820
+      certification_training:
+        nca_associate: { students: 300, price: 500, total: 150000 }
+        ncap_assessor: { students: 80, price: 2500, total: 200000 }
+        ncmp_master: { students: 15, price: 5000, total: 75000 }
+        enterprise_workshop: { days: 30, price: 5000, total: 150000 }
+        subtotal: 575000
+      partnerships:
+        founding: { count: 2, fee: 100000, total: 200000 }
+        strategic: { count: 4, fee: 50000, total: 200000 }
+        contributor: { count: 10, fee: 10000, total: 100000 }
+        observer: { count: 35, fee: 0, total: 0 }
+        subtotal: 500000
+      grants:
+        active_grants: 3
+        average_value: 75000
+        subtotal: 225000
+      consulting:
+        assessment_days: 30
+        avg_day_rate: 2500
+        retainer_months: 8
+        retainer_rate: 5000
+        subtotal: 115000
+      total_revenue: 1789820
+
+    expenses:
+      personnel:
+        headcount: 8
+        avg_salary: 75000
+        benefits_multiplier: 1.25
+        subtotal: 750000
+      infrastructure: { subtotal: 60000 }
+      research: { subtotal: 120000 }
+      travel_conferences: { subtotal: 60000 }
+      legal_compliance: { subtotal: 35000 }
+      marketing_community: { subtotal: 45000 }
+      office_admin: { subtotal: 25000 }
+      contingency:
+        rate: 0.10
+        subtotal: 109500
+      total_expenses: 1204500
+
+    summary:
+      total_revenue: 1789820
+      total_expenses: 1204500
+      net_surplus: 585320
+      reserve_balance: 660410    # cumulative
+
+  year_3:
+    period: "2027-07-01 to 2028-06-30"
+    revenue:
+      api_subscriptions:
+        community: { customers: 4000, price: 0, total: 0 }
+        professional: { customers: 350, price: 999, total: 349650 }
+        enterprise: { customers: 80, price: 4999, total: 399920 }
+        custom: { customers: 10, price: 20000, total: 200000 }
+        subtotal: 949570
+      certification_training:
+        nca_associate: { students: 500, price: 500, total: 250000 }
+        ncap_assessor: { students: 150, price: 2500, total: 375000 }
+        ncmp_master: { students: 25, price: 5000, total: 125000 }
+        enterprise_workshop: { days: 50, price: 5000, total: 250000 }
+        subtotal: 1000000
+      partnerships:
+        founding: { count: 3, fee: 100000, total: 300000 }
+        strategic: { count: 5, fee: 50000, total: 250000 }
+        contributor: { count: 15, fee: 10000, total: 150000 }
+        observer: { count: 50, fee: 0, total: 0 }
+        subtotal: 700000
+      grants:
+        active_grants: 4
+        average_value: 100000
+        subtotal: 400000
+      consulting:
+        assessment_days: 40
+        avg_day_rate: 3000
+        retainer_months: 12
+        retainer_rate: 5000
+        subtotal: 180000
+      total_revenue: 3229570
+
+    expenses:
+      personnel:
+        headcount: 12
+        avg_salary: 80000
+        benefits_multiplier: 1.25
+        subtotal: 1200000
+      infrastructure: { subtotal: 120000 }
+      research: { subtotal: 250000 }
+      travel_conferences: { subtotal: 120000 }
+      legal_compliance: { subtotal: 60000 }
+      marketing_community: { subtotal: 100000 }
+      office_admin: { subtotal: 40000 }
+      contingency:
+        rate: 0.10
+        subtotal: 189000
+      total_expenses: 2079000
+
+    summary:
+      total_revenue: 3229570
+      total_expenses: 2079000
+      net_surplus: 1150570
+      reserve_balance: 1810980   # cumulative
+
+# Break-even analysis
+break_even:
+  monthly_fixed_costs: 53946     # Year 1 total / 12
+  avg_revenue_per_paid_customer: 1999  # blended annual
+  customers_to_break_even: 27
+  estimated_month_to_break_even: 4     # Month 4 of Year 1

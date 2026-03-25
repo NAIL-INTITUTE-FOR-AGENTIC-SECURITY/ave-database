@@ -1,0 +1,958 @@
+openapi: "3.1.0"
+info:
+  title: NAIL Institute AVE API
+  version: "2.0.0"
+  description: |
+    The NAIL Institute Agentic Vulnerability Enumeration (AVE) API provides
+    programmatic access to the world's most comprehensive database of agentic
+    AI vulnerabilities.
+
+    ## Authentication
+    All requests require an API key passed in the `Authorization` header:
+    ```
+    Authorization: Bearer YOUR_API_KEY
+    ```
+
+    ## Rate Limiting
+    Rate limits vary by plan tier. See `X-RateLimit-*` headers in responses.
+
+    ## Versioning
+    This API uses URL-based versioning (v2). The v1 API is deprecated.
+  contact:
+    name: NAIL Institute API Support
+    email: api@nailinstitute.org
+    url: https://nailinstitute.org
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: https://api.nailinstitute.org/v2
+    description: Production
+  - url: https://api-staging.nailinstitute.org/v2
+    description: Staging
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: Authentication
+    description: API key management and usage tracking
+  - name: Cards
+    description: AVE vulnerability card operations
+  - name: Search
+    description: Advanced search and filtering
+  - name: Export
+    description: Bulk data export (Pro+)
+  - name: Webhooks
+    description: Real-time event notifications (Pro+)
+  - name: Risk
+    description: Risk scoring and assessment (Enterprise)
+  - name: Compliance
+    description: Regulatory compliance mapping (Pro+)
+  - name: Certification
+    description: NAIL certification verification
+  - name: Analytics
+    description: Usage and vulnerability analytics (Enterprise)
+
+paths:
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register and get API key
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                organisation:
+                  type: string
+                plan:
+                  type: string
+                  enum: [community, professional, enterprise]
+                  default: community
+      responses:
+        "201":
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "409":
+          description: Email already registered
+
+  /auth/keys:
+    post:
+      tags: [Authentication]
+      summary: Generate additional API key
+      operationId: createKey
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Human-readable key name
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                    enum: [read, write, admin, webhook, export]
+                expires_at:
+                  type: string
+                  format: date-time
+      responses:
+        "201":
+          description: Key created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKey"
+
+  /auth/keys/{key_id}:
+    delete:
+      tags: [Authentication]
+      summary: Revoke an API key
+      operationId: revokeKey
+      parameters:
+        - name: key_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Key revoked
+
+  /auth/usage:
+    get:
+      tags: [Authentication]
+      summary: Get usage statistics
+      operationId: getUsage
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [hour, day, week, month]
+            default: day
+      responses:
+        "200":
+          description: Usage data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsageResponse"
+
+  /cards:
+    get:
+      tags: [Cards, Search]
+      summary: List and search AVE cards
+      operationId: listCards
+      parameters:
+        - name: q
+          in: query
+          description: Full-text search query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum:
+              - prompt_injection
+              - goal_drift
+              - tool_misuse
+              - identity_spoofing
+              - memory_poisoning
+              - privilege_escalation
+              - resource_abuse
+              - output_manipulation
+              - coordination_failure
+              - supply_chain
+              - data_exfiltration
+              - denial_of_service
+              - model_extraction
+              - social_engineering
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [critical, high, medium, low]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [published, draft, deprecated, under-review, proven, proven_mitigated, not_proven, theoretical]
+        - name: since
+          in: query
+          description: Cards added/updated since this timestamp
+          schema:
+            type: string
+            format: date-time
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [ave_id, severity, date_published, avss_score]
+            default: ave_id
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        "200":
+          description: Paginated card list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardListResponse"
+          headers:
+            X-Total-Count:
+              schema:
+                type: integer
+            X-Page:
+              schema:
+                type: integer
+            X-Per-Page:
+              schema:
+                type: integer
+
+  /cards/{ave_id}:
+    get:
+      tags: [Cards]
+      summary: Get a specific AVE card
+      operationId: getCard
+      parameters:
+        - name: ave_id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^AVE-\\d{4}-\\d{3,}$"
+      responses:
+        "200":
+          description: Card details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AveCard"
+        "404":
+          description: Card not found
+
+  /cards/bulk:
+    get:
+      tags: [Cards, Export]
+      summary: Bulk fetch multiple cards (Pro+)
+      operationId: bulkGetCards
+      parameters:
+        - name: ids
+          in: query
+          description: Comma-separated AVE IDs
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Array of cards
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cards:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AveCard"
+                  meta:
+                    $ref: "#/components/schemas/BulkMeta"
+
+  /cards/export:
+    post:
+      tags: [Export]
+      summary: Async bulk export (Pro+)
+      operationId: createExport
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                format:
+                  type: string
+                  enum: [json, csv, yaml, sarif]
+                  default: json
+                filters:
+                  type: object
+                  properties:
+                    category:
+                      type: array
+                      items:
+                        type: string
+                    severity:
+                      type: array
+                      items:
+                        type: string
+                    since:
+                      type: string
+                      format: date-time
+                include_fields:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "202":
+          description: Export job created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportJob"
+
+  /cards/export/{job_id}:
+    get:
+      tags: [Export]
+      summary: Check export job status
+      operationId: getExportStatus
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Export job status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportJob"
+
+  /cards/diff:
+    get:
+      tags: [Cards]
+      summary: Get changes since timestamp
+      operationId: getCardDiff
+      parameters:
+        - name: since
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Card changes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiffResponse"
+
+  /webhooks:
+    get:
+      tags: [Webhooks]
+      summary: List webhooks (Pro+)
+      operationId: listWebhooks
+      responses:
+        "200":
+          description: Webhook list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhooks:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Webhook"
+    post:
+      tags: [Webhooks]
+      summary: Create webhook (Pro+)
+      operationId: createWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebhookCreate"
+      responses:
+        "201":
+          description: Webhook created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Webhook"
+
+  /webhooks/{webhook_id}:
+    patch:
+      tags: [Webhooks]
+      summary: Update webhook
+      operationId: updateWebhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebhookCreate"
+      responses:
+        "200":
+          description: Webhook updated
+    delete:
+      tags: [Webhooks]
+      summary: Delete webhook
+      operationId: deleteWebhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Webhook deleted
+
+  /webhooks/{webhook_id}/test:
+    post:
+      tags: [Webhooks]
+      summary: Send test event
+      operationId: testWebhook
+      parameters:
+        - name: webhook_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Test event sent
+
+  /risk/score:
+    post:
+      tags: [Risk]
+      summary: Calculate risk score (Enterprise)
+      operationId: calculateRiskScore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RiskScoreRequest"
+      responses:
+        "200":
+          description: Risk assessment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskScoreResponse"
+
+  /compliance/map:
+    post:
+      tags: [Compliance]
+      summary: Map AVE categories to regulatory framework
+      operationId: mapCompliance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [framework]
+              properties:
+                framework:
+                  type: string
+                  enum: [eu_ai_act, nist_ai_rmf, iso_42001, eo_14110]
+                categories:
+                  type: array
+                  items:
+                    type: string
+                jurisdiction:
+                  type: string
+      responses:
+        "200":
+          description: Compliance mapping
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceMapping"
+
+  /certification/verify/{cert_id}:
+    get:
+      tags: [Certification]
+      summary: Verify a NAIL certification
+      operationId: verifyCertification
+      parameters:
+        - name: cert_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Certification details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Certification"
+        "404":
+          description: Certification not found
+
+  /analytics/query:
+    post:
+      tags: [Analytics]
+      summary: Custom analytics query (Enterprise)
+      operationId: analyticsQuery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                metric:
+                  type: string
+                  enum: [cards_by_category, cards_by_severity, cards_over_time, avss_distribution, defence_coverage]
+                period:
+                  type: string
+                  enum: [week, month, quarter, year, all]
+                group_by:
+                  type: string
+                filters:
+                  type: object
+      responses:
+        "200":
+          description: Analytics results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsResponse"
+
+  /stats:
+    get:
+      tags: [Cards]
+      summary: Database statistics
+      operationId: getStats
+      responses:
+        "200":
+          description: Current statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsResponse"
+
+  /categories:
+    get:
+      tags: [Cards]
+      summary: List all AVE categories
+      operationId: listCategories
+      responses:
+        "200":
+          description: Category list with counts
+
+  /health:
+    get:
+      tags: []
+      summary: Health check
+      security: []
+      responses:
+        "200":
+          description: API healthy
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: API key as Bearer token
+
+  schemas:
+    AuthResponse:
+      type: object
+      properties:
+        account_id:
+          type: string
+          format: uuid
+        api_key:
+          type: string
+        plan:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    ApiKey:
+      type: object
+      properties:
+        key_id:
+          type: string
+        key:
+          type: string
+          description: Only shown once at creation
+        name:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+
+    UsageResponse:
+      type: object
+      properties:
+        plan:
+          type: string
+        period:
+          type: string
+        requests_used:
+          type: integer
+        requests_limit:
+          type: integer
+        requests_remaining:
+          type: integer
+        breakdown:
+          type: object
+          additionalProperties:
+            type: integer
+
+    AveCard:
+      type: object
+      properties:
+        ave_id:
+          type: string
+          pattern: "^AVE-\\d{4}-\\d{3,}$"
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        category:
+          type: string
+        severity:
+          type: string
+          enum: [critical, high, medium, low]
+        status:
+          type: string
+        summary:
+          type: string
+        mechanism:
+          type: string
+        blast_radius:
+          type: string
+        prerequisite:
+          type: string
+        environment:
+          type: object
+        evidence:
+          type: array
+          items:
+            type: object
+        defences:
+          type: array
+          items:
+            type: object
+        date_discovered:
+          type: string
+        date_published:
+          type: string
+        cwe_mapping:
+          type: string
+        mitre_mapping:
+          type: string
+        references:
+          type: array
+          items:
+            type: string
+        related_aves:
+          type: array
+          items:
+            type: string
+        avss_score:
+          type: object
+        poc:
+          type: string
+        timeline:
+          type: string
+        contributor:
+          type: string
+        _meta:
+          type: object
+
+    CardListResponse:
+      type: object
+      properties:
+        cards:
+          type: array
+          items:
+            $ref: "#/components/schemas/AveCard"
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+            per_page:
+              type: integer
+            total:
+              type: integer
+            total_pages:
+              type: integer
+
+    BulkMeta:
+      type: object
+      properties:
+        requested:
+          type: integer
+        found:
+          type: integer
+        not_found:
+          type: array
+          items:
+            type: string
+
+    ExportJob:
+      type: object
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        format:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+        download_url:
+          type: string
+          description: Available when status is completed
+        expires_at:
+          type: string
+          format: date-time
+
+    DiffResponse:
+      type: object
+      properties:
+        since:
+          type: string
+          format: date-time
+        added:
+          type: array
+          items:
+            $ref: "#/components/schemas/AveCard"
+        updated:
+          type: array
+          items:
+            $ref: "#/components/schemas/AveCard"
+        deprecated:
+          type: array
+          items:
+            type: string
+
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+            enum: [ave.new, ave.updated, ave.deprecated, advisory.published, certification.issued]
+        secret:
+          type: string
+          description: HMAC signing secret
+        active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    WebhookCreate:
+      type: object
+      required: [url, events]
+      properties:
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+          default: true
+
+    RiskScoreRequest:
+      type: object
+      required: [system]
+      properties:
+        system:
+          type: object
+          properties:
+            name:
+              type: string
+            industry:
+              type: string
+            agent_count:
+              type: integer
+            model_provider:
+              type: string
+            tools:
+              type: array
+              items:
+                type: string
+            defences:
+              type: array
+              items:
+                type: object
+            data_sensitivity:
+              type: string
+              enum: [public, internal, confidential, restricted]
+
+    RiskScoreResponse:
+      type: object
+      properties:
+        overall_score:
+          type: number
+          minimum: 0
+          maximum: 100
+        grade:
+          type: string
+          enum: [A, B, C, D, F]
+        components:
+          type: object
+        recommendations:
+          type: array
+          items:
+            type: object
+        premium_multiplier:
+          type: number
+
+    ComplianceMapping:
+      type: object
+      properties:
+        framework:
+          type: string
+        mappings:
+          type: array
+          items:
+            type: object
+            properties:
+              article:
+                type: string
+              title:
+                type: string
+              ave_categories:
+                type: array
+                items:
+                  type: string
+              compliance_level:
+                type: string
+
+    Certification:
+      type: object
+      properties:
+        cert_id:
+          type: string
+        organisation:
+          type: string
+        system:
+          type: string
+        tier:
+          type: string
+          enum: [bronze, silver, gold, platinum]
+        score:
+          type: number
+        issued_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        valid:
+          type: boolean
+
+    AnalyticsResponse:
+      type: object
+      properties:
+        metric:
+          type: string
+        period:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+        generated_at:
+          type: string
+          format: date-time
+
+    StatsResponse:
+      type: object
+      properties:
+        total_cards:
+          type: integer
+        by_category:
+          type: object
+          additionalProperties:
+            type: integer
+        by_severity:
+          type: object
+          additionalProperties:
+            type: integer
+        by_status:
+          type: object
+          additionalProperties:
+            type: integer
+        last_updated:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string

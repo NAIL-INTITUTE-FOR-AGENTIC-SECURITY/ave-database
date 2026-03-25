@@ -1,0 +1,162 @@
+# Partnership Tier Definitions
+# NAIL Institute — International Partnerships Framework
+# Version: 1.0.0
+
+tiers:
+  observer:
+    name: "Observer"
+    badge: "🥉"
+    level: 1
+    duration_years: 1
+    auto_renew: true
+    min_evaluation_score: 60
+    requirements:
+      - "Signed NDA"
+      - "Designated organisational liaison"
+      - "Demonstrated interest in AI safety"
+    obligations:
+      - description: "Attend quarterly briefings"
+        frequency: "quarterly"
+        minimum: 2
+        period: "year"
+      - description: "Respond to annual partnership survey"
+        frequency: "annual"
+        minimum: 1
+        period: "year"
+    benefits:
+      - "Early AVE advisory access (48h pre-publication)"
+      - "Read-only API access (10,000 req/month)"
+      - "Quarterly threat intelligence briefings"
+      - "NAIL Observer designation rights"
+      - "Newsletter and mailing list access"
+    termination_notice_days: 30
+
+  collaborator:
+    name: "Collaborator"
+    badge: "🥈"
+    level: 2
+    duration_years: 2
+    auto_renew: false
+    min_evaluation_score: 70
+    prerequisite_tier: "observer"
+    prerequisite_months: 6
+    requirements:
+      - "Observer tier for ≥6 months"
+      - "Demonstrated contribution to AVE database"
+      - "Signed Data Sharing Agreement"
+      - "Technical staff with AI security expertise"
+    obligations:
+      - description: "Submit AVE vulnerability reports"
+        frequency: "quarterly"
+        minimum: 4
+        period: "year"
+      - description: "Share anonymised incident data"
+        frequency: "quarterly"
+        minimum: 4
+        period: "year"
+      - description: "Participate in working group"
+        frequency: "ongoing"
+        minimum: 1
+        period: "year"
+      - description: "Review RFCs when requested"
+        frequency: "as-needed"
+        minimum: 2
+        period: "year"
+    benefits:
+      - "All Observer benefits"
+      - "Co-branded research publications"
+      - "Data-sharing pipeline access"
+      - "Priority RFC review and comment"
+      - "Speaking slots at NAIL events"
+      - "API access (50,000 req/month)"
+      - "NAIL Collaborator designation rights"
+    termination_notice_days: 60
+
+  strategic:
+    name: "Strategic Partner"
+    badge: "🥇"
+    level: 3
+    duration_years: 3
+    auto_renew: false
+    min_evaluation_score: 80
+    prerequisite_tier: "collaborator"
+    prerequisite_months: 12
+    approval: "advisory_board_majority"
+    requirements:
+      - "Collaborator tier for ≥12 months"
+      - "Advisory Board approval (majority vote)"
+      - "Signed MOU"
+      - "Dedicated partnership liaison"
+      - "Executive sponsor identified"
+    obligations:
+      - description: "Joint research deliverable"
+        frequency: "annual"
+        minimum: 1
+        period: "year"
+      - description: "Executive quarterly meetings"
+        frequency: "quarterly"
+        minimum: 4
+        period: "year"
+      - description: "Co-fund initiative"
+        frequency: "annual"
+        minimum: 1
+        period: "year"
+      - description: "Present at NAIL conference"
+        frequency: "annual"
+        minimum: 1
+        period: "year"
+    benefits:
+      - "All Collaborator benefits"
+      - "Non-voting Advisory Board seat"
+      - "Priority RFC development input"
+      - "Joint event co-hosting"
+      - "Enterprise API access (unlimited)"
+      - "Logo on NAIL website"
+      - "NAIL Strategic Partner designation rights"
+      - "Early access to tooling and frameworks"
+    termination_notice_days: 90
+
+  treaty:
+    name: "Treaty Partner"
+    badge: "💎"
+    level: 4
+    duration_years: 5
+    auto_renew: false
+    min_evaluation_score: 90
+    prerequisite_tier: "strategic"
+    prerequisite_months: 24
+    approval: "advisory_board_supermajority"
+    requirements:
+      - "Strategic Partner for ≥24 months"
+      - "Advisory Board supermajority (5/7) approval"
+      - "Formal MOU signed by authorised representatives"
+      - "Resource commitment (staff, funding, or infrastructure)"
+      - "Regulatory engagement capability"
+    obligations:
+      - description: "Joint regulatory engagement"
+        frequency: "ongoing"
+        minimum: 2
+        period: "year"
+      - description: "Annual partnership summit"
+        frequency: "annual"
+        minimum: 1
+        period: "year"
+      - description: "Resource contribution"
+        frequency: "annual"
+        value: "≥$50,000 equivalent (staff, funding, or infra)"
+      - description: "Joint standards development"
+        frequency: "ongoing"
+        minimum: 1
+        period: "year"
+      - description: "Mutual certification recognition programme"
+        frequency: "ongoing"
+    benefits:
+      - "All Strategic Partner benefits"
+      - "Mutual certification recognition"
+      - "Joint standards development"
+      - "Policy drafting participation"
+      - "Voting Advisory Board seat"
+      - "Co-governance of shared initiatives"
+      - "NAIL Treaty Partner designation rights"
+      - "Joint brand and marketing collaboration"
+    termination_notice_days: 180

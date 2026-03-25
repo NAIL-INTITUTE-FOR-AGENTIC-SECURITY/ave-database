@@ -1,0 +1,133 @@
+# Grading Rubrics
+# NAIL Institute Training Programme
+# Version: 1.0.0
+
+rubrics:
+  lab_assessment:
+    description: "Rubric for grading lab exercises"
+    scale:
+      4: "Excellent — exceeds expectations"
+      3: "Proficient — meets expectations"
+      2: "Developing — partially meets expectations"
+      1: "Beginning — does not meet expectations"
+      0: "Not attempted"
+
+    criteria:
+      vulnerability_identification:
+        weight: 30
+        levels:
+          4: "Identifies all intended vulnerabilities plus additional findings"
+          3: "Identifies all intended vulnerabilities"
+          2: "Identifies most intended vulnerabilities (>60%)"
+          1: "Identifies some vulnerabilities (<60%)"
+          0: "No vulnerabilities identified"
+
+      classification_accuracy:
+        weight: 25
+        levels:
+          4: "100% correct AVE classification with nuanced reasoning"
+          3: "≥90% correct classification"
+          2: "≥70% correct classification"
+          1: "<70% correct classification"
+          0: "Not attempted"
+
+      scoring_accuracy:
+        weight: 20
+        levels:
+          4: "AVSS scores within ±5% of reference with clear justification"
+          3: "AVSS scores within ±10% of reference"
+          2: "AVSS scores within ±20% of reference"
+          1: "AVSS scores >±20% from reference"
+          0: "Not attempted"
+
+      report_quality:
+        weight: 15
+        levels:
+          4: "Professional-quality report suitable for external delivery"
+          3: "Clear, well-structured report with all required elements"
+          2: "Report present but missing elements or unclear"
+          1: "Incomplete or poorly structured report"
+          0: "No report submitted"
+
+      defence_recommendations:
+        weight: 10
+        levels:
+          4: "Specific, actionable, prioritised recommendations with implementation guidance"
+          3: "Relevant recommendations with clear prioritisation"
+          2: "General recommendations without prioritisation"
+          1: "Vague or inappropriate recommendations"
+          0: "No recommendations"
+
+  practical_exam:
+    description: "Rubric for NCA practical examination"
+    scale:
+      5: "Expert — exceptional performance"
+      4: "Advanced — above standard"
+      3: "Competent — meets standard"
+      2: "Developing — below standard"
+      1: "Novice — significantly below standard"
+
+    criteria:
+      methodology:
+        weight: 20
+        levels:
+          5: "Systematic approach, efficient time management, comprehensive coverage"
+          4: "Well-organised approach covering all major areas"
+          3: "Structured approach covering most areas"
+          2: "Some structure but significant gaps"
+          1: "Unstructured or inefficient approach"
+
+      technical_depth:
+        weight: 30
+        levels:
+          5: "Deep technical analysis, novel attack vectors discovered"
+          4: "Thorough technical analysis of all findings"
+          3: "Adequate technical analysis for most findings"
+          2: "Superficial technical analysis"
+          1: "Minimal technical analysis"
+
+      completeness:
+        weight: 20
+        levels:
+          5: "All categories assessed, all findings fully documented"
+          4: "Most categories assessed, findings well documented"
+          3: "Key categories assessed, basic documentation"
+          2: "Limited category coverage"
+          1: "Very limited assessment"
+
+      communication:
+        weight: 15
+        levels:
+          5: "Executive-ready report, clear risk communication"
+          4: "Well-written report with clear findings"
+          3: "Adequate report, understandable findings"
+          2: "Report present but unclear"
+          1: "Poor communication of findings"
+
+      recommendations:
+        weight: 15
+        levels:
+          5: "Prioritised, specific, with implementation roadmap"
+          4: "Prioritised and actionable"
+          3: "Relevant and reasonable"
+          2: "Generic or impractical"
+          1: "Missing or inappropriate"
+
+  instructor_evaluation:
+    description: "Rubric for evaluating instructor performance"
+    criteria:
+      content_mastery:
+        weight: 25
+        description: "Deep knowledge of AVE standard and assessment methodology"
+      delivery_skills:
+        weight: 25
+        description: "Clear communication, engaging presentation, time management"
+      facilitation:
+        weight: 20
+        description: "Managing discussions, handling questions, adapting to audience"
+      lab_support:
+        weight: 15
+        description: "Effective lab guidance, troubleshooting, individual attention"
+      professionalism:
+        weight: 15
+        description: "Preparation, appearance, brand adherence, follow-up"

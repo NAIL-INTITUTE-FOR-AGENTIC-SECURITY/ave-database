@@ -1,0 +1,132 @@
+# API Tier Definitions
+# NAIL Institute — Commercial API Platform
+# Version: 2.0.0
+
+tiers:
+  community:
+    name: "Community"
+    price_monthly_usd: 0
+    price_annual_usd: 0
+    rate_limit:
+      requests_per_hour: 100
+      requests_per_day: 1000
+      burst: 10
+    api_keys: 1
+    features:
+      card_access: true
+      search_basic: true
+      search_advanced: false
+      bulk_export: false
+      webhooks: false
+      webhook_limit: 0
+      avss_scoring: false
+      certification_api: false
+      insurance_risk_api: false
+      regulatory_mapping: false
+      analytics_dashboard: false
+      sso_saml: false
+      custom_domain: false
+    support:
+      level: "community"
+      channels: ["github_discussions"]
+      response_time_hours: null
+    sla:
+      uptime_percent: null
+      description: "Best effort"
+
+  professional:
+    name: "Professional"
+    price_monthly_usd: 299
+    price_annual_usd: 2990
+    annual_discount_percent: 17
+    rate_limit:
+      requests_per_hour: 10000
+      requests_per_day: 100000
+      burst: 100
+    api_keys: 5
+    features:
+      card_access: true
+      search_basic: true
+      search_advanced: true
+      bulk_export: true
+      bulk_export_formats: ["json", "csv"]
+      webhooks: true
+      webhook_limit: 5
+      avss_scoring: true
+      certification_api: true
+      certification_write: false
+      insurance_risk_api: false
+      regulatory_mapping: true
+      regulatory_custom: false
+      analytics_dashboard: true
+      analytics_advanced: false
+      sso_saml: false
+      custom_domain: false
+    support:
+      level: "email"
+      channels: ["email", "github_discussions"]
+      response_time_hours: 48
+    sla:
+      uptime_percent: 99.5
+      description: "99.5% monthly uptime"
+      credits:
+        below_99_5: "10% monthly credit"
+        below_99_0: "25% monthly credit"
+        below_95_0: "50% monthly credit"
+
+  enterprise:
+    name: "Enterprise"
+    price_monthly_usd: null
+    price_description: "Custom pricing — contact sales"
+    rate_limit:
+      requests_per_hour: null
+      requests_per_day: null
+      burst: null
+      description: "Unlimited"
+    api_keys: null
+    api_keys_description: "Unlimited"
+    features:
+      card_access: true
+      search_basic: true
+      search_advanced: true
+      search_custom: true
+      bulk_export: true
+      bulk_export_formats: ["json", "csv", "yaml", "sarif"]
+      webhooks: true
+      webhook_limit: null
+      webhook_description: "Unlimited"
+      avss_scoring: true
+      avss_custom_models: true
+      certification_api: true
+      certification_write: true
+      insurance_risk_api: true
+      regulatory_mapping: true
+      regulatory_custom: true
+      analytics_dashboard: true
+      analytics_advanced: true
+      analytics_custom_queries: true
+      sso_saml: true
+      custom_domain: true
+      dedicated_support_engineer: true
+      custom_integrations: true
+    support:
+      level: "dedicated"
+      channels: ["email", "slack", "phone", "dedicated_engineer"]
+      response_time_hours: 4
+      critical_response_hours: 1
+    sla:
+      uptime_percent: 99.9
+      description: "99.9% monthly uptime"
+      credits:
+        below_99_9: "10% monthly credit"
+        below_99_5: "25% monthly credit"
+        below_99_0: "50% monthly credit"
+        below_95_0: "100% monthly credit"
+
+# Rate limit response headers
+rate_limit_headers:
+  - "X-RateLimit-Limit"
+  - "X-RateLimit-Remaining"
+  - "X-RateLimit-Reset"
+  - "X-RateLimit-Plan"
+  - "Retry-After"

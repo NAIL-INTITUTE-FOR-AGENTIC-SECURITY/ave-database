@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "certification.issued webhook event",
+  "description": "Fired when a NAIL certification is issued (Enterprise only)",
+  "type": "object",
+  "required": ["id", "event", "timestamp", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^evt_" },
+    "event": { "const": "certification.issued" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "data": {
+      "type": "object",
+      "required": ["cert_id", "organisation", "system", "tier", "score"],
+      "properties": {
+        "cert_id": { "type": "string", "pattern": "^NAIL-CERT-" },
+        "organisation": { "type": "string" },
+        "system": { "type": "string" },
+        "tier": { "type": "string", "enum": ["bronze", "silver", "gold", "platinum"] },
+        "score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "issued_at": { "type": "string", "format": "date-time" },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "verification_url": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}

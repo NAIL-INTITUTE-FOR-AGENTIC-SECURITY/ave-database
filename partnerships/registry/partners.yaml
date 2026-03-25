@@ -1,0 +1,44 @@
+# NAIL Institute — Active Partner Registry
+# Version: 1.0.0
+# Updated: March 2026
+#
+# This registry is automatically published. Do not include confidential terms.
+
+partners: []
+
+# Example entry:
+# - id: "partner-001"
+#   organisation: "Example Standards Body"
+#   short_name: "ESB"
+#   website: "https://example.org"
+#   tier: "observer"
+#   status: "active"
+#   joined: "2026-04-01"
+#   renewal: "2027-04-01"
+#   liaison:
+#     name: "Jane Doe"
+#     email: "j.doe@example.org"
+#   collaboration_areas:
+#     - "standards_development"
+#     - "vulnerability_research"
+#   contributions:
+#     ave_submissions: 0
+#     research_papers: 0
+#     events_attended: 0
+#   region: "Europe"
+#   type: "standards_body"
+
+# Statistics (auto-generated)
+summary:
+  total_partners: 0
+  by_tier:
+    observer: 0
+    collaborator: 0
+    strategic: 0
+    treaty: 0
+  by_region:
+    north_america: 0
+    europe: 0
+    asia_pacific: 0
+    other: 0
+  last_updated: "2026-03-25"

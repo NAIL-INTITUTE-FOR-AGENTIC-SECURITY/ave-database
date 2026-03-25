@@ -1,0 +1,160 @@
+# Certification Exam Blueprint
+# NAIL Institute Training Programme
+# Version: 1.0.0
+
+exams:
+  nail_associate:
+    code: "NA-EXAM-100"
+    name: "NAIL Associate Certification Exam"
+    version: "1.0.0"
+    duration_minutes: 60
+    total_questions: 50
+    passing_score_percent: 70
+    format: "multiple-choice + short-answer"
+    question_breakdown:
+      multiple_choice: 40
+      short_answer: 10
+    scoring:
+      multiple_choice: 1.5  # points each
+      short_answer: 4.0     # points each
+      total_points: 100
+    domains:
+      - name: "AVE Taxonomy & Classification"
+        code: "D1"
+        weight_percent: 30
+        questions: 15
+        topics:
+          - "Identifying and naming 14 AVE categories"
+          - "Classifying vulnerabilities into correct categories"
+          - "Understanding severity levels"
+          - "Recognising category overlaps and edge cases"
+
+      - name: "AVSS Scoring"
+        code: "D2"
+        weight_percent: 20
+        questions: 10
+        topics:
+          - "AVSS component understanding"
+          - "Calculating AVSS scores"
+          - "Comparing with CVSS"
+          - "Risk prioritisation using scores"
+
+      - name: "Vulnerability Identification"
+        code: "D3"
+        weight_percent: 30
+        questions: 15
+        topics:
+          - "Recognising vulnerabilities in agent descriptions"
+          - "Identifying attack vectors"
+          - "Understanding blast radius"
+          - "Assessing prerequisites for exploitation"
+
+      - name: "Tools & API"
+        code: "D4"
+        weight_percent: 20
+        questions: 10
+        topics:
+          - "Using the AVE database and CLI"
+          - "API endpoint knowledge"
+          - "Feed and notification setup"
+          - "Practical tool usage"
+
+    retake_policy:
+      wait_period_days: 30
+      max_attempts_per_year: 3
+      fee_per_retake_usd: 99
+
+  nail_certified_assessor:
+    code: "NCA-EXAM-200"
+    name: "NAIL Certified Assessor Exam"
+    version: "1.0.0"
+    duration_minutes: 120
+    format: "practical + written"
+
+    written_component:
+      duration_minutes: 60
+      total_questions: 40
+      passing_score_percent: 70
+      weight_percent: 40
+      question_breakdown:
+        multiple_choice: 25
+        case_study_analysis: 10
+        short_answer: 5
+
+    practical_component:
+      duration_minutes: 60
+      weight_percent: 60
+      passing_score_percent: 70
+      format: "Hands-on assessment of a live agent system"
+      deliverables:
+        - "Vulnerability findings (minimum 5)"
+        - "AVE classification for each finding"
+        - "AVSS score for each finding"
+        - "Defence recommendations"
+        - "Executive summary"
+
+    overall_passing:
+      both_components_required: true
+      minimum_per_component: 60
+
+    domains:
+      - name: "Assessment Methodology"
+        code: "D1"
+        weight_percent: 20
+        topics:
+          - "Scoping and planning assessments"
+          - "Rules of engagement"
+          - "Assessment frameworks and checklists"
+          - "Report structure and quality"
+
+      - name: "Vulnerability Discovery"
+        code: "D2"
+        weight_percent: 25
+        topics:
+          - "Prompt injection testing techniques"
+          - "Tool misuse and privilege escalation testing"
+          - "Memory and data flow analysis"
+          - "Multi-agent coordination testing"
+          - "Supply chain assessment"
+
+      - name: "Defence Evaluation"
+        code: "D3"
+        weight_percent: 20
+        topics:
+          - "Evaluating defence effectiveness"
+          - "Control gap analysis"
+          - "Defence-in-depth assessment"
+          - "Monitoring and detection evaluation"
+
+      - name: "Reporting & Communication"
+        code: "D4"
+        weight_percent: 15
+        topics:
+          - "Writing AVE cards"
+          - "Executive summary writing"
+          - "Risk communication to stakeholders"
+          - "Remediation recommendations"
+
+      - name: "Compliance & Governance"
+        code: "D5"
+        weight_percent: 10
+        topics:
+          - "Regulatory framework mapping"
+          - "Certification tier assessment"
+          - "Responsible disclosure"
+          - "Insurance risk scoring"
+
+      - name: "Tools & Automation"
+        code: "D6"
+        weight_percent: 10
+        topics:
+          - "NAIL CLI and API usage"
+          - "Certification checker tool"
+          - "Compliance mapper tool"
+          - "Risk scorer tool"
+
+    retake_policy:
+      wait_period_days: 60
+      max_attempts_per_year: 2
+      fee_per_retake_usd: 299
+      partial_retake: true  # Can retake only failed component

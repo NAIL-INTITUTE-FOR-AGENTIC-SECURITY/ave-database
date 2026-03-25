@@ -1,0 +1,105 @@
+# Track 3: Enterprise Workshop — Curriculum Plan
+# NAIL Institute Training Programme
+# Duration: 1 day (7 hours)
+
+track:
+  id: "track-3"
+  name: "Enterprise Workshop"
+  code: "NAIL-T3"
+  version: "1.0.0"
+  duration_days: 1
+  total_hours: 7
+  audience:
+    - "CISOs and security leadership"
+    - "Engineering leads and architects"
+    - "Product managers"
+    - "Risk and compliance officers"
+  prerequisites: []
+  certification: "Completion certificate"
+  max_class_size: 30
+  delivery_modes: ["on-site", "virtual"]
+  customisation: "Content tailored to client's tech stack and industry"
+
+modules:
+  - id: "T3-M1"
+    title: "Executive Briefing: Agentic AI Risk Landscape"
+    duration_minutes: 60
+    type: "presentation"
+    objectives:
+      - "Understand the agentic AI threat landscape"
+      - "Identify business risks from agent vulnerabilities"
+      - "Benchmark against industry peers"
+    topics:
+      - "State of agentic AI adoption and associated risks"
+      - "Real-world incident case studies"
+      - "Industry-specific threat profiles"
+      - "Cost of agent security failures"
+
+  - id: "T3-M2"
+    title: "Threat Modelling Your AI Systems with AVE"
+    duration_minutes: 90
+    type: "workshop"
+    objectives:
+      - "Inventory your organisation's AI agents"
+      - "Apply AVE threat modelling to your systems"
+      - "Prioritise risks by business impact"
+    topics:
+      - "Agent system inventory methodology"
+      - "AVE-based threat modelling (STRIDE meets AVE)"
+      - "Risk ranking with AVSS and business context"
+      - "Hands-on: Map your agents to AVE categories"
+
+  - id: "T3-M3"
+    title: "Building an AVE Defence Programme"
+    duration_minutes: 60
+    type: "lecture"
+    objectives:
+      - "Design a defence-in-depth strategy for agents"
+      - "Select appropriate controls per AVE category"
+      - "Integrate with existing security operations"
+    topics:
+      - "Defence layers: input, processing, output, monitoring"
+      - "Control selection per category"
+      - "Integration with SOC, SIEM, and incident response"
+      - "Budget and resource planning"
+
+  - id: "T3-M4"
+    title: "Workshop: Assess Your Own Systems"
+    duration_minutes: 90
+    type: "workshop"
+    objectives:
+      - "Perform a lightweight assessment of your systems"
+      - "Identify quick wins and critical gaps"
+      - "Build a remediation roadmap"
+    topics:
+      - "Guided self-assessment using NAIL tools"
+      - "Group exercises by system type"
+      - "Quick-win identification"
+      - "Remediation prioritisation"
+
+  - id: "T3-M5"
+    title: "Certification Roadmap & Quick Wins"
+    duration_minutes: 60
+    type: "lecture"
+    objectives:
+      - "Understand the NAIL Certification pathway"
+      - "Identify your current readiness level"
+      - "Plan a certification timeline"
+    topics:
+      - "Certification tiers and requirements"
+      - "Self-assessment vs. third-party assessment"
+      - "Typical timelines by tier"
+      - "Quick wins for score improvement"
+
+  - id: "T3-M6"
+    title: "Q&A and Action Planning"
+    duration_minutes: 60
+    type: "discussion"
+    objectives:
+      - "Address organisation-specific questions"
+      - "Create a concrete 90-day action plan"
+      - "Identify next steps and resources"
+    deliverables:
+      - "90-day action plan document"
+      - "Prioritised risk register"
+      - "Recommended training plan for team"

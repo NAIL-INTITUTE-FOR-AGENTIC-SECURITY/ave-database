@@ -1,0 +1,152 @@
+# NAIL Institute — Sponsorship Tiers
+# For event sponsorship and general sponsorship programmes
+
+event_sponsorship:
+  description: >
+    Sponsorship opportunities for NAIL Institute events,
+    workshops, and community programmes.
+
+  tiers:
+    - name: Platinum Sponsor
+      price: 25000
+      currency: USD
+      period: per_event
+      benefits:
+        - Logo on all event materials (top placement)
+        - 10-minute speaking slot at opening
+        - Dedicated booth space (premium location)
+        - Logo on event livestream overlay
+        - 5 complimentary registrations
+        - Post-event report with lead data
+        - Social media promotion (5 posts)
+        - Logo on event recording (permanent)
+        - First right of refusal for next event
+      limit: 1
+
+    - name: Gold Sponsor
+      price: 15000
+      currency: USD
+      period: per_event
+      benefits:
+        - Logo on all event materials
+        - 5-minute speaking slot
+        - Shared booth space
+        - Logo on event livestream
+        - 3 complimentary registrations
+        - Social media promotion (3 posts)
+        - Logo on event recording
+      limit: 3
+
+    - name: Silver Sponsor
+      price: 7500
+      currency: USD
+      period: per_event
+      benefits:
+        - Logo on event website and programme
+        - 2 complimentary registrations
+        - Social media promotion (2 posts)
+        - Branded swag in attendee bag
+      limit: 5
+
+    - name: Community Sponsor
+      price: 2500
+      currency: USD
+      period: per_event
+      benefits:
+        - Logo on event website
+        - 1 complimentary registration
+        - Social media mention (1 post)
+      limit: 10
+
+annual_sponsorship:
+  description: >
+    Year-round sponsorship of the NAIL Institute's
+    research, community, and educational programmes.
+
+  tiers:
+    - name: Principal Sponsor
+      price: 100000
+      currency: USD
+      period: annual
+      benefits:
+        - Logo on nailinstitute.org homepage
+        - Logo on all AVE database pages
+        - Quarterly strategy call with leadership
+        - Early access to all research publications
+        - 5 Enterprise API licenses included
+        - Co-branding on annual report
+        - Speaking slot at all NAIL events
+        - Custom vulnerability research project (1)
+        - Press release announcing partnership
+      limit: 2
+
+    - name: Research Sponsor
+      price: 50000
+      currency: USD
+      period: annual
+      benefits:
+        - Logo on research publications
+        - Logo on nailinstitute.org sponsors page
+        - Bi-annual strategy call with leadership
+        - Early access to research (1 week)
+        - 2 Enterprise API licenses included
+        - Named acknowledgement in AVE entries
+        - Input on research priorities
+      limit: 5
+
+    - name: Education Sponsor
+      price: 25000
+      currency: USD
+      period: annual
+      benefits:
+        - Logo on training materials
+        - Logo on nailinstitute.org sponsors page
+        - 5 training scholarships to award
+        - 1 Professional API license included
+        - Quarterly newsletter feature
+      limit: 10
+
+    - name: Community Sponsor
+      price: 10000
+      currency: USD
+      period: annual
+      benefits:
+        - Logo on nailinstitute.org sponsors page
+        - Annual report acknowledgement
+        - 1 Professional API license included
+        - Social media mention (quarterly)
+      limit: 20
+
+in_kind_sponsorship:
+  description: >
+    Non-monetary contributions that support NAIL Institute
+    operations and research.
+
+  categories:
+    - type: Cloud Computing
+      description: "GPU compute, hosting, or cloud credits"
+      minimum_value: 5000
+      benefits: "Community Sponsor tier benefits"
+
+    - type: Conference Support
+      description: "Booth space, travel sponsorship, event hosting"
+      minimum_value: 3000
+      benefits: "Per-event Silver Sponsor benefits"
+
+    - type: Software Licenses
+      description: "Development tools, SaaS subscriptions"
+      minimum_value: 2000
+      benefits: "Website acknowledgement"
+
+    - type: Expert Time
+      description: "Advisory hours, code review, mentoring"
+      minimum_value: 1000
+      benefits: "Contributor acknowledgement"
+
+policies:
+  - Sponsorship does not influence research findings or AVE entries
+  - Sponsor logos are clearly labelled as "Sponsored by"
+  - NAIL Institute retains editorial independence at all times
+  - Sponsors may not review or approve content before publication
+  - Sponsorship agreements reviewed annually by the Board
+  - Conflicts of interest disclosed publicly

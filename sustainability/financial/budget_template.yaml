@@ -1,0 +1,135 @@
+# NAIL Institute — Annual Budget Template
+# Copy and customise for each fiscal year
+
+budget:
+  fiscal_year: "YYYY-MM-DD to YYYY-MM-DD"
+  currency: USD
+  prepared_by: "[Name]"
+  approved_by: "[Board Chair]"
+  approved_date: null
+
+  revenue:
+    api_subscriptions:
+      community: { forecast: 0, actual: null }
+      professional: { forecast: 0, actual: null }
+      enterprise: { forecast: 0, actual: null }
+      custom: { forecast: 0, actual: null }
+      notes: ""
+
+    certification_training:
+      nca_associate: { forecast: 0, actual: null }
+      ncap_assessor: { forecast: 0, actual: null }
+      ncmp_master: { forecast: 0, actual: null }
+      enterprise_workshops: { forecast: 0, actual: null }
+      notes: ""
+
+    partnerships:
+      founding: { forecast: 0, actual: null }
+      strategic: { forecast: 0, actual: null }
+      contributor: { forecast: 0, actual: null }
+      notes: ""
+
+    grants:
+      grant_1: { name: "", funder: "", forecast: 0, actual: null }
+      grant_2: { name: "", funder: "", forecast: 0, actual: null }
+      grant_3: { name: "", funder: "", forecast: 0, actual: null }
+      notes: ""
+
+    consulting:
+      assessments: { forecast: 0, actual: null }
+      retainers: { forecast: 0, actual: null }
+      advisory: { forecast: 0, actual: null }
+      notes: ""
+
+    other:
+      donations: { forecast: 0, actual: null }
+      sponsorships: { forecast: 0, actual: null }
+      notes: ""
+
+  expenses:
+    personnel:
+      salaries: { forecast: 0, actual: null }
+      benefits: { forecast: 0, actual: null }
+      contractors: { forecast: 0, actual: null }
+      recruitment: { forecast: 0, actual: null }
+      training: { forecast: 0, actual: null }
+      headcount: 0
+      notes: ""
+
+    infrastructure:
+      cloud_hosting: { forecast: 0, actual: null }
+      api_platform: { forecast: 0, actual: null }
+      monitoring: { forecast: 0, actual: null }
+      domains_dns: { forecast: 0, actual: null }
+      email_comms: { forecast: 0, actual: null }
+      notes: ""
+
+    research:
+      compute_gpu: { forecast: 0, actual: null }
+      experiment_costs: { forecast: 0, actual: null }
+      publications: { forecast: 0, actual: null }
+      datasets: { forecast: 0, actual: null }
+      notes: ""
+
+    travel_conferences:
+      event_1: { name: "", forecast: 0, actual: null }
+      event_2: { name: "", forecast: 0, actual: null }
+      event_3: { name: "", forecast: 0, actual: null }
+      event_4: { name: "", forecast: 0, actual: null }
+      general_travel: { forecast: 0, actual: null }
+      notes: ""
+
+    legal_compliance:
+      legal_counsel: { forecast: 0, actual: null }
+      insurance: { forecast: 0, actual: null }
+      accounting_audit: { forecast: 0, actual: null }
+      regulatory: { forecast: 0, actual: null }
+      notes: ""
+
+    marketing_community:
+      website: { forecast: 0, actual: null }
+      content_creation: { forecast: 0, actual: null }
+      swag_merchandise: { forecast: 0, actual: null }
+      community_tools: { forecast: 0, actual: null }
+      advertising: { forecast: 0, actual: null }
+      notes: ""
+
+    office_admin:
+      coworking_space: { forecast: 0, actual: null }
+      supplies: { forecast: 0, actual: null }
+      software_licenses: { forecast: 0, actual: null }
+      notes: ""
+
+    contingency:
+      rate: 0.10
+      amount: { forecast: 0, actual: null }
+      notes: "10% of total operating expenses"
+
+  summary:
+    total_revenue_forecast: 0
+    total_revenue_actual: null
+    total_expenses_forecast: 0
+    total_expenses_actual: null
+    net_forecast: 0
+    net_actual: null
+    reserve_balance: 0
+
+  quarterly_review:
+    q1: { date: null, status: "pending", variance_pct: null }
+    q2: { date: null, status: "pending", variance_pct: null }
+    q3: { date: null, status: "pending", variance_pct: null }
+    q4: { date: null, status: "pending", variance_pct: null }
+
+  approval:
+    - role: "Executive Director"
+      name: ""
+      date: null
+      signature: ""
+    - role: "Board Treasurer"
+      name: ""
+      date: null
+      signature: ""
+    - role: "Board Chair"
+      name: ""
+      date: null
+      signature: ""

@@ -1,0 +1,147 @@
+# Track 1: AVE Foundations — Curriculum Plan
+# NAIL Institute Training Programme
+# Duration: 1 day (7 hours instruction + 1 hour exam)
+
+track:
+  id: "track-1"
+  name: "AVE Foundations"
+  code: "NAIL-T1"
+  version: "1.0.0"
+  duration_days: 1
+  total_hours: 8
+  audience:
+    - "Security analysts"
+    - "AI/ML engineers"
+    - "Product managers"
+    - "DevOps/DevSecOps engineers"
+  prerequisites:
+    - "Basic understanding of AI/ML concepts"
+    - "Familiarity with cybersecurity fundamentals"
+  certification: "NAIL Associate (NA)"
+  max_class_size: 30
+  delivery_modes: ["in-person", "virtual", "self-paced"]
+
+modules:
+  - id: "T1-M1"
+    title: "Introduction to Agentic AI Vulnerabilities"
+    duration_minutes: 90
+    type: "lecture"
+    objectives:
+      - "Define agentic AI and distinguish from traditional AI"
+      - "Explain why agent-specific vulnerabilities exist"
+      - "Describe the AVE mission and database"
+      - "Identify real-world incidents involving agent vulnerabilities"
+    topics:
+      - "What makes AI 'agentic'? (autonomy, tool use, memory, planning)"
+      - "The agent attack surface vs. traditional ML"
+      - "Case studies: prompt injection in production, tool misuse incidents"
+      - "Introduction to the AVE database and community"
+    materials:
+      - "Slides: 40 slides"
+      - "Handout: Agent Architecture Diagram"
+      - "Video: 3 incident case study clips"
+
+  - id: "T1-M2"
+    title: "The AVE Taxonomy — 14 Categories Deep Dive"
+    duration_minutes: 90
+    type: "lecture"
+    objectives:
+      - "Name and describe all 14 AVE vulnerability categories"
+      - "Classify vulnerabilities into correct categories"
+      - "Explain severity levels and how they're assigned"
+      - "Identify which categories apply to different agent architectures"
+    topics:
+      - "Prompt injection (direct & indirect)"
+      - "Goal drift and objective hijacking"
+      - "Tool misuse and capability abuse"
+      - "Identity spoofing and impersonation"
+      - "Memory poisoning and context manipulation"
+      - "Privilege escalation in agent systems"
+      - "Resource abuse and denial of service"
+      - "Output manipulation and data exfiltration"
+      - "Coordination failures in multi-agent systems"
+      - "Supply chain attacks"
+      - "Social engineering through agents"
+      - "Model extraction"
+    materials:
+      - "Slides: 60 slides"
+      - "Handout: AVE Category Quick Reference Card"
+      - "Exercise: Classify 10 scenarios into categories"
+
+  - id: "T1-M3"
+    title: "AVSS Scoring System"
+    duration_minutes: 60
+    type: "lecture"
+    objectives:
+      - "Explain the AVSS scoring methodology"
+      - "Calculate AVSS scores for sample vulnerabilities"
+      - "Compare AVSS with CVSS and understand differences"
+      - "Use AVSS scores in risk prioritisation"
+    topics:
+      - "AVSS components: exploitability, impact, defence maturity"
+      - "Scoring walkthrough with examples"
+      - "AVSS vs. CVSS: why agents need their own scoring"
+      - "Using scores for risk-based prioritisation"
+    materials:
+      - "Slides: 25 slides"
+      - "Calculator: AVSS scoring worksheet"
+      - "Exercise: Score 5 vulnerabilities"
+
+  - id: "T1-M4"
+    title: "Using the AVE Database & API"
+    duration_minutes: 60
+    type: "lecture_demo"
+    objectives:
+      - "Navigate the AVE database web interface"
+      - "Use the CLI toolkit for searches and analysis"
+      - "Integrate the API into workflows"
+      - "Set up feeds and notifications"
+    topics:
+      - "Web interface tour"
+      - "CLI: nail-ave search, show, stats, export"
+      - "API basics: authentication, endpoints, filtering"
+      - "RSS/Atom feeds and webhook setup"
+    materials:
+      - "Slides: 20 slides"
+      - "Demo: Live API walkthrough"
+      - "Handout: API Quick Reference"
+
+  - id: "T1-M5"
+    title: "Lab: Finding Vulnerabilities in Sample Agents"
+    duration_minutes: 60
+    type: "lab"
+    objectives:
+      - "Identify vulnerabilities in a provided agent system"
+      - "Classify findings using AVE categories"
+      - "Score findings using AVSS"
+      - "Write a basic vulnerability report"
+    setup:
+      - "Pre-configured lab environment with 3 sample agents"
+      - "Agent 1: Customer service chatbot (prompt injection)"
+      - "Agent 2: Code assistant (tool misuse)"
+      - "Agent 3: Research agent (memory poisoning)"
+    deliverables:
+      - "Identified vulnerabilities (minimum 3)"
+      - "Category classification for each"
+      - "AVSS score for each"
+    materials:
+      - "Lab guide: Step-by-step instructions"
+      - "Lab environment: Docker-based sandbox"
+      - "Report template"
+
+  - id: "T1-EXAM"
+    title: "NAIL Associate Certification Exam"
+    duration_minutes: 60
+    type: "exam"
+    format: "multiple-choice + short-answer"
+    questions: 50
+    passing_score: 70
+    domains:
+      - name: "AVE Taxonomy"
+        weight: 30
+      - name: "AVSS Scoring"
+        weight: 20
+      - name: "Vulnerability Identification"
+        weight: 30
+      - name: "Tools & API"
+        weight: 20

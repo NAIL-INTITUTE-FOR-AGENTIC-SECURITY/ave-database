@@ -1,0 +1,11 @@
+# Conference Reports
+
+This directory stores post-event reports from conference participation.
+
+## Naming Convention
+
+```
+YYYY-MM_event-name.md
+```
+
+Example: `2025-08_defcon33.md`

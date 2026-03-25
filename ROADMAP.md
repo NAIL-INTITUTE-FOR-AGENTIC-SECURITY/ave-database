@@ -103,15 +103,27 @@
 
 ---
 
+## ✅ Completed (continued)
+
+### Phase 9: Scale & Sustainability (Complete)
+
+- [x] **International Partnerships** — 4-tier partnership framework (Observer→Founding) with MOU, data sharing, joint research, NDA templates, evaluation criteria, partner registry (partnerships/)
+- [x] **Commercial API Platform** — OpenAPI 3.1.0 v2 spec, 4-tier pricing ($0–custom), Python + TypeScript SDKs, webhook system with 5 event schemas, rate limiting, bulk export, auth docs, migration guide (commercial-api/)
+- [x] **Training & Workshops** — 4-track curriculum (Foundations→Trainer), 3 certification levels, exam blueprints, grading rubrics, instructor guides, lab setup, slide templates, pricing models (training/)
+- [x] **Conference Presence Kit** — 4 talk abstracts (DEF CON, Black Hat, NeurIPS, keynote), live demo + booth demo scripts, speaker kit, 4 one-pagers, brand guidelines, media/press kit, event checklists (conference/)
+- [x] **Sustainability Model** — 3-year financial projections ($595K→$2.2M), 5 revenue streams, budget templates, reporting schedules, grant strategy with 15+ target funders, proposal templates, pitch deck, sponsorship tiers (sustainability/)
+
+---
+
 ## 📋 Planned
 
-### Phase 9: Scale & Sustainability
+### Phase 10: Global Ecosystem & Maturity
 
-- [ ] **International Partnerships** — Formal partnerships with NIST, ENISA, BSI, and AI safety institutes
-- [ ] **Commercial API** — Tiered API access with enterprise features (SLA, webhooks, bulk export)
-- [ ] **Training & Workshops** — Instructor-led training for NAIL Certified assessors
-- [ ] **Conference Presence** — Presentations at DEF CON AI Village, Black Hat, NeurIPS
-- [ ] **Sustainability Model** — Long-term funding via certification fees, enterprise partnerships, grants
+- [ ] **AVE 2.0 Schema** — Next-generation card schema with enhanced fields for multi-agent scenarios, temporal patterns, and composite vulnerabilities
+- [ ] **Regional Chapters** — Establish NAIL chapters in North America, Europe, and Asia-Pacific with local governance
+- [ ] **Academic Programme** — University course modules, PhD research partnerships, and student ambassador programme
+- [ ] **Vendor Integration Programme** — Direct integrations with SIEM, SOAR, and GRC platforms (Splunk, Sentinel, ServiceNow)
+- [ ] **Annual AVE Report** — First "State of Agentic AI Security" annual report with industry survey data
 
 ---
 
@@ -146,8 +158,14 @@ Have an idea? Open a [Discussion](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-
 | RFC Specifications | 1 | 5+ |
 | Insurance Industry Sectors | 9 | 15+ |
 | Weekly Digest Subscribers | 0 | 500+ |
+| Partnership Tiers | 4 | 4 |
+| API Pricing Tiers | 4 | 4 |
+| Training Tracks | 4 | 6+ |
+| Conference Talks | 4 | 8+ |
+| Revenue Streams | 5 | 5+ |
+| Grant Target Funders | 15 | 20+ |
 
 ---
 
-*Updated: March 2026*
+*Updated: June 2025*
 *NAIL Institute — Neuravant AI Limited*

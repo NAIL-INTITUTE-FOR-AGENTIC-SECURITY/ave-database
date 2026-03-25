@@ -1,0 +1,61 @@
+# NAIL Institute — Grant Application Tracker
+# Track all grant applications, their status, and outcomes
+
+grants:
+  # Template entry:
+  # - id: GRANT-YYYY-NNN
+  #   title: "Project title"
+  #   funder: "Funding body"
+  #   programme: "Specific programme/call"
+  #   amount_requested: 0
+  #   amount_awarded: null
+  #   currency: USD
+  #   duration_months: 12
+  #   pi: "Principal Investigator"
+  #   co_investigators: []
+  #   submitted_date: null
+  #   decision_date: null
+  #   start_date: null
+  #   end_date: null
+  #   status: draft          # draft | submitted | under_review | awarded | rejected | withdrawn
+  #   reporting_schedule: quarterly
+  #   notes: ""
+
+  active: []
+  # Example:
+  # - id: GRANT-2025-001
+  #   title: "Systematic Discovery of Agentic AI Vulnerabilities"
+  #   funder: "UKRI / EPSRC"
+  #   programme: "Trustworthy Autonomous Systems"
+  #   amount_requested: 250000
+  #   amount_awarded: null
+  #   currency: GBP
+  #   duration_months: 24
+  #   pi: "[Name]"
+  #   co_investigators:
+  #     - name: "[Name]"
+  #       affiliation: "[University]"
+  #   submitted_date: null
+  #   decision_date: null
+  #   start_date: null
+  #   end_date: null
+  #   status: draft
+  #   reporting_schedule: semi-annual
+  #   notes: "Concept note shared with programme officer"
+
+  pipeline: []
+  # Grants being considered / in preparation
+
+  completed: []
+  # Past grants (awarded or rejected) for records
+
+# Summary metrics (update quarterly)
+metrics:
+  total_submitted: 0
+  total_awarded: 0
+  total_rejected: 0
+  total_withdrawn: 0
+  success_rate: null
+  total_funding_secured: 0
+  total_funding_pipeline: 0
+  last_updated: null

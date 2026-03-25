@@ -1,0 +1,227 @@
+# Track 2: NAIL Assessor Certification — Curriculum Plan
+# NAIL Institute Training Programme
+# Duration: 3 days (21 hours instruction + 2 hours exam)
+
+track:
+  id: "track-2"
+  name: "NAIL Assessor Certification"
+  code: "NAIL-T2"
+  version: "1.0.0"
+  duration_days: 3
+  total_hours: 23
+  audience:
+    - "Security assessors and auditors"
+    - "Red team operators"
+    - "AI security researchers"
+    - "Compliance auditors"
+  prerequisites:
+    - "NAIL Associate certification or equivalent experience"
+    - "2+ years security assessment experience"
+    - "Hands-on AI/ML experience recommended"
+  certification: "NAIL Certified Assessor (NCA)"
+  max_class_size: 15
+  delivery_modes: ["in-person", "virtual"]
+
+modules:
+  # Day 1
+  - id: "T2-M1"
+    day: 1
+    title: "AVE Assessment Methodology"
+    duration_minutes: 90
+    type: "lecture"
+    objectives:
+      - "Apply the NAIL assessment framework to agent systems"
+      - "Plan and scope an AVE assessment"
+      - "Define rules of engagement for agent testing"
+      - "Map assessment to certification tiers"
+    topics:
+      - "Assessment lifecycle: scoping → discovery → testing → reporting"
+      - "Rules of engagement and ethical boundaries"
+      - "Scoping: what's in/out, agent inventory, tool inventory"
+      - "Mapping to Bronze/Silver/Gold/Platinum requirements"
+
+  - id: "T2-M2"
+    day: 1
+    title: "Prompt Injection & Goal Drift — Attack & Defence"
+    duration_minutes: 90
+    type: "lecture_demo"
+    objectives:
+      - "Execute and detect prompt injection attacks"
+      - "Identify goal drift patterns in autonomous agents"
+      - "Evaluate defence mechanisms against these attacks"
+      - "Score systems using AVE criteria"
+    topics:
+      - "Direct prompt injection techniques"
+      - "Indirect prompt injection via data sources"
+      - "Goal drift detection and monitoring"
+      - "Defence evaluation: input filtering, guardrails, monitoring"
+
+  - id: "T2-M3"
+    day: 1
+    title: "Tool Misuse & Privilege Escalation — Attack & Defence"
+    duration_minutes: 90
+    type: "lecture_demo"
+    objectives:
+      - "Identify tool misuse vulnerabilities in agent systems"
+      - "Test privilege escalation paths"
+      - "Evaluate access control mechanisms"
+      - "Recommend effective controls"
+    topics:
+      - "Tool permission models and common weaknesses"
+      - "Escalation via tool chaining"
+      - "Sandbox escape techniques"
+      - "Least privilege and defence-in-depth for agents"
+
+  - id: "T2-M4"
+    day: 1
+    title: "Lab: Red Teaming a Multi-Agent System"
+    duration_minutes: 90
+    type: "lab"
+    objectives:
+      - "Conduct a structured red team assessment"
+      - "Document attack chains across agent boundaries"
+      - "Assess defence effectiveness"
+    setup:
+      - "Multi-agent orchestration system with 4 agents"
+      - "Each agent has different tools and permissions"
+      - "System includes deliberate vulnerabilities"
+
+  # Day 2
+  - id: "T2-M5"
+    day: 2
+    title: "Memory Poisoning & Data Exfiltration"
+    duration_minutes: 90
+    type: "lecture_demo"
+    objectives:
+      - "Test agent memory systems for poisoning vulnerabilities"
+      - "Identify data exfiltration channels"
+      - "Evaluate memory integrity controls"
+      - "Assess data loss prevention measures"
+    topics:
+      - "Conversation memory manipulation"
+      - "RAG poisoning and retrieval attacks"
+      - "Side-channel data exfiltration"
+      - "Memory isolation and integrity verification"
+
+  - id: "T2-M6"
+    day: 2
+    title: "Supply Chain & Coordination Failures"
+    duration_minutes: 90
+    type: "lecture_demo"
+    objectives:
+      - "Assess agent supply chain security"
+      - "Identify coordination vulnerabilities in multi-agent systems"
+      - "Evaluate trust models between agents"
+      - "Test consensus and voting mechanisms"
+    topics:
+      - "Model supply chain risks"
+      - "Plugin and tool supply chain"
+      - "Multi-agent coordination protocols"
+      - "Byzantine fault tolerance for agents"
+
+  - id: "T2-M7"
+    day: 2
+    title: "Regulatory Compliance Mapping"
+    duration_minutes: 90
+    type: "lecture"
+    objectives:
+      - "Map AVE findings to regulatory frameworks"
+      - "Generate compliance reports"
+      - "Identify regulatory gaps"
+      - "Advise on compliance remediation"
+    topics:
+      - "EU AI Act requirements for high-risk AI"
+      - "NIST AI RMF alignment"
+      - "ISO/IEC 42001 certification support"
+      - "Using the NAIL compliance mapper tool"
+
+  - id: "T2-M8"
+    day: 2
+    title: "Lab: Full Assessment of a Production-like Agent"
+    duration_minutes: 90
+    type: "lab"
+    objectives:
+      - "Conduct a complete AVE assessment"
+      - "Produce a professional assessment report"
+      - "Calculate certification tier eligibility"
+    setup:
+      - "Realistic production agent system"
+      - "Customer-facing AI assistant with tools"
+      - "Assessment must cover all 14 categories"
+
+  # Day 3
+  - id: "T2-M9"
+    day: 3
+    title: "Writing AVE Cards & Responsible Disclosure"
+    duration_minutes: 90
+    type: "lecture_workshop"
+    objectives:
+      - "Write publication-quality AVE cards"
+      - "Follow responsible disclosure procedures"
+      - "Navigate the AVE submission process"
+      - "Handle vendor coordination"
+    topics:
+      - "AVE-RFC-0001 format specification"
+      - "Evidence standards and PoC requirements"
+      - "Responsible disclosure timeline"
+      - "Working with the AVE Advisory Board"
+
+  - id: "T2-M10"
+    day: 3
+    title: "Insurance Risk Scoring & Reporting"
+    duration_minutes: 90
+    type: "lecture_demo"
+    objectives:
+      - "Use the NAIL risk scoring model"
+      - "Generate insurance-grade risk reports"
+      - "Communicate findings to business stakeholders"
+      - "Support underwriting processes"
+    topics:
+      - "Risk scoring methodology and components"
+      - "Industry-specific risk multipliers"
+      - "Executive summary writing"
+      - "Working with insurance underwriters"
+
+  - id: "T2-M11"
+    day: 3
+    title: "Capstone Lab: End-to-End Assessment"
+    duration_minutes: 120
+    type: "lab"
+    objectives:
+      - "Complete a full assessment independently"
+      - "Produce certification-quality deliverables"
+      - "Present findings to simulated client"
+    setup:
+      - "Complex agent system with multiple integration points"
+      - "Must produce: assessment report, AVE cards, risk score, certification recommendation"
+
+  - id: "T2-EXAM"
+    day: 3
+    title: "NCA Certification Exam"
+    duration_minutes: 120
+    type: "exam"
+    format: "practical + written"
+    sections:
+      - name: "Written Component"
+        duration_minutes: 60
+        questions: 40
+        format: "multiple-choice + case study analysis"
+        weight: 40
+      - name: "Practical Component"
+        duration_minutes: 60
+        format: "Hands-on assessment of a live system"
+        weight: 60
+    passing_score: 75
+    domains:
+      - name: "Assessment Methodology"
+        weight: 20
+      - name: "Vulnerability Discovery"
+        weight: 25
+      - name: "Defence Evaluation"
+        weight: 20
+      - name: "Reporting & Communication"
+        weight: 15
+      - name: "Compliance & Governance"
+        weight: 10
+      - name: "Tools & Automation"
+        weight: 10
