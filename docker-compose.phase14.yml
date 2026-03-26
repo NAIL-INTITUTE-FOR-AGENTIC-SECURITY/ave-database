@@ -1,0 +1,67 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────
+#  Phase 14 — Sentient Infrastructure & Ecosystem Intelligence
+#  Ports 8800-8804
+# ─────────────────────────────────────────────────────────────────────
+
+services:
+  # 14-1  Self-Evolving Defence Catalogue
+  defence-catalogue:
+    build:
+      context: ./defence-catalogue
+      dockerfile: ../Dockerfile
+    ports:
+      - "8800:8800"
+    environment:
+      - SERVICE_NAME=defence-catalogue
+      - PORT=8800
+    restart: unless-stopped
+
+  # 14-2  Cross-Organisation Threat Federation
+  org-federation:
+    build:
+      context: ./org-federation
+      dockerfile: ../Dockerfile
+    ports:
+      - "8801:8801"
+    environment:
+      - SERVICE_NAME=org-federation
+      - PORT=8801
+    restart: unless-stopped
+
+  # 14-3  AVE Digital Twin
+  digital-twin:
+    build:
+      context: ./digital-twin
+      dockerfile: ../Dockerfile
+    ports:
+      - "8802:8802"
+    environment:
+      - SERVICE_NAME=digital-twin
+      - PORT=8802
+    restart: unless-stopped
+
+  # 14-4  Cognitive Threat Modelling
+  cognitive-threat:
+    build:
+      context: ./cognitive-threat
+      dockerfile: ../Dockerfile
+    ports:
+      - "8803:8803"
+    environment:
+      - SERVICE_NAME=cognitive-threat
+      - PORT=8803
+    restart: unless-stopped
+
+  # 14-5  Governance-as-Code Pipeline
+  governance-pipeline:
+    build:
+      context: ./governance-pipeline
+      dockerfile: ../Dockerfile
+    ports:
+      - "8804:8804"
+    environment:
+      - SERVICE_NAME=governance-pipeline
+      - PORT=8804
+    restart: unless-stopped
