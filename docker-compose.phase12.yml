@@ -1,0 +1,96 @@
+version: "3.9"
+
+# =============================================================================
+# Phase 12: Adaptive Intelligence & Ecosystem Convergence
+# =============================================================================
+
+services:
+  # -------------------------------------------------------------------------
+  # 1. Predictive Vulnerability Engine
+  # -------------------------------------------------------------------------
+  predictive-engine:
+    build:
+      context: ./predictive-engine
+      dockerfile: ../Dockerfile.fastapi
+    ports:
+      - "8600:8600"
+    environment:
+      - SERVICE_NAME=predictive-engine
+      - PORT=8600
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8600/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # -------------------------------------------------------------------------
+  # 2. AVE Compliance Dashboard
+  # -------------------------------------------------------------------------
+  compliance-dashboard:
+    build:
+      context: ./compliance-dashboard
+      dockerfile: ../Dockerfile.fastapi
+    ports:
+      - "8601:8601"
+    environment:
+      - SERVICE_NAME=compliance-dashboard
+      - PORT=8601
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8601/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # -------------------------------------------------------------------------
+  # 3. Federated Threat Intelligence Network
+  # -------------------------------------------------------------------------
+  federated-intel:
+    build:
+      context: ./federated-intel
+      dockerfile: ../Dockerfile.fastapi
+    ports:
+      - "8602:8602"
+    environment:
+      - SERVICE_NAME=federated-intel
+      - PORT=8602
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8602/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # -------------------------------------------------------------------------
+  # 4. AVE Simulation Sandbox
+  # -------------------------------------------------------------------------
+  simulation-sandbox:
+    build:
+      context: ./simulation-sandbox
+      dockerfile: ../Dockerfile.fastapi
+    ports:
+      - "8603:8603"
+    environment:
+      - SERVICE_NAME=simulation-sandbox
+      - PORT=8603
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8603/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # -------------------------------------------------------------------------
+  # 5. Autonomous Defence Agent
+  # -------------------------------------------------------------------------
+  autonomous-defence-agent:
+    build:
+      context: ./autonomous-defence-agent
+      dockerfile: ../Dockerfile.fastapi
+    ports:
+      - "8604:8604"
+    environment:
+      - SERVICE_NAME=autonomous-defence-agent
+      - PORT=8604
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8604/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
