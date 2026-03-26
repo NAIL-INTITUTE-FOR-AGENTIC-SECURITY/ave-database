@@ -1,0 +1,127 @@
+# AVE v1.0.0 → v2.0.0 Field Compatibility Matrix
+
+compatibility:
+  schema_version: "2.0.0"
+  base_schema: "1.0.0"
+  relationship: "backwards_compatible_extension"
+
+  # v1 fields — all unchanged in v2
+  v1_fields:
+    ave_id: { status: unchanged, required: true }
+    name: { status: unchanged, required: true }
+    aliases: { status: unchanged, required: true }
+    category: { status: extended, required: true, note: "+7 new enum values" }
+    severity: { status: unchanged, required: true }
+    status: { status: extended, required: true, note: "+1 new enum value (superseded)" }
+    summary: { status: unchanged, required: true }
+    mechanism: { status: unchanged, required: true }
+    blast_radius: { status: unchanged, required: true }
+    prerequisite: { status: unchanged, required: true }
+    environment: { status: unchanged, required: true }
+    evidence: { status: unchanged, required: true }
+    defences: { status: unchanged, required: true }
+    date_discovered: { status: unchanged, required: true }
+    date_published: { status: unchanged, required: true }
+    cwe_mapping: { status: unchanged, required: true }
+    mitre_mapping: { status: unchanged, required: true }
+    references: { status: unchanged, required: false }
+    related_aves: { status: unchanged, required: false }
+    avss_score: { status: extended, required: false, note: "+4 modifier sub-fields" }
+    poc: { status: unchanged, required: false }
+    timeline: { status: unchanged, required: false }
+    _meta: { status: extended, required: false, note: "+3 optional sub-fields" }
+    contributor: { status: unchanged, required: false }
+
+  # v2 new fields — all optional
+  v2_fields:
+    multi_agent:
+      status: new
+      required: false
+      type: object
+      sub_fields_required: [topology, agent_count_min, roles_affected, propagation_pattern, isolation_bypass]
+      when_to_populate: "When vulnerability involves 2+ agents"
+      auto_enrichable: true
+      enrich_from: "environment.multi_agent == true"
+
+    temporal:
+      status: new
+      required: false
+      type: object
+      sub_fields_required: [latency_class, persistence, trigger_type]
+      when_to_populate: "When timing affects exploitation"
+      auto_enrichable: false
+
+    composites:
+      status: new
+      required: false
+      type: object
+      sub_fields_required: [chain, relationship]
+      when_to_populate: "When AVEs combine for greater impact"
+      auto_enrichable: false
+
+    attack_graph:
+      status: new
+      required: false
+      type: object
+      sub_fields_required: [kill_chain, entry_points]
+      when_to_populate: "When multi-step exploitation exists"
+      auto_enrichable: false
+
+    provenance:
+      status: new
+      required: false
+      type: object
+      sub_fields_required: [discovery_method, reproducibility, confidence]
+      when_to_populate: "Always recommended for v2 cards"
+      auto_enrichable: true
+      enrich_from: "evidence array analysis"
+
+    affected_components:
+      status: new
+      required: false
+      type: array
+      item_required_fields: [component, vendor]
+      when_to_populate: "When vendor/version info is known"
+      auto_enrichable: true
+      enrich_from: "environment.frameworks"
+
+    counterfactual:
+      status: new
+      required: false
+      type: object
+      sub_fields_required: [boundary_conditions, what_if_mitigated]
+      when_to_populate: "When conditions are well-understood"
+      auto_enrichable: false
+
+    regulatory_impact:
+      status: new
+      required: false
+      type: object
+      sub_fields_required: []
+      when_to_populate: "When regulatory relevance is known"
+      auto_enrichable: true
+      enrich_from: "regulatory/ mapping files"
+
+  # Extended enums
+  category_extensions:
+    - multi_agent_collusion
+    - temporal_exploitation
+    - composite
+    - supply_chain
+    - model_extraction
+    - emergent_behaviour
+    - environmental_manipulation
+
+  status_extensions:
+    - superseded
+
+  avss_score_extensions:
+    - multi_agent_modifier
+    - temporal_modifier
+    - composite_modifier
+    - environmental_modifier
+
+  meta_extensions:
+    - migrated_from
+    - migration_date
+    - v2_fields_populated

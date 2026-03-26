@@ -1,0 +1,554 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nailinstitute.org/schemas/ave-card-v2.0.0.json",
+  "title": "AVE Card v2.0.0",
+  "description": "Agentic Vulnerability Enumeration card schema v2.0.0. Backwards-compatible extension of v1.0.0 with multi-agent, temporal, composite, attack graph, provenance, affected components, counterfactual, and regulatory impact fields.",
+  "type": "object",
+  "required": [
+    "ave_id", "name", "aliases", "category", "severity", "status",
+    "summary", "mechanism", "blast_radius", "prerequisite",
+    "environment", "evidence", "defences",
+    "date_discovered", "date_published",
+    "cwe_mapping", "mitre_mapping"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "ave_id": {
+      "type": "string",
+      "pattern": "^AVE-\\d{4}-\\d{4}$",
+      "description": "Unique identifier in format AVE-YYYY-NNNN"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 200,
+      "description": "Human-readable vulnerability name"
+    },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Alternative names for this vulnerability"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "prompt_injection", "tool_misuse", "memory", "identity",
+        "multi_agent", "resource", "output", "planning",
+        "goal_drift", "social_engineering", "data_exfiltration",
+        "denial_of_service", "monitoring_evasion",
+        "multi_agent_collusion", "temporal_exploitation", "composite",
+        "supply_chain", "model_extraction", "emergent_behaviour",
+        "environmental_manipulation"
+      ],
+      "description": "Primary vulnerability category (13 v1 + 7 v2)"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low", "info"],
+      "description": "Severity level derived from AVSS score"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "published", "draft", "deprecated", "under-review",
+        "proven", "proven_mitigated", "not_proven", "theoretical",
+        "superseded"
+      ],
+      "description": "Lifecycle status of the AVE entry (8 v1 + 1 v2)"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Brief description of the vulnerability"
+    },
+    "mechanism": {
+      "type": "string",
+      "description": "Technical description of how the vulnerability works"
+    },
+    "blast_radius": {
+      "type": "string",
+      "description": "Scope and impact of successful exploitation"
+    },
+    "prerequisite": {
+      "type": "string",
+      "description": "Conditions required for the vulnerability to exist"
+    },
+    "environment": {
+      "type": "object",
+      "required": ["frameworks", "models_tested", "multi_agent", "tools_required", "memory_required"],
+      "properties": {
+        "frameworks": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "models_tested": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "multi_agent": { "type": "boolean" },
+        "tools_required": { "type": "boolean" },
+        "memory_required": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["experiment_id", "key_metric", "key_value", "data_file"],
+        "properties": {
+          "experiment_id": { "type": "string" },
+          "key_metric": { "type": "string" },
+          "key_value": { "type": "string" },
+          "data_file": { "type": "string" },
+          "p_value": { "type": ["number", "null"] },
+          "sample_size": { "type": ["integer", "null"] },
+          "cross_model": { "type": "boolean" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "defences": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string" },
+          {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "layer": { "type": "string" },
+              "effectiveness": { "type": "string" },
+              "rmap_module": { "type": "string" },
+              "nail_monitor_detector": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        ]
+      }
+    },
+    "date_discovered": {
+      "type": "string",
+      "description": "Discovery date (YYYY-MM or YYYY-MM-DD)"
+    },
+    "date_published": {
+      "type": "string",
+      "description": "Publication date (YYYY-MM-DD or empty)"
+    },
+    "cwe_mapping": {
+      "type": "string",
+      "description": "CWE identifier(s) with description"
+    },
+    "mitre_mapping": {
+      "type": "string",
+      "description": "MITRE ATT&CK and/or ATLAS technique identifiers"
+    },
+    "references": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "related_aves": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^AVE-\\d{4}-\\d{4}$"
+      }
+    },
+    "avss_score": {
+      "type": ["object", "null"],
+      "properties": {
+        "overall_score": { "type": "number", "minimum": 0, "maximum": 10 },
+        "severity_label": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low", "info"]
+        },
+        "vector_string": { "type": "string" },
+        "base_score": { "type": ["number", "null"] },
+        "temporal_score": { "type": ["number", "null"] },
+        "agentic_score": { "type": ["number", "null"] },
+        "vector": { "type": ["object", "null"] },
+        "multi_agent_modifier": {
+          "type": "number", "minimum": 0, "maximum": 2,
+          "description": "v2: Score modifier for multi-agent scenarios (1.0 = neutral)"
+        },
+        "temporal_modifier": {
+          "type": "number", "minimum": 0, "maximum": 2,
+          "description": "v2: Score modifier for temporal patterns"
+        },
+        "composite_modifier": {
+          "type": "number", "minimum": 0, "maximum": 2,
+          "description": "v2: Score modifier when part of chain"
+        },
+        "environmental_modifier": {
+          "type": "number", "minimum": 0, "maximum": 2,
+          "description": "v2: Deployment-specific modifier"
+        }
+      },
+      "additionalProperties": true
+    },
+    "poc": { "type": ["object", "string", "null"] },
+    "timeline": { "type": ["array", "object", "null"] },
+    "_meta": {
+      "type": "object",
+      "required": ["schema_version", "generated_at", "generator", "license", "access_tier"],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "enum": ["1.0.0", "2.0.0"],
+          "description": "Schema version — '2.0.0' for v2 cards"
+        },
+        "generated_at": { "type": "string", "format": "date-time" },
+        "generator": { "type": "string" },
+        "license": { "type": "string" },
+        "access_tier": {
+          "type": "string",
+          "enum": ["public", "partner", "enterprise"]
+        },
+        "redacted_fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "full_access": { "type": "string", "format": "uri" },
+        "migrated_from": {
+          "type": "string",
+          "description": "v2: Source schema version if migrated"
+        },
+        "migration_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "v2: When migration occurred"
+        },
+        "v2_fields_populated": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "v2: Which v2 field groups have data"
+        }
+      },
+      "additionalProperties": true
+    },
+    "contributor": {
+      "type": "string",
+      "description": "GitHub username of primary contributor"
+    },
+
+    "multi_agent": {
+      "type": "object",
+      "description": "v2: Multi-agent vulnerability characteristics",
+      "required": ["topology", "agent_count_min", "roles_affected", "propagation_pattern", "isolation_bypass"],
+      "properties": {
+        "topology": {
+          "type": "string",
+          "enum": ["hierarchical", "flat", "swarm", "pipeline", "hub_spoke", "mesh"]
+        },
+        "agent_count_min": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "agent_count_max": {
+          "type": ["integer", "null"],
+          "minimum": 2
+        },
+        "roles_affected": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["orchestrator", "worker", "validator", "tool_agent", "memory_agent", "gateway", "monitor"]
+          },
+          "minItems": 1
+        },
+        "propagation_pattern": {
+          "type": "string",
+          "enum": ["lateral", "vertical", "broadcast", "cascading", "contained"]
+        },
+        "isolation_bypass": { "type": "boolean" },
+        "cross_framework": { "type": "boolean" },
+        "communication_vector": {
+          "type": "string",
+          "enum": ["shared_memory", "message_passing", "tool_output", "environment", "side_channel"]
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "temporal": {
+      "type": "object",
+      "description": "v2: Temporal vulnerability characteristics",
+      "required": ["latency_class", "persistence", "trigger_type"],
+      "properties": {
+        "latency_class": {
+          "type": "string",
+          "enum": ["immediate", "delayed", "sleeper", "progressive"]
+        },
+        "persistence": {
+          "type": "string",
+          "enum": ["ephemeral", "session", "persistent", "permanent"]
+        },
+        "trigger_type": {
+          "type": "string",
+          "enum": ["immediate", "conditional", "time_based", "event_based", "stochastic"]
+        },
+        "trigger_condition": { "type": "string" },
+        "observation_window_hours": { "type": "number", "minimum": 0 },
+        "recurrence": {
+          "type": "string",
+          "enum": ["one_shot", "periodic", "escalating", "adaptive"]
+        },
+        "mean_time_to_manifest": { "type": "number", "minimum": 0 },
+        "detection_lag": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+
+    "composites": {
+      "type": "object",
+      "description": "v2: Composite vulnerability chain",
+      "required": ["chain", "relationship"],
+      "properties": {
+        "chain": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^AVE-\\d{4}-\\d{4}$" },
+          "minItems": 2
+        },
+        "relationship": {
+          "type": "string",
+          "enum": ["prerequisite", "amplifier", "enabler", "co_requisite"]
+        },
+        "combined_severity_delta": {
+          "type": "number",
+          "minimum": -10,
+          "maximum": 10
+        },
+        "chain_probability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "weakest_link": {
+          "type": "string",
+          "pattern": "^AVE-\\d{4}-\\d{4}$"
+        },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "attack_graph": {
+      "type": "object",
+      "description": "v2: Multi-step exploitation path",
+      "required": ["kill_chain", "entry_points"],
+      "properties": {
+        "kill_chain": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "reconnaissance", "weaponisation", "delivery",
+              "initial_access", "execution", "persistence",
+              "privilege_escalation", "lateral_movement",
+              "exfiltration", "impact"
+            ]
+          },
+          "minItems": 1
+        },
+        "entry_points": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "user_input", "tool_response", "memory_read",
+              "api_call", "environment_variable", "model_output",
+              "inter_agent_message"
+            ]
+          },
+          "minItems": 1
+        },
+        "branching_factor": { "type": "integer", "minimum": 1 },
+        "shortest_path_steps": { "type": "integer", "minimum": 1 },
+        "longest_path_steps": { "type": "integer", "minimum": 1 },
+        "requires_human": { "type": "boolean" },
+        "automation_level": {
+          "type": "string",
+          "enum": ["fully_automated", "semi_automated", "manual"]
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "provenance": {
+      "type": "object",
+      "description": "v2: Discovery and validation provenance",
+      "required": ["discovery_method", "reproducibility", "confidence"],
+      "properties": {
+        "discovery_method": {
+          "type": "string",
+          "enum": [
+            "manual_testing", "automated_fuzzing", "red_team",
+            "incident_response", "academic_research",
+            "community_report", "automated_scanning"
+          ]
+        },
+        "reproducibility": {
+          "type": "string",
+          "enum": [
+            "deterministic", "high_probability", "probabilistic",
+            "environment_dependent", "rare"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "independent_confirmations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "first_seen_in_wild": { "type": "boolean" },
+        "discovery_date": { "type": "string" },
+        "reporter_type": {
+          "type": "string",
+          "enum": ["researcher", "vendor", "operator", "automated_system", "anonymous"]
+        },
+        "cvss_equivalent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "affected_components": {
+      "type": "array",
+      "description": "v2: Specific software components affected",
+      "items": {
+        "type": "object",
+        "required": ["component", "vendor"],
+        "properties": {
+          "component": {
+            "type": "string",
+            "enum": [
+              "memory_store", "tool_interface", "model_api",
+              "orchestrator", "planner", "retrieval_engine",
+              "communication_bus", "monitoring", "auth_module",
+              "plugin_system", "sandbox", "output_parser"
+            ]
+          },
+          "vendor": { "type": "string" },
+          "product": { "type": "string" },
+          "version_range": { "type": "string" },
+          "cpe": { "type": ["string", "null"] },
+          "fixed_in": { "type": ["string", "null"] },
+          "workaround_available": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "counterfactual": {
+      "type": "object",
+      "description": "v2: Boundary conditions and what-if analysis",
+      "required": ["boundary_conditions", "what_if_mitigated"],
+      "properties": {
+        "boundary_conditions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "what_if_mitigated": { "type": "string" },
+        "residual_risk": { "type": "string" },
+        "false_positive_rate": {
+          "type": "number", "minimum": 0, "maximum": 1
+        },
+        "false_negative_rate": {
+          "type": "number", "minimum": 0, "maximum": 1
+        },
+        "environmental_factors": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "regulatory_impact": {
+      "type": "object",
+      "description": "v2: Regulatory framework mapping",
+      "properties": {
+        "eu_ai_act": {
+          "type": "object",
+          "properties": {
+            "risk_level": {
+              "type": "string",
+              "enum": ["unacceptable", "high", "limited", "minimal"]
+            },
+            "articles": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "obligations": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        },
+        "nist_ai_rmf": {
+          "type": "object",
+          "properties": {
+            "functions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["GOVERN", "MAP", "MEASURE", "MANAGE"]
+              }
+            },
+            "categories": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "subcategories": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        },
+        "iso_42001": {
+          "type": "object",
+          "properties": {
+            "clauses": { "type": "array", "items": { "type": "string" } },
+            "controls": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": false
+        },
+        "iso_27001": {
+          "type": "object",
+          "properties": {
+            "clauses": { "type": "array", "items": { "type": "string" } },
+            "controls": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": false
+        },
+        "sector_specific": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["regulation", "jurisdiction"],
+            "properties": {
+              "regulation": { "type": "string" },
+              "jurisdiction": { "type": "string" },
+              "requirements": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

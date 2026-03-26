@@ -115,15 +115,27 @@
 
 ---
 
+## ✅ Completed (continued)
+
+### Phase 10: Global Ecosystem & Maturity (Complete)
+
+- [x] **AVE 2.0 Schema** — Next-generation card schema (RFC-0002) with multi-agent topology, temporal patterns, composite vulnerabilities, attack graphs, provenance tracking, AVSS v2 modifiers, migration guide + script, validator tool, compatibility matrix, changelog (schema-v2/)
+- [x] **Regional Chapters** — NAIL chapters for NA, Europe, Asia-Pacific with charter template, governance framework, chapter handbook, lead role description, event toolkit, brand guidelines (chapters/)
+- [x] **Academic Programme** — 14-week course curriculum (AAS-101 through AAS-304), PhD research partnership (3-tier), student ambassador programme, academic advisory board, partnership framework, research topic suggestions (academic/)
+- [x] **Vendor Integration Programme** — Splunk (HEC ingestion + SPL queries + alerts), Microsoft Sentinel (KQL analytics + workbook), ServiceNow (GRC/VR integration + scripted REST), Integration SDK with Python client + data transformers + webhook receiver + CLI (vendor-integrations/)
+- [x] **Annual AVE Report** — "State of Agentic AI Security" report framework with 12 chapters + 2 appendices, executive summary, vulnerability landscape analysis, methodology, automated data generation pipeline (annual-report/)
+
+---
+
 ## 📋 Planned
 
-### Phase 10: Global Ecosystem & Maturity
+### Phase 11: Autonomous Defence & Real-Time Intelligence
 
-- [ ] **AVE 2.0 Schema** — Next-generation card schema with enhanced fields for multi-agent scenarios, temporal patterns, and composite vulnerabilities
-- [ ] **Regional Chapters** — Establish NAIL chapters in North America, Europe, and Asia-Pacific with local governance
-- [ ] **Academic Programme** — University course modules, PhD research partnerships, and student ambassador programme
-- [ ] **Vendor Integration Programme** — Direct integrations with SIEM, SOAR, and GRC platforms (Splunk, Sentinel, ServiceNow)
-- [ ] **Annual AVE Report** — First "State of Agentic AI Security" annual report with industry survey data
+- [ ] **AVE Live Feed** — Real-time streaming API (WebSocket/SSE) for instant vulnerability notifications with filtering and prioritisation
+- [ ] **Autonomous Red Team Agent** — Self-directed AI agent that discovers and catalogues new agentic AI vulnerabilities using the AVE taxonomy
+- [ ] **Defence Orchestration Platform** — Automated deployment and management of guardrails, monitors, and circuit-breakers based on AVE intelligence
+- [ ] **Threat Intelligence Sharing (STIX/TAXII)** — Native TAXII 2.1 server for bidirectional threat intelligence exchange with ISACs and CERTs
+- [ ] **AVE Knowledge Graph** — Graph database (Neo4j) linking AVE cards, MITRE techniques, CWEs, frameworks, defences, and research papers for advanced querying
 
 ---
 
@@ -156,6 +168,9 @@ Have an idea? Open a [Discussion](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-
 | Certification Tiers | 4 | 4 |
 | Regulatory Mappings | 4 | 8+ |
 | RFC Specifications | 1 | 5+ |
+| Regional Chapters | 3 | 6+ |
+| Academic Course Modules | 10 | 20+ |
+| Vendor Integrations | 3 | 8+ |
 | Insurance Industry Sectors | 9 | 15+ |
 | Weekly Digest Subscribers | 0 | 500+ |
 | Partnership Tiers | 4 | 4 |
@@ -167,5 +182,5 @@ Have an idea? Open a [Discussion](https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-
 
 ---
 
-*Updated: June 2025*
+*Updated: July 2025*
 *NAIL Institute — Neuravant AI Limited*
