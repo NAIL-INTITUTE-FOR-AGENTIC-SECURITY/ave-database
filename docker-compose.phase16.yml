@@ -1,0 +1,128 @@
+###############################################################################
+# Phase 16 — Planetary-Scale Resilience & Cognitive Sovereignty
+#
+# Services:
+#   neuro-symbolic            :9000   Neuro-Symbolic Threat Reasoning
+#   sovereign-data-mesh       :9001   Sovereign Data Mesh
+#   incident-commander        :9002   Autonomous Incident Commander
+#   adversarial-evolution     :9003   Adversarial Evolution Engine
+#   global-trust-fabric       :9004   Global Trust Fabric
+#
+# Usage:
+#   docker compose -f docker-compose.phase16.yml up --build
+###############################################################################
+
+x-common: &common
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:${PORT:-8000}/health')"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 15s
+
+services:
+  # -----------------------------------------------------------------------
+  # 1. Neuro-Symbolic Threat Reasoning
+  # -----------------------------------------------------------------------
+  neuro-symbolic:
+    <<: *common
+    build:
+      context: ./neuro-symbolic
+      dockerfile: ../Dockerfile
+    container_name: nail-neuro-symbolic
+    ports:
+      - "9000:9000"
+    environment:
+      - PORT=9000
+      - SERVICE_NAME=neuro-symbolic-threat-reasoning
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # -----------------------------------------------------------------------
+  # 2. Sovereign Data Mesh
+  # -----------------------------------------------------------------------
+  sovereign-data-mesh:
+    <<: *common
+    build:
+      context: ./sovereign-data-mesh
+      dockerfile: ../Dockerfile
+    container_name: nail-sovereign-data-mesh
+    ports:
+      - "9001:9001"
+    environment:
+      - PORT=9001
+      - SERVICE_NAME=sovereign-data-mesh
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9001/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # -----------------------------------------------------------------------
+  # 3. Autonomous Incident Commander
+  # -----------------------------------------------------------------------
+  incident-commander:
+    <<: *common
+    build:
+      context: ./incident-commander
+      dockerfile: ../Dockerfile
+    container_name: nail-incident-commander
+    ports:
+      - "9002:9002"
+    environment:
+      - PORT=9002
+      - SERVICE_NAME=autonomous-incident-commander
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9002/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # -----------------------------------------------------------------------
+  # 4. Adversarial Evolution Engine
+  # -----------------------------------------------------------------------
+  adversarial-evolution:
+    <<: *common
+    build:
+      context: ./adversarial-evolution
+      dockerfile: ../Dockerfile
+    container_name: nail-adversarial-evolution
+    ports:
+      - "9003:9003"
+    environment:
+      - PORT=9003
+      - SERVICE_NAME=adversarial-evolution-engine
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9003/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # -----------------------------------------------------------------------
+  # 5. Global Trust Fabric
+  # -----------------------------------------------------------------------
+  global-trust-fabric:
+    <<: *common
+    build:
+      context: ./global-trust-fabric
+      dockerfile: ../Dockerfile
+    container_name: nail-global-trust-fabric
+    ports:
+      - "9004:9004"
+    environment:
+      - PORT=9004
+      - SERVICE_NAME=global-trust-fabric
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9004/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
