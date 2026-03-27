@@ -33,11 +33,35 @@ jobs:
 
       - name: Check index is up to date
         run: |
-          python -m ave export --format index --output /tmp/index.json ave-database/cards/
+          python3 -c "
+          import json, glob, os
+          cards_dir = 'ave-database/cards'
+          idx = {'total': 0, 'cards': {}, 'categories': set(), 'severities': set()}
+          for f in sorted(glob.glob(os.path.join(cards_dir, 'AVE-*.json'))):
+              with open(f) as fh:
+                  card = json.load(fh)
+              ave_id = card.get('ave_id', card.get('id', os.path.basename(f).replace('.json','')))
+              idx['cards'][ave_id] = {
+                  'name': card.get('name', card.get('title', '')),
+                  'category': card.get('category', ''),
+                  'severity': card.get('severity', ''),
+                  'status': card.get('status', '')
+              }
+              idx['categories'].add(card.get('category', ''))
+              idx['severities'].add(card.get('severity', ''))
+          idx['total'] = len(idx['cards'])
+          idx['categories'] = sorted(idx['categories'])
+          idx['severities'] = sorted(idx['severities'])
+          with open('/tmp/index.json', 'w') as fh:
+              json.dump(idx, fh, indent=2)
+              fh.write('\n')
+          "
           if ! diff -q ave-database/index.json /tmp/index.json > /dev/null 2>&1; then
-            echo "::error::ave-database/index.json is out of date. Run: python -m ave export --format index"
+            echo "::error::ave-database/index.json is out of date. Regenerate it from the cards."
+            diff ave-database/index.json /tmp/index.json || true
             exit 1
           fi
+          echo "✓ index.json is up to date"
 
       - name: Verify JSON/Markdown pairs
         run: |

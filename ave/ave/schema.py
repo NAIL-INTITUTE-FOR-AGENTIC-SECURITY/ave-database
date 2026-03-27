@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 class Category(str, Enum):
     """Attack surface / failure domain."""
+    # ── v1 categories (13) ──────────────────────────────────────────
     MEMORY = "memory"                    # Memory pollution, laundering, poisoning
     CONSENSUS = "consensus"              # Deadlock, paralysis, bystander effect
     INJECTION = "injection"              # Prompt injection, indirect injection
@@ -33,6 +34,14 @@ class Category(str, Enum):
     DELEGATION = "delegation"            # Shadow delegation, privilege escalation
     FABRICATION = "fabrication"           # Hallucination, data fabrication
     EMERGENT = "emergent"                # Novel behaviours not fitting other categories
+    # ── v2 categories (7) ──────────────────────────────────────────
+    MULTI_AGENT_COLLUSION = "multi_agent_collusion"      # Agent collusion, coordinated adversarial behaviour
+    TEMPORAL_EXPLOITATION = "temporal_exploitation"      # Timing windows, race conditions, sequencing
+    COMPOSITE = "composite"              # Multi-stage attacks combining multiple types
+    MODEL_EXTRACTION = "model_extraction" # Model stealing, weight extraction
+    REWARD_HACKING = "reward_hacking"    # Reward signal exploitation, specification gaming
+    ENVIRONMENTAL_MANIPULATION = "environmental_manipulation"  # Manipulating agent environment
+    MODEL_POISONING = "model_poisoning"  # Training data poisoning, backdoors
 
 
 class Severity(str, Enum):

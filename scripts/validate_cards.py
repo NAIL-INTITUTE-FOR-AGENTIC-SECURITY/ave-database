@@ -51,9 +51,14 @@ OPTIONAL_FIELDS = {
 }
 
 VALID_CATEGORIES = {
+    # v1 categories
     "alignment", "consensus", "credential", "delegation", "drift",
     "fabrication", "injection", "memory", "resource", "social",
     "structural", "temporal", "tool",
+    # v2 categories
+    "multi_agent_collusion", "temporal_exploitation", "composite",
+    "model_extraction", "reward_hacking", "environmental_manipulation",
+    "model_poisoning",
 }
 
 VALID_SEVERITIES = {"critical", "high", "medium", "low"}

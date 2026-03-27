@@ -1,5 +1,5 @@
 {
-  "total": 50,
+  "total": 100,
   "cards": {
     "AVE-2025-0001": {
       "name": "Sleeper Payload Injection",
@@ -300,28 +300,333 @@
       "category": "alignment",
       "severity": "medium",
       "status": "proven"
+    },
+    "AVE-2025-0051": {
+      "name": "Silent Majority Override",
+      "category": "multi_agent_collusion",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0052": {
+      "name": "Coordination Protocol Spoofing",
+      "category": "multi_agent_collusion",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0053": {
+      "name": "Emergent Goal Alignment",
+      "category": "multi_agent_collusion",
+      "severity": "critical",
+      "status": "theoretical"
+    },
+    "AVE-2025-0054": {
+      "name": "Task Decomposition Laundering",
+      "category": "multi_agent_collusion",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0055": {
+      "name": "Reputation Poisoning Attack",
+      "category": "multi_agent_collusion",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0056": {
+      "name": "Context Window Exhaustion Attack",
+      "category": "temporal_exploitation",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0057": {
+      "name": "Rate Limit Window Exploitation",
+      "category": "temporal_exploitation",
+      "severity": "medium",
+      "status": "proven"
+    },
+    "AVE-2025-0058": {
+      "name": "Session State Persistence Attack",
+      "category": "temporal_exploitation",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0059": {
+      "name": "Temporal Reasoning Exploitation",
+      "category": "temporal_exploitation",
+      "severity": "medium",
+      "status": "theoretical"
+    },
+    "AVE-2025-0060": {
+      "name": "Gradual Drift Injection",
+      "category": "temporal_exploitation",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0061": {
+      "name": "Injection-to-Exfiltration Chain",
+      "category": "composite",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0062": {
+      "name": "Memory-Assisted Privilege Escalation",
+      "category": "composite",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0063": {
+      "name": "Social Engineering Relay",
+      "category": "composite",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0064": {
+      "name": "Supply Chain to Backdoor Pipeline",
+      "category": "composite",
+      "severity": "critical",
+      "status": "theoretical"
+    },
+    "AVE-2025-0065": {
+      "name": "Cross-Modal Attack Chain",
+      "category": "composite",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0066": {
+      "name": "System Prompt Extraction via Tool Logging",
+      "category": "model_extraction",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0067": {
+      "name": "Behavioural Model Fingerprinting",
+      "category": "model_extraction",
+      "severity": "medium",
+      "status": "proven"
+    },
+    "AVE-2025-0068": {
+      "name": "Training Data Extraction via Memorization",
+      "category": "model_extraction",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0069": {
+      "name": "Embedding Space Probing",
+      "category": "model_extraction",
+      "severity": "medium",
+      "status": "theoretical"
+    },
+    "AVE-2025-0070": {
+      "name": "Metric Gaming via Output Manipulation",
+      "category": "reward_hacking",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0071": {
+      "name": "Evaluator Exploitation",
+      "category": "reward_hacking",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0072": {
+      "name": "Specification Gaming in Multi-Agent Rewards",
+      "category": "reward_hacking",
+      "severity": "high",
+      "status": "theoretical"
+    },
+    "AVE-2025-0073": {
+      "name": "Sycophantic Reward Maximisation",
+      "category": "reward_hacking",
+      "severity": "medium",
+      "status": "proven"
+    },
+    "AVE-2025-0074": {
+      "name": "Knowledge Base Poisoning",
+      "category": "environmental_manipulation",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0075": {
+      "name": "Tool Response Spoofing",
+      "category": "environmental_manipulation",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0076": {
+      "name": "Configuration Drift Attack",
+      "category": "environmental_manipulation",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0077": {
+      "name": "Search Result Manipulation",
+      "category": "environmental_manipulation",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0078": {
+      "name": "Fine-Tuning Backdoor Insertion",
+      "category": "model_poisoning",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0079": {
+      "name": "Adapter Layer Poisoning",
+      "category": "model_poisoning",
+      "severity": "critical",
+      "status": "theoretical"
+    },
+    "AVE-2025-0080": {
+      "name": "Preference Data Manipulation",
+      "category": "model_poisoning",
+      "severity": "high",
+      "status": "theoretical"
+    },
+    "AVE-2025-0081": {
+      "name": "Instruction Hierarchy Inversion",
+      "category": "alignment",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0082": {
+      "name": "Objective Function Poisoning",
+      "category": "alignment",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0083": {
+      "name": "Value Lock-In Failure",
+      "category": "alignment",
+      "severity": "medium",
+      "status": "theoretical"
+    },
+    "AVE-2025-0084": {
+      "name": "Dependency Confusion in Agent Toolchains",
+      "category": "structural",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0085": {
+      "name": "Orchestrator Single Point of Failure",
+      "category": "structural",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0086": {
+      "name": "Schema Version Mismatch Exploitation",
+      "category": "structural",
+      "severity": "medium",
+      "status": "proven"
+    },
+    "AVE-2025-0087": {
+      "name": "Selective Memory Deletion",
+      "category": "memory",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0088": {
+      "name": "Cross-User Memory Leakage",
+      "category": "memory",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0089": {
+      "name": "Memory Replay Attack",
+      "category": "memory",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0090": {
+      "name": "Multimodal Injection via Audio",
+      "category": "injection",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0091": {
+      "name": "Encoding-Chain Injection",
+      "category": "injection",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0092": {
+      "name": "Structured Data Injection",
+      "category": "injection",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0093": {
+      "name": "Authority Spoofing",
+      "category": "social",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0094": {
+      "name": "Emotional Manipulation of Agent",
+      "category": "social",
+      "severity": "medium",
+      "status": "proven"
+    },
+    "AVE-2025-0095": {
+      "name": "Tool Output Injection",
+      "category": "tool",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0096": {
+      "name": "Tool Permission Escalation",
+      "category": "tool",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0097": {
+      "name": "Model Update Behavioural Drift",
+      "category": "drift",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0098": {
+      "name": "Feedback Loop Amplification",
+      "category": "drift",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0099": {
+      "name": "Deliberation Deadlock Injection",
+      "category": "consensus",
+      "severity": "medium",
+      "status": "proven"
+    },
+    "AVE-2025-0100": {
+      "name": "API Key Harvesting via Prompt",
+      "category": "credential",
+      "severity": "critical",
+      "status": "proven"
     }
   },
   "categories": [
     "alignment",
+    "composite",
     "consensus",
     "credential",
     "delegation",
     "drift",
+    "environmental_manipulation",
     "fabrication",
     "injection",
     "memory",
+    "model_extraction",
+    "model_poisoning",
+    "multi_agent_collusion",
     "resource",
+    "reward_hacking",
     "social",
     "structural",
     "temporal",
+    "temporal_exploitation",
     "tool"
   ],
   "severities": [
     "critical",
     "high",
-    "medium",
-    "low",
-    "info"
+    "medium"
   ]
 }
