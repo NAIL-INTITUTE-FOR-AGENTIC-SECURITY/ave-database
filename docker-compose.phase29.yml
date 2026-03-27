@@ -1,0 +1,87 @@
+###############################################################################
+# Phase 29 – Adaptive Intelligence & Self-Improving Systems
+# Services: meta-learning-orchestrator, feedback-loop-analyser,
+#           capability-discovery-agent, performance-regression-detector,
+#           knowledge-distillation-engine
+# Ports:    9920-9924
+###############################################################################
+
+x-common: &common
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8000}/health"]
+    interval: 30s
+    timeout: 5s
+    retries: 3
+
+services:
+
+  meta-learning-orchestrator:
+    <<: *common
+    build: ./meta-learning-orchestrator
+    container_name: meta-learning-orchestrator
+    ports:
+      - "9920:9920"
+    environment:
+      - PORT=9920
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9920/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  feedback-loop-analyser:
+    <<: *common
+    build: ./feedback-loop-analyser
+    container_name: feedback-loop-analyser
+    ports:
+      - "9921:9921"
+    environment:
+      - PORT=9921
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9921/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  capability-discovery-agent:
+    <<: *common
+    build: ./capability-discovery-agent
+    container_name: capability-discovery-agent
+    ports:
+      - "9922:9922"
+    environment:
+      - PORT=9922
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9922/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  performance-regression-detector:
+    <<: *common
+    build: ./performance-regression-detector
+    container_name: performance-regression-detector
+    ports:
+      - "9923:9923"
+    environment:
+      - PORT=9923
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9923/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  knowledge-distillation-engine:
+    <<: *common
+    build: ./knowledge-distillation-engine
+    container_name: knowledge-distillation-engine
+    ports:
+      - "9924:9924"
+    environment:
+      - PORT=9924
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9924/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
