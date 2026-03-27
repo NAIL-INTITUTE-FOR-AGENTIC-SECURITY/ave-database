@@ -1,0 +1,135 @@
+###############################################################################
+# docker-compose.phase17.yml
+# Phase 17 — Meta-Cognitive Architecture & Civilisational Resilience
+#
+# Services (ports 9100–9104):
+#   1. recursive-self-improvement  (9100) — Meta-learning engine
+#   2. temporal-forensics          (9101) — Temporal attack forensics
+#   3. ethical-reasoning           (9102) — Ethical reasoning framework
+#   4. civilisational-risk         (9103) — Civilisational risk dashboard
+#   5. standards-evolution         (9104) — Autonomous standards evolution
+#
+# Usage:
+#   docker compose -f docker-compose.phase17.yml up --build
+###############################################################################
+
+x-common: &common
+  restart: unless-stopped
+  networks:
+    - nail-net
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:${PORT:-8000}/health')"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 15s
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. Recursive Self-Improvement Engine
+  # ---------------------------------------------------------------------------
+  recursive-self-improvement:
+    <<: *common
+    build:
+      context: ./recursive-self-improvement
+      dockerfile: ../Dockerfile
+    container_name: nail-recursive-self-improvement
+    ports:
+      - "9100:9100"
+    environment:
+      - PORT=9100
+      - SERVICE_NAME=recursive-self-improvement-engine
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9100/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ---------------------------------------------------------------------------
+  # 2. Temporal Attack Forensics
+  # ---------------------------------------------------------------------------
+  temporal-forensics:
+    <<: *common
+    build:
+      context: ./temporal-forensics
+      dockerfile: ../Dockerfile
+    container_name: nail-temporal-forensics
+    ports:
+      - "9101:9101"
+    environment:
+      - PORT=9101
+      - SERVICE_NAME=temporal-attack-forensics
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9101/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ---------------------------------------------------------------------------
+  # 3. Ethical Reasoning Framework
+  # ---------------------------------------------------------------------------
+  ethical-reasoning:
+    <<: *common
+    build:
+      context: ./ethical-reasoning
+      dockerfile: ../Dockerfile
+    container_name: nail-ethical-reasoning
+    ports:
+      - "9102:9102"
+    environment:
+      - PORT=9102
+      - SERVICE_NAME=ethical-reasoning-framework
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9102/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ---------------------------------------------------------------------------
+  # 4. Civilisational Risk Dashboard
+  # ---------------------------------------------------------------------------
+  civilisational-risk:
+    <<: *common
+    build:
+      context: ./civilisational-risk
+      dockerfile: ../Dockerfile
+    container_name: nail-civilisational-risk
+    ports:
+      - "9103:9103"
+    environment:
+      - PORT=9103
+      - SERVICE_NAME=civilisational-risk-dashboard
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9103/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ---------------------------------------------------------------------------
+  # 5. Autonomous Standards Evolution
+  # ---------------------------------------------------------------------------
+  standards-evolution:
+    <<: *common
+    build:
+      context: ./standards-evolution
+      dockerfile: ../Dockerfile
+    container_name: nail-standards-evolution
+    ports:
+      - "9104:9104"
+    environment:
+      - PORT=9104
+      - SERVICE_NAME=autonomous-standards-evolution
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9104/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+networks:
+  nail-net:
+    driver: bridge
