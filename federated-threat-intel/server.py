@@ -1,17 +1,15 @@
 """
-Federated Threat Intelligence Exchange — Phase 20 Service 3 of 5
-Port: 9402
+Federated Threat Intelligence Hub — Phase 24 Service 1 of 5
+Port: 9800
 
-Privacy-preserving multi-org threat intel sharing with differential
-privacy (Laplace noise, randomised response, budget tracking),
-secure aggregation with K-anonymity threshold, trust-tiered access,
-contribution reputation, and federated queries.
+Cross-organisational threat sharing with privacy-preserving data exchange,
+indicator federation, trust-tier access control, and Traffic Light Protocol
+(TLP) enforcement.
 """
 
 from __future__ import annotations
 
-import math
-import random
+import hashlib
 import uuid
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -27,42 +25,57 @@ from pydantic import BaseModel, Field
 # ---------------------------------------------------------------------------
 
 class TrustTier(str, Enum):
-    founding = "founding"
-    verified = "verified"
-    standard = "standard"
-    provisional = "provisional"
+    founder = "founder"
+    partner = "partner"
+    associate = "associate"
+    observer = "observer"
 
 
-TIER_ACCESS = {
-    TrustTier.founding: 4,    # raw submissions
-    TrustTier.verified: 3,    # detailed indicators
-    TrustTier.standard: 2,    # category breakdowns
-    TrustTier.provisional: 1, # aggregates only
+class TLPLevel(str, Enum):
+    RED = "TLP:RED"
+    AMBER_STRICT = "TLP:AMBER+STRICT"
+    AMBER = "TLP:AMBER"
+    GREEN = "TLP:GREEN"
+    CLEAR = "TLP:CLEAR"
+
+
+TLP_ORDER = {
+    "TLP:RED": 5, "TLP:AMBER+STRICT": 4, "TLP:AMBER": 3,
+    "TLP:GREEN": 2, "TLP:CLEAR": 1,
 }
 
-TIER_BUDGET = {
-    TrustTier.founding: 50.0,
-    TrustTier.verified: 30.0,
-    TrustTier.standard: 15.0,
-    TrustTier.provisional: 5.0,
+TIER_MAX_TLP = {
+    "founder": 5,       # all TLP levels
+    "partner": 3,       # AMBER and below
+    "associate": 2,     # GREEN and CLEAR
+    "observer": 1,      # CLEAR only
 }
 
 
 class IndicatorType(str, Enum):
-    ioc = "ioc"
-    ttp = "ttp"
-    threat_actor = "threat_actor"
-    vulnerability = "vulnerability"
+    ip = "ip"
+    domain = "domain"
+    hash = "hash"
+    url = "url"
+    email = "email"
+    cve = "cve"
+    ttps = "ttps"
+    behaviour = "behaviour"
 
 
-AVE_CATEGORIES: list[str] = [
-    "prompt_injection", "tool_misuse", "memory_poisoning",
-    "goal_hijacking", "identity_spoofing", "privilege_escalation",
-    "data_exfiltration", "resource_exhaustion", "multi_agent_manipulation",
-    "context_overflow", "guardrail_bypass", "output_manipulation",
-    "supply_chain_compromise", "model_extraction", "reward_hacking",
-    "capability_elicitation", "alignment_subversion", "delegation_abuse",
-]
+class IndicatorSeverity(str, Enum):
+    critical = "critical"
+    high = "high"
+    medium = "medium"
+    low = "low"
+    informational = "informational"
+
+
+class SightingType(str, Enum):
+    confirmed = "confirmed"
+    suspected = "suspected"
+    false_positive = "false_positive"
+
 
 # ---------------------------------------------------------------------------
 # Pydantic Models
@@ -70,57 +83,65 @@ AVE_CATEGORIES: list[str] = [
 
 class OrgCreate(BaseModel):
     name: str
-    trust_tier: TrustTier = TrustTier.provisional
-    sharing_categories: List[str] = Field(default_factory=lambda: list(AVE_CATEGORIES))
-    min_aggregation_threshold: int = Field(default=3, ge=1)
-    retention_days: int = Field(default=365, ge=1)
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    trust_tier: TrustTier = TrustTier.observer
+    tlp_clearance: TLPLevel = TLPLevel.CLEAR
+    sector: str = "general"
+    contact_email: str = ""
+    description: str = ""
 
 
 class OrgRecord(OrgCreate):
     org_id: str
-    privacy_budget_remaining: float
-    contribution_score: float = 0.0
-    indicators_submitted: int = 0
     created_at: str
 
 
 class IndicatorCreate(BaseModel):
-    org_id: str
     indicator_type: IndicatorType
-    category: str
-    severity: str = "medium"
-    confidence: float = Field(default=0.8, ge=0.0, le=1.0)
-    value: str  # the actual indicator data
+    value: str
+    tlp: TLPLevel = TLPLevel.GREEN
+    confidence: float = Field(default=50.0, ge=0, le=100)
+    severity: IndicatorSeverity = IndicatorSeverity.medium
+    source_org_id: str
     description: str = ""
-    embargo_until: Optional[str] = None
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    mitre_attack_ids: List[str] = Field(default_factory=list)
+    tags: List[str] = Field(default_factory=list)
+    ttl_hours: int = Field(default=720, ge=1)
+    hash_only: bool = False
 
 
-class IndicatorRecord(IndicatorCreate):
+class IndicatorRecord(BaseModel):
     indicator_id: str
-    corroboration_count: int = 1
+    indicator_type: str
+    value: str
+    value_hash: str
+    tlp: str
+    confidence: float
+    severity: str
+    source_org_id: str
+    description: str
+    mitre_attack_ids: List[str]
+    tags: List[str]
+    ttl_hours: int
+    sightings: List[Dict[str, Any]] = Field(default_factory=list)
+    sighting_count: int = 0
+    related_indicators: List[str] = Field(default_factory=list)
     created_at: str
+    updated_at: str
 
 
-class AggregateQuery(BaseModel):
-    requesting_org_id: str
-    category: Optional[str] = None
-    indicator_type: Optional[IndicatorType] = None
-    query_type: str = "count"  # count | avg_severity | distribution
-
-
-class TrendQuery(BaseModel):
-    requesting_org_id: str
-    category: Optional[str] = None
-    window_days: int = Field(default=30, ge=1, le=365)
+class SightingCreate(BaseModel):
+    sighting_type: SightingType
+    reporter_org_id: str
+    detail: str = ""
 
 
 class AgreementCreate(BaseModel):
-    org_a: str
-    org_b: str
-    shared_categories: List[str]
-    expires_at: Optional[str] = None
+    org_a_id: str
+    org_b_id: str
+    indicator_types: List[IndicatorType] = Field(default_factory=list)
+    tlp_ceiling: TLPLevel = TLPLevel.GREEN
+    retention_days: int = Field(default=90, ge=1)
+    description: str = ""
 
 
 class AgreementRecord(AgreementCreate):
@@ -133,41 +154,24 @@ class AgreementRecord(AgreementCreate):
 # In-Memory Stores
 # ---------------------------------------------------------------------------
 
-orgs: Dict[str, OrgRecord] = {}
+organisations: Dict[str, OrgRecord] = {}
 indicators: Dict[str, IndicatorRecord] = {}
 agreements: Dict[str, AgreementRecord] = {}
-query_log: List[Dict[str, Any]] = []
 
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-# ---------------------------------------------------------------------------
-# Differential Privacy Helpers
-# ---------------------------------------------------------------------------
-
-DEFAULT_EPSILON = 1.0
-DEFAULT_DELTA = 1e-5
-K_ANONYMITY = 3  # minimum orgs contributing before releasing result
+def _hash(value: str) -> str:
+    return hashlib.sha256(value.encode()).hexdigest()
 
 
-def _laplace_noise(sensitivity: float, epsilon: float) -> float:
-    """Add Laplace noise for ε-differential privacy."""
-    scale = sensitivity / epsilon
-    return random.uniform(-1, 1) * scale * math.log(1.0 / (1.0 - random.random() + 1e-10))
-
-
-def _consume_budget(org: OrgRecord, cost: float) -> bool:
-    """Consume privacy budget; return False if exhausted."""
-    if org.privacy_budget_remaining < cost:
-        return False
-    org.privacy_budget_remaining -= cost
-    return True
-
-
-def _severity_to_num(sev: str) -> float:
-    return {"critical": 4, "high": 3, "medium": 2, "low": 1, "informational": 0}.get(sev, 2)
+def _can_access_tlp(org: OrgRecord, tlp_value: str) -> bool:
+    """Check if org's tier allows access to this TLP level."""
+    org_max = TIER_MAX_TLP.get(org.trust_tier.value, 1)
+    indicator_level = TLP_ORDER.get(tlp_value, 1)
+    return org_max >= indicator_level
 
 
 # ---------------------------------------------------------------------------
@@ -175,272 +179,249 @@ def _severity_to_num(sev: str) -> float:
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="Federated Threat Intelligence Exchange",
-    description="Phase 20 — Privacy-preserving multi-org threat intel with differential privacy",
-    version="20.0.0",
+    title="Federated Threat Intelligence Hub",
+    description="Phase 24 — Cross-org threat sharing with TLP enforcement and trust-tier access control",
+    version="24.0.0",
 )
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 
 @app.get("/health")
 def health():
+    tier_dist: Dict[str, int] = defaultdict(int)
+    for o in organisations.values():
+        tier_dist[o.trust_tier.value] += 1
     return {
-        "service": "federated-threat-intelligence-exchange",
+        "service": "federated-threat-intelligence-hub",
         "status": "healthy",
-        "phase": 20,
-        "port": 9402,
+        "phase": 24,
+        "port": 9800,
         "stats": {
-            "organisations": len(orgs),
+            "organisations": len(organisations),
             "indicators": len(indicators),
             "agreements": len(agreements),
+            "tier_distribution": dict(tier_dist),
         },
         "timestamp": _now(),
     }
 
 
-# ── Organisations ──────────────────────────────────────────────────────────
+# -- Organisations -----------------------------------------------------------
 
 @app.post("/v1/organisations", status_code=201)
 def register_org(body: OrgCreate):
     oid = f"ORG-{uuid.uuid4().hex[:12]}"
-    budget = TIER_BUDGET.get(body.trust_tier, 5.0)
-    record = OrgRecord(
-        **body.dict(),
-        org_id=oid,
-        privacy_budget_remaining=budget,
-        created_at=_now(),
-    )
-    orgs[oid] = record
+    record = OrgRecord(**body.dict(), org_id=oid, created_at=_now())
+    organisations[oid] = record
     return record.dict()
 
 
 @app.get("/v1/organisations")
-def list_orgs(tier: Optional[TrustTier] = None):
-    results = list(orgs.values())
-    if tier:
-        results = [o for o in results if o.trust_tier == tier]
+def list_orgs(
+    trust_tier: Optional[TrustTier] = None,
+    sector: Optional[str] = None,
+):
+    results = list(organisations.values())
+    if trust_tier:
+        results = [o for o in results if o.trust_tier == trust_tier]
+    if sector:
+        results = [o for o in results if o.sector == sector]
     return {"organisations": [o.dict() for o in results], "total": len(results)}
 
 
-@app.get("/v1/organisations/{org_id}")
-def get_org(org_id: str):
-    if org_id not in orgs:
-        raise HTTPException(404, "Organisation not found")
-    return orgs[org_id].dict()
-
-
-# ── Indicators ─────────────────────────────────────────────────────────────
+# -- Indicators --------------------------------------------------------------
 
 @app.post("/v1/indicators", status_code=201)
-def submit_indicator(body: IndicatorCreate):
-    if body.org_id not in orgs:
-        raise HTTPException(404, "Organisation not found")
-    org = orgs[body.org_id]
-    if body.category not in org.sharing_categories:
-        raise HTTPException(422, f"Category '{body.category}' not in org sharing policy")
-    iid = f"IND-{uuid.uuid4().hex[:12]}"
-    record = IndicatorRecord(**body.dict(), indicator_id=iid, created_at=_now())
+def publish_indicator(body: IndicatorCreate):
+    if body.source_org_id not in organisations:
+        raise HTTPException(404, "Source organisation not found")
+    iid = f"IOC-{uuid.uuid4().hex[:12]}"
+    now = _now()
+    stored_value = _hash(body.value) if body.hash_only else body.value
+    record = IndicatorRecord(
+        indicator_id=iid,
+        indicator_type=body.indicator_type.value,
+        value=stored_value,
+        value_hash=_hash(body.value),
+        tlp=body.tlp.value,
+        confidence=body.confidence,
+        severity=body.severity.value,
+        source_org_id=body.source_org_id,
+        description=body.description,
+        mitre_attack_ids=body.mitre_attack_ids,
+        tags=body.tags,
+        ttl_hours=body.ttl_hours,
+        created_at=now,
+        updated_at=now,
+    )
     indicators[iid] = record
-    # Update org stats
-    org.indicators_submitted += 1
-    org.contribution_score += body.confidence * (1.0 if body.severity in ("critical", "high") else 0.5)
     return record.dict()
 
 
 @app.get("/v1/indicators")
-def list_indicators(
-    requesting_org_id: str = Query(...),
-    category: Optional[str] = None,
+def query_indicators(
     indicator_type: Optional[IndicatorType] = None,
-    limit: int = Query(default=50, ge=1, le=500),
+    severity: Optional[IndicatorSeverity] = None,
+    tlp: Optional[TLPLevel] = None,
+    source_org_id: Optional[str] = None,
+    tag: Optional[str] = None,
+    search: Optional[str] = None,
+    requesting_org_id: Optional[str] = None,
+    limit: int = Query(default=100, ge=1, le=1000),
 ):
-    if requesting_org_id not in orgs:
-        raise HTTPException(404, "Requesting organisation not found")
-    org = orgs[requesting_org_id]
-    access = TIER_ACCESS[org.trust_tier]
     results = list(indicators.values())
-    if category:
-        results = [i for i in results if i.category == category]
     if indicator_type:
-        results = [i for i in results if i.indicator_type == indicator_type]
-    # Filter by embargo
-    now_str = _now()
-    results = [i for i in results if not i.embargo_until or i.embargo_until <= now_str]
-    # Tier gating
-    if access < 3:
-        # Standard/provisional: strip value field
-        sanitised = []
-        for i in results[:limit]:
-            d = i.dict()
-            d["value"] = "[REDACTED — upgrade trust tier for details]"
-            sanitised.append(d)
-        return {"indicators": sanitised, "total": len(results), "access_level": access}
-    return {"indicators": [i.dict() for i in results[:limit]], "total": len(results), "access_level": access}
+        results = [i for i in results if i.indicator_type == indicator_type.value]
+    if severity:
+        results = [i for i in results if i.severity == severity.value]
+    if tlp:
+        results = [i for i in results if i.tlp == tlp.value]
+    if source_org_id:
+        results = [i for i in results if i.source_org_id == source_org_id]
+    if tag:
+        results = [i for i in results if tag in i.tags]
+    if search:
+        q = search.lower()
+        results = [i for i in results if q in i.description.lower() or q in i.value.lower()]
+    # TLP gate
+    if requesting_org_id and requesting_org_id in organisations:
+        org = organisations[requesting_org_id]
+        results = [i for i in results if _can_access_tlp(org, i.tlp)]
+    results.sort(key=lambda i: i.created_at, reverse=True)
+    return {"indicators": [i.dict() for i in results[:limit]], "total": len(results)}
 
 
-@app.get("/v1/indicators/{indicator_id}")
-def get_indicator(indicator_id: str, requesting_org_id: str = Query(...)):
-    if requesting_org_id not in orgs:
-        raise HTTPException(404, "Requesting organisation not found")
-    if indicator_id not in indicators:
+@app.get("/v1/indicators/{ioc_id}")
+def get_indicator(ioc_id: str):
+    if ioc_id not in indicators:
         raise HTTPException(404, "Indicator not found")
-    org = orgs[requesting_org_id]
-    access = TIER_ACCESS[org.trust_tier]
-    ind = indicators[indicator_id]
-    d = ind.dict()
-    if access < 3:
-        d["value"] = "[REDACTED]"
-    return d
+    return indicators[ioc_id].dict()
 
 
-# ── Federated Queries ──────────────────────────────────────────────────────
-
-@app.post("/v1/query/aggregate")
-def aggregate_query(body: AggregateQuery):
-    if body.requesting_org_id not in orgs:
-        raise HTTPException(404, "Organisation not found")
-    org = orgs[body.requesting_org_id]
-    budget_cost = DEFAULT_EPSILON
-    if not _consume_budget(org, budget_cost):
-        raise HTTPException(429, "Privacy budget exhausted")
-
-    filtered = list(indicators.values())
-    if body.category:
-        filtered = [i for i in filtered if i.category == body.category]
-    if body.indicator_type:
-        filtered = [i for i in filtered if i.indicator_type == body.indicator_type]
-
-    # K-anonymity check: how many distinct orgs contributed
-    contributing_orgs = {i.org_id for i in filtered}
-    if len(contributing_orgs) < K_ANONYMITY:
-        return {
-            "suppressed": True,
-            "reason": f"Fewer than {K_ANONYMITY} organisations contributed — result suppressed for privacy",
-            "budget_remaining": round(org.privacy_budget_remaining, 4),
-        }
-
-    if body.query_type == "count":
-        raw = len(filtered)
-        noisy = max(0, round(raw + _laplace_noise(1.0, DEFAULT_EPSILON)))
-        result = {"count": noisy, "noise_added": True}
-    elif body.query_type == "avg_severity":
-        if not filtered:
-            result = {"avg_severity": 0.0}
-        else:
-            raw_avg = sum(_severity_to_num(i.severity) for i in filtered) / len(filtered)
-            noisy_avg = max(0, raw_avg + _laplace_noise(4.0 / len(filtered), DEFAULT_EPSILON))
-            result = {"avg_severity": round(noisy_avg, 2), "noise_added": True}
-    elif body.query_type == "distribution":
-        dist: Dict[str, int] = defaultdict(int)
-        for i in filtered:
-            dist[i.category] += 1
-        noisy_dist = {k: max(0, round(v + _laplace_noise(1.0, DEFAULT_EPSILON))) for k, v in dist.items()}
-        result = {"distribution": noisy_dist, "noise_added": True}
-    else:
-        result = {"error": "Unknown query_type"}
-
-    query_log.append({"org_id": body.requesting_org_id, "query_type": body.query_type, "budget_cost": budget_cost, "timestamp": _now()})
-    return {**result, "contributing_orgs": len(contributing_orgs), "budget_remaining": round(org.privacy_budget_remaining, 4)}
-
-
-@app.post("/v1/query/trends")
-def trend_query(body: TrendQuery):
-    if body.requesting_org_id not in orgs:
-        raise HTTPException(404, "Organisation not found")
-    org = orgs[body.requesting_org_id]
-    if not _consume_budget(org, DEFAULT_EPSILON):
-        raise HTTPException(429, "Privacy budget exhausted")
-    filtered = list(indicators.values())
-    if body.category:
-        filtered = [i for i in filtered if i.category == body.category]
-    # Simple bucket: count per day (simulated)
-    total = len(filtered)
-    avg_per_day = total / max(body.window_days, 1)
-    noisy_avg = max(0, avg_per_day + _laplace_noise(1.0, DEFAULT_EPSILON))
-    return {
-        "window_days": body.window_days,
-        "category": body.category,
-        "avg_indicators_per_day": round(noisy_avg, 2),
-        "total_in_window": max(0, round(total + _laplace_noise(1.0, DEFAULT_EPSILON))),
-        "noise_added": True,
-        "budget_remaining": round(org.privacy_budget_remaining, 4),
+@app.post("/v1/indicators/{ioc_id}/sightings", status_code=201)
+def report_sighting(ioc_id: str, body: SightingCreate):
+    if ioc_id not in indicators:
+        raise HTTPException(404, "Indicator not found")
+    if body.reporter_org_id not in organisations:
+        raise HTTPException(404, "Reporter organisation not found")
+    indicator = indicators[ioc_id]
+    sighting = {
+        "sighting_id": f"SIG-{uuid.uuid4().hex[:8]}",
+        "sighting_type": body.sighting_type.value,
+        "reporter_org_id": body.reporter_org_id,
+        "detail": body.detail,
+        "reported_at": _now(),
     }
+    indicator.sightings.append(sighting)
+    indicator.sighting_count = len(indicator.sightings)
+
+    # Adjust confidence based on sighting type
+    confirmed = sum(1 for s in indicator.sightings if s["sighting_type"] == "confirmed")
+    false_pos = sum(1 for s in indicator.sightings if s["sighting_type"] == "false_positive")
+    if confirmed > false_pos:
+        indicator.confidence = min(100, indicator.confidence + 5)
+    elif false_pos > confirmed:
+        indicator.confidence = max(0, indicator.confidence - 10)
+    indicator.updated_at = _now()
+    return sighting
 
 
-# ── Privacy Budget ─────────────────────────────────────────────────────────
-
-@app.get("/v1/privacy/budget/{org_id}")
-def privacy_budget(org_id: str):
-    if org_id not in orgs:
-        raise HTTPException(404, "Organisation not found")
-    org = orgs[org_id]
-    return {
-        "org_id": org_id,
-        "trust_tier": org.trust_tier.value,
-        "initial_budget": TIER_BUDGET[org.trust_tier],
-        "remaining": round(org.privacy_budget_remaining, 4),
-        "consumed": round(TIER_BUDGET[org.trust_tier] - org.privacy_budget_remaining, 4),
-    }
-
-
-# ── Agreements ─────────────────────────────────────────────────────────────
+# -- Sharing Agreements ------------------------------------------------------
 
 @app.post("/v1/agreements", status_code=201)
 def create_agreement(body: AgreementCreate):
-    if body.org_a not in orgs:
-        raise HTTPException(404, f"Organisation {body.org_a} not found")
-    if body.org_b not in orgs:
-        raise HTTPException(404, f"Organisation {body.org_b} not found")
-    aid = f"AGR-{uuid.uuid4().hex[:12]}"
+    if body.org_a_id not in organisations:
+        raise HTTPException(404, f"Organisation {body.org_a_id} not found")
+    if body.org_b_id not in organisations:
+        raise HTTPException(404, f"Organisation {body.org_b_id} not found")
+    aid = f"SA-{uuid.uuid4().hex[:12]}"
     record = AgreementRecord(**body.dict(), agreement_id=aid, created_at=_now())
     agreements[aid] = record
     return record.dict()
 
 
 @app.get("/v1/agreements")
-def list_agreements(org_id: Optional[str] = None):
+def list_agreements(org_id: Optional[str] = None, active_only: bool = False):
     results = list(agreements.values())
     if org_id:
-        results = [a for a in results if a.org_a == org_id or a.org_b == org_id]
+        results = [a for a in results if a.org_a_id == org_id or a.org_b_id == org_id]
+    if active_only:
+        results = [a for a in results if a.active]
     return {"agreements": [a.dict() for a in results], "total": len(results)}
 
 
-# ── Reputation ─────────────────────────────────────────────────────────────
-
-@app.get("/v1/reputation/{org_id}")
-def get_reputation(org_id: str):
-    if org_id not in orgs:
-        raise HTTPException(404, "Organisation not found")
-    org = orgs[org_id]
-    return {
-        "org_id": org_id,
-        "contribution_score": round(org.contribution_score, 2),
-        "indicators_submitted": org.indicators_submitted,
-        "trust_tier": org.trust_tier.value,
-    }
+@app.delete("/v1/agreements/{agreement_id}")
+def revoke_agreement(agreement_id: str):
+    if agreement_id not in agreements:
+        raise HTTPException(404, "Agreement not found")
+    agreements[agreement_id].active = False
+    return {"agreement_id": agreement_id, "active": False}
 
 
-# ── Analytics ──────────────────────────────────────────────────────────────
+# -- Feed --------------------------------------------------------------------
+
+@app.get("/v1/feed")
+def indicator_feed(
+    consumer_org_id: str,
+    indicator_type: Optional[IndicatorType] = None,
+    severity: Optional[IndicatorSeverity] = None,
+    limit: int = Query(default=50, ge=1, le=500),
+):
+    if consumer_org_id not in organisations:
+        raise HTTPException(404, "Consumer organisation not found")
+    org = organisations[consumer_org_id]
+    results = [i for i in indicators.values() if _can_access_tlp(org, i.tlp)]
+    if indicator_type:
+        results = [i for i in results if i.indicator_type == indicator_type.value]
+    if severity:
+        results = [i for i in results if i.severity == severity.value]
+    results.sort(key=lambda i: i.created_at, reverse=True)
+    return {"feed": [i.dict() for i in results[:limit]], "consumer_org": consumer_org_id, "total": len(results)}
+
+
+# -- Analytics ----------------------------------------------------------------
 
 @app.get("/v1/analytics")
 def analytics():
-    tier_dist: Dict[str, int] = defaultdict(int)
-    for o in orgs.values():
-        tier_dist[o.trust_tier.value] += 1
     type_dist: Dict[str, int] = defaultdict(int)
-    cat_dist: Dict[str, int] = defaultdict(int)
-    for i in indicators.values():
-        type_dist[i.indicator_type.value] += 1
-        cat_dist[i.category] += 1
+    sev_dist: Dict[str, int] = defaultdict(int)
+    tlp_dist: Dict[str, int] = defaultdict(int)
+    src_dist: Dict[str, int] = defaultdict(int)
+    for ind in indicators.values():
+        type_dist[ind.indicator_type] += 1
+        sev_dist[ind.severity] += 1
+        tlp_dist[ind.tlp] += 1
+        src_dist[ind.source_org_id] += 1
+
+    tier_dist: Dict[str, int] = defaultdict(int)
+    for o in organisations.values():
+        tier_dist[o.trust_tier.value] += 1
+
+    total_sightings = sum(i.sighting_count for i in indicators.values())
+    confirmed_sightings = sum(
+        1 for i in indicators.values()
+        for s in i.sightings if s["sighting_type"] == "confirmed"
+    )
+
     return {
-        "organisations": {"total": len(orgs), "tier_distribution": dict(tier_dist)},
-        "indicators": {"total": len(indicators), "type_distribution": dict(type_dist), "category_distribution": dict(cat_dist)},
-        "agreements": {"total": len(agreements), "active": sum(1 for a in agreements.values() if a.active)},
-        "queries_processed": len(query_log),
-        "privacy": {
-            "epsilon": DEFAULT_EPSILON,
-            "delta": DEFAULT_DELTA,
-            "k_anonymity": K_ANONYMITY,
+        "organisations": {
+            "total": len(organisations),
+            "tier_distribution": dict(tier_dist),
+        },
+        "indicators": {
+            "total": len(indicators),
+            "type_distribution": dict(type_dist),
+            "severity_distribution": dict(sev_dist),
+            "tlp_distribution": dict(tlp_dist),
+            "source_distribution": dict(src_dist),
+        },
+        "sightings": {
+            "total": total_sightings,
+            "confirmed": confirmed_sightings,
+        },
+        "agreements": {
+            "total": len(agreements),
+            "active": sum(1 for a in agreements.values() if a.active),
         },
     }
 
@@ -448,4 +429,4 @@ def analytics():
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=9402)
+    uvicorn.run(app, host="0.0.0.0", port=9800)

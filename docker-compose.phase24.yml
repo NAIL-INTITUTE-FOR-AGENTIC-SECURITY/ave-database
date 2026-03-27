@@ -1,0 +1,90 @@
+###############################################################################
+# Phase 24 — Federated Intelligence & Cross-Organisational Collaboration
+# Services: federated-threat-intel (9800), incident-war-room (9801),
+#           policy-harmoniser (9802), playbook-library (9803),
+#           compliance-bridge (9804)
+###############################################################################
+
+x-common: &common
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:$${PORT}/health')"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 15s
+
+services:
+  # -- Service 1: Federated Threat Intelligence Hub (9800) --------------------
+  federated-threat-intel:
+    <<: *common
+    build:
+      context: ./federated-threat-intel
+      dockerfile: ../Dockerfile
+    container_name: federated-threat-intel
+    ports:
+      - "9800:9800"
+    environment:
+      - PORT=9800
+    networks:
+      - ave-phase24
+
+  # -- Service 2: Collaborative Incident War Room (9801) ----------------------
+  incident-war-room:
+    <<: *common
+    build:
+      context: ./incident-war-room
+      dockerfile: ../Dockerfile
+    container_name: incident-war-room
+    ports:
+      - "9801:9801"
+    environment:
+      - PORT=9801
+    networks:
+      - ave-phase24
+
+  # -- Service 3: Cross-Org Policy Harmoniser (9802) -------------------------
+  policy-harmoniser:
+    <<: *common
+    build:
+      context: ./policy-harmoniser
+      dockerfile: ../Dockerfile
+    container_name: policy-harmoniser
+    ports:
+      - "9802:9802"
+    environment:
+      - PORT=9802
+    networks:
+      - ave-phase24
+
+  # -- Service 4: Shared Defence Playbook Library (9803) ---------------------
+  playbook-library:
+    <<: *common
+    build:
+      context: ./playbook-library
+      dockerfile: ../Dockerfile
+    container_name: playbook-library
+    ports:
+      - "9803:9803"
+    environment:
+      - PORT=9803
+    networks:
+      - ave-phase24
+
+  # -- Service 5: Inter-Agency Compliance Bridge (9804) ----------------------
+  compliance-bridge:
+    <<: *common
+    build:
+      context: ./compliance-bridge
+      dockerfile: ../Dockerfile
+    container_name: compliance-bridge
+    ports:
+      - "9804:9804"
+    environment:
+      - PORT=9804
+    networks:
+      - ave-phase24
+
+networks:
+  ave-phase24:
+    driver: bridge
