@@ -1,950 +1,516 @@
 """
-Autonomous Incident Commander — Core incident response server.
+Autonomous Incident Commander — Phase 21 Service 4 of 5
+Port: 9503
 
-Full OODA-loop (Observe → Orient → Decide → Act) incident management
-for AI agent security events.  Seven-state lifecycle with automated
-triage, rule-based escalation with SLA timers, six containment
-strategies, eradication + recovery + verification, mandatory human
-approval for critical/high severity actions, and post-incident
-review with timeline reconstruction + lessons learned + MTTR.
+AI-driven incident response orchestrator with playbook execution,
+escalation chains, war-room coordination, real-time status tracking,
+and automated post-mortem generation.
 """
 
 from __future__ import annotations
 
-import random
-import statistics
 import uuid
-from collections import Counter, defaultdict
-from datetime import datetime, timedelta, timezone
+from collections import defaultdict
+from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Query, status
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 # ---------------------------------------------------------------------------
-# App
+# Enums
 # ---------------------------------------------------------------------------
-
-app = FastAPI(
-    title="NAIL Autonomous Incident Commander",
-    description=(
-        "AI-driven incident command with full OODA loop, human-on-the-loop "
-        "approval, automated containment, and post-incident review."
-    ),
-    version="1.0.0",
-    docs_url="/docs",
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
-
-AVE_CATEGORIES = [
-    "prompt_injection", "tool_misuse", "memory_poisoning", "goal_hijacking",
-    "identity_spoofing", "privilege_escalation", "data_exfiltration",
-    "resource_exhaustion", "multi_agent_manipulation", "context_overflow",
-    "guardrail_bypass", "output_manipulation", "supply_chain_compromise",
-    "model_extraction", "reward_hacking", "capability_elicitation",
-    "alignment_subversion", "delegation_abuse",
-]
-
 
 class IncidentState(str, Enum):
-    DETECTED = "detected"
-    TRIAGED = "triaged"
-    ESCALATED = "escalated"
-    CONTAINED = "contained"
-    ERADICATED = "eradicated"
-    RECOVERED = "recovered"
-    CLOSED = "closed"
+    detected = "detected"
+    triaged = "triaged"
+    escalated = "escalated"
+    mitigating = "mitigating"
+    contained = "contained"
+    resolved = "resolved"
+    post_mortem = "post_mortem"
+
+
+STATE_ORDER = list(IncidentState)
 
 
 class Severity(str, Enum):
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
+    P1 = "P1"
+    P2 = "P2"
+    P3 = "P3"
+    P4 = "P4"
 
 
-class ContainmentStrategy(str, Enum):
-    ISOLATE_AGENT = "isolate_agent"
-    BLOCK_PATTERN = "block_pattern"
-    RATE_LIMIT = "rate_limit"
-    SANDBOX = "sandbox"
-    REVOKE_CREDENTIALS = "revoke_credentials"
-    NETWORK_FENCE = "network_fence"
+SEVERITY_SLA_MINUTES = {"P1": 15, "P2": 60, "P3": 240, "P4": 1440}
 
 
-# SLA targets (minutes)
-SLA_TARGETS: dict[str, dict[str, int]] = {
-    "critical": {"triage": 5, "contain": 15, "eradicate": 60, "recover": 120},
-    "high": {"triage": 15, "contain": 30, "eradicate": 120, "recover": 240},
-    "medium": {"triage": 60, "contain": 120, "eradicate": 480, "recover": 720},
-    "low": {"triage": 240, "contain": 480, "eradicate": 1440, "recover": 2880},
-}
+class IncidentType(str, Enum):
+    prompt_injection_incident = "prompt_injection_incident"
+    data_exfiltration_incident = "data_exfiltration_incident"
+    privilege_escalation_incident = "privilege_escalation_incident"
+    multi_agent_compromise = "multi_agent_compromise"
+    supply_chain_incident = "supply_chain_incident"
+    model_extraction_incident = "model_extraction_incident"
+    guardrail_bypass_incident = "guardrail_bypass_incident"
+    alignment_subversion_incident = "alignment_subversion_incident"
 
-# Transitions — which states can advance to which
-VALID_TRANSITIONS: dict[IncidentState, list[IncidentState]] = {
-    IncidentState.DETECTED: [IncidentState.TRIAGED],
-    IncidentState.TRIAGED: [IncidentState.ESCALATED, IncidentState.CONTAINED],
-    IncidentState.ESCALATED: [IncidentState.CONTAINED],
-    IncidentState.CONTAINED: [IncidentState.ERADICATED],
-    IncidentState.ERADICATED: [IncidentState.RECOVERED],
-    IncidentState.RECOVERED: [IncidentState.CLOSED],
-    IncidentState.CLOSED: [],
-}
 
+class StepType(str, Enum):
+    investigate = "investigate"
+    isolate = "isolate"
+    mitigate = "mitigate"
+    verify = "verify"
+    communicate = "communicate"
+    escalate = "escalate"
+
+
+class StepStatus(str, Enum):
+    pending = "pending"
+    in_progress = "in_progress"
+    completed = "completed"
+    skipped = "skipped"
+    failed = "failed"
+
+
+class EscalationTier(str, Enum):
+    on_call = "on_call"
+    team_lead = "team_lead"
+    director = "director"
+    ciso = "ciso"
+    ceo = "ceo"
+
+
+TIER_ORDER = list(EscalationTier)
+
+
+class WarRoomRole(str, Enum):
+    commander = "commander"
+    investigator = "investigator"
+    communicator = "communicator"
+    scribe = "scribe"
+
+
+AVE_CATEGORIES: list[str] = [
+    "prompt_injection", "tool_misuse", "memory_poisoning",
+    "goal_hijacking", "identity_spoofing", "privilege_escalation",
+    "data_exfiltration", "resource_exhaustion", "multi_agent_manipulation",
+    "context_overflow", "guardrail_bypass", "output_manipulation",
+    "supply_chain_compromise", "model_extraction", "reward_hacking",
+    "capability_elicitation", "alignment_subversion", "delegation_abuse",
+]
 
 # ---------------------------------------------------------------------------
 # Pydantic Models
 # ---------------------------------------------------------------------------
 
-
-class TimelineEvent(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    state: str
-    actor: str = "system"  # system | human | automated
-    action: str
-    details: dict[str, Any] = Field(default_factory=dict)
-
-
-class Incident(BaseModel):
-    id: str = Field(default_factory=lambda: f"INC-{uuid.uuid4().hex[:8].upper()}")
-    title: str
-    description: str = ""
-    category: str = ""
-    severity: Severity = Severity.MEDIUM
-    priority: int = 3  # 1-5, 1 = highest
-    state: IncidentState = IncidentState.DETECTED
-    source: str = ""
-    affected_agents: list[str] = Field(default_factory=list)
-    affected_systems: list[str] = Field(default_factory=list)
-    containment_strategy: Optional[ContainmentStrategy] = None
-    containment_details: dict[str, Any] = Field(default_factory=dict)
-    eradication_details: dict[str, Any] = Field(default_factory=dict)
-    recovery_details: dict[str, Any] = Field(default_factory=dict)
-    human_approval_required: bool = False
-    human_approved: bool = False
-    human_approver: Optional[str] = None
-    human_approved_at: Optional[str] = None
-    assigned_to: str = ""
-    escalation_chain: list[str] = Field(default_factory=list)
-    timeline: list[TimelineEvent] = Field(default_factory=list)
-    metadata: dict[str, Any] = Field(default_factory=dict)
-    detected_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    triaged_at: Optional[str] = None
-    contained_at: Optional[str] = None
-    eradicated_at: Optional[str] = None
-    recovered_at: Optional[str] = None
-    closed_at: Optional[str] = None
-    mttr_minutes: Optional[float] = None  # Mean time to resolve
-    lessons_learned: list[str] = Field(default_factory=list)
-
-
 class IncidentCreate(BaseModel):
     title: str
+    incident_type: IncidentType
+    severity: Severity = Severity.P3
     description: str = ""
-    category: str = ""
-    source: str = ""
-    affected_agents: list[str] = Field(default_factory=list)
-    affected_systems: list[str] = Field(default_factory=list)
-    metadata: dict[str, Any] = Field(default_factory=dict)
+    affected_services: List[str] = Field(default_factory=list)
+    reporter: str = ""
+    metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
-class Playbook(BaseModel):
-    id: str = Field(default_factory=lambda: f"PB-{uuid.uuid4().hex[:8].upper()}")
-    name: str
-    description: str = ""
-    category: str = ""
-    severity_threshold: Severity = Severity.MEDIUM
-    containment_strategy: ContainmentStrategy = ContainmentStrategy.ISOLATE_AGENT
-    auto_execute: bool = False
-    steps: list[dict[str, Any]] = Field(default_factory=list)
-    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+class IncidentRecord(IncidentCreate):
+    incident_id: str
+    state: IncidentState = IncidentState.detected
+    commander: str = ""
+    current_escalation_tier: EscalationTier = EscalationTier.on_call
+    timeline: List[Dict[str, Any]] = Field(default_factory=list)
+    playbook_id: Optional[str] = None
+    playbook_progress: List[Dict[str, Any]] = Field(default_factory=list)
+    warroom: List[Dict[str, Any]] = Field(default_factory=list)
+    post_mortem: Optional[Dict[str, Any]] = None
+    created_at: str
+    updated_at: str
+    resolved_at: Optional[str] = None
+    mttr_minutes: Optional[float] = None
 
 
 class PlaybookCreate(BaseModel):
     name: str
+    incident_type: IncidentType
+    steps: List[Dict[str, Any]] = Field(default_factory=list)
     description: str = ""
-    category: str = ""
-    severity_threshold: Severity = Severity.MEDIUM
-    containment_strategy: ContainmentStrategy = ContainmentStrategy.ISOLATE_AGENT
-    auto_execute: bool = False
-    steps: list[dict[str, Any]] = Field(default_factory=list)
 
 
-class OODACycle(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    incident_id: str
-    observe: dict[str, Any] = Field(default_factory=dict)
-    orient: dict[str, Any] = Field(default_factory=dict)
-    decide: dict[str, Any] = Field(default_factory=dict)
-    act: dict[str, Any] = Field(default_factory=dict)
-    cycle_time_ms: float = 0.0
-    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+class PlaybookRecord(PlaybookCreate):
+    playbook_id: str
+    created_at: str
 
 
-# ---------------------------------------------------------------------------
-# In-Memory Stores  (production → PostgreSQL + Redis queues + PagerDuty)
-# ---------------------------------------------------------------------------
-
-INCIDENTS: dict[str, Incident] = {}
-PLAYBOOKS: dict[str, Playbook] = {}
-OODA_HISTORY: list[OODACycle] = []
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-_now = lambda: datetime.now(timezone.utc)  # noqa: E731
+class EscalationChainCreate(BaseModel):
+    name: str
+    severity: Severity
+    tiers: List[Dict[str, Any]] = Field(default_factory=list)
 
 
-def _auto_triage(incident: Incident) -> tuple[Severity, int, str]:
-    """Auto-triage based on category, affected agents, and metadata."""
-    title_lower = incident.title.lower() + " " + incident.description.lower()
-    category = incident.category.lower() if incident.category else ""
-
-    # Severity rules
-    critical_keywords = ["data_exfiltration", "privilege_escalation", "model_extraction",
-                         "alignment_subversion", "supply_chain"]
-    high_keywords = ["prompt_injection", "guardrail_bypass", "identity_spoofing",
-                     "multi_agent_manipulation"]
-
-    if category in critical_keywords or any(kw in title_lower for kw in critical_keywords):
-        severity = Severity.CRITICAL
-        priority = 1
-    elif category in high_keywords or any(kw in title_lower for kw in high_keywords):
-        severity = Severity.HIGH
-        priority = 2
-    elif len(incident.affected_agents) > 3:
-        severity = Severity.HIGH
-        priority = 2
-    elif len(incident.affected_agents) > 1:
-        severity = Severity.MEDIUM
-        priority = 3
-    else:
-        severity = Severity.LOW
-        priority = 4
-
-    # Auto-assign
-    assignment_map = {
-        Severity.CRITICAL: "CISO + Senior IR Team",
-        Severity.HIGH: "IR Team Lead",
-        Severity.MEDIUM: "Security Analyst",
-        Severity.LOW: "Junior Analyst (auto-queue)",
-    }
-    assigned = assignment_map.get(severity, "Unassigned")
-
-    return severity, priority, assigned
+class EscalationChainRecord(EscalationChainCreate):
+    chain_id: str
+    created_at: str
 
 
-def _add_event(incident: Incident, state: str, action: str, actor: str = "system",
-               details: dict[str, Any] | None = None) -> None:
-    event = TimelineEvent(
-        state=state, actor=actor, action=action, details=details or {},
-    )
-    incident.timeline.append(event)
-
-
-def _check_sla(incident: Incident) -> dict[str, Any]:
-    """Check SLA compliance for current incident."""
-    sla = SLA_TARGETS.get(incident.severity.value, SLA_TARGETS["medium"])
-    detected = datetime.fromisoformat(incident.detected_at)
-    now = _now()
-
-    breaches: list[str] = []
-    elapsed_min = (now - detected).total_seconds() / 60
-
-    # Check triage SLA
-    if not incident.triaged_at and elapsed_min > sla["triage"]:
-        breaches.append(f"triage SLA breached ({sla['triage']}min)")
-    if not incident.contained_at and elapsed_min > sla["contain"]:
-        breaches.append(f"contain SLA breached ({sla['contain']}min)")
-
-    return {
-        "severity": incident.severity.value,
-        "sla_targets": sla,
-        "elapsed_minutes": round(elapsed_min, 1),
-        "breaches": breaches,
-        "compliant": len(breaches) == 0,
-    }
-
-
-def _select_containment(incident: Incident) -> ContainmentStrategy:
-    """Rule-based containment strategy selection."""
-    cat = incident.category.lower() if incident.category else ""
-
-    strategy_map = {
-        "data_exfiltration": ContainmentStrategy.NETWORK_FENCE,
-        "privilege_escalation": ContainmentStrategy.REVOKE_CREDENTIALS,
-        "identity_spoofing": ContainmentStrategy.REVOKE_CREDENTIALS,
-        "prompt_injection": ContainmentStrategy.BLOCK_PATTERN,
-        "guardrail_bypass": ContainmentStrategy.SANDBOX,
-        "resource_exhaustion": ContainmentStrategy.RATE_LIMIT,
-        "multi_agent_manipulation": ContainmentStrategy.ISOLATE_AGENT,
-        "tool_misuse": ContainmentStrategy.SANDBOX,
-        "model_extraction": ContainmentStrategy.NETWORK_FENCE,
-        "supply_chain_compromise": ContainmentStrategy.ISOLATE_AGENT,
-    }
-
-    return strategy_map.get(cat, ContainmentStrategy.ISOLATE_AGENT)
-
-
-def _run_ooda(incident: Incident) -> OODACycle:
-    """Execute one OODA cycle for an incident."""
-    import time
-    start = time.monotonic()
-
-    # OBSERVE — gather signals
-    observe = {
-        "incident_id": incident.id,
-        "current_state": incident.state.value,
-        "severity": incident.severity.value,
-        "affected_agents": incident.affected_agents,
-        "affected_systems": incident.affected_systems,
-        "timeline_events": len(incident.timeline),
-        "sla": _check_sla(incident),
-    }
-
-    # ORIENT — contextualise
-    orient = {
-        "category": incident.category,
-        "attack_vector": incident.category if incident.category in AVE_CATEGORIES else "unknown",
-        "blast_radius": len(incident.affected_agents) + len(incident.affected_systems),
-        "escalation_needed": incident.severity in (Severity.CRITICAL, Severity.HIGH),
-        "human_approval_needed": incident.severity in (Severity.CRITICAL, Severity.HIGH),
-        "recommended_containment": _select_containment(incident).value,
-    }
-
-    # DECIDE — choose action
-    if incident.state == IncidentState.DETECTED:
-        decide = {"action": "triage", "rationale": "Incident not yet triaged"}
-    elif incident.state == IncidentState.TRIAGED:
-        if orient["escalation_needed"]:
-            decide = {"action": "escalate", "rationale": f"Severity {incident.severity.value} requires escalation"}
-        else:
-            decide = {"action": "contain", "rationale": "Proceeding to containment"}
-    elif incident.state == IncidentState.ESCALATED:
-        decide = {"action": "contain", "rationale": "Escalation complete, proceeding to containment"}
-    elif incident.state == IncidentState.CONTAINED:
-        decide = {"action": "eradicate", "rationale": "Containment holding, begin eradication"}
-    elif incident.state == IncidentState.ERADICATED:
-        decide = {"action": "recover", "rationale": "Threat eradicated, begin recovery"}
-    elif incident.state == IncidentState.RECOVERED:
-        decide = {"action": "close", "rationale": "Recovery verified, close incident"}
-    else:
-        decide = {"action": "none", "rationale": "Incident already closed"}
-
-    # ACT — record recommendation (actual execution via specific endpoints)
-    act = {
-        "recommended_action": decide["action"],
-        "auto_execute": incident.severity not in (Severity.CRITICAL, Severity.HIGH),
-        "requires_human_approval": incident.severity in (Severity.CRITICAL, Severity.HIGH),
-    }
-
-    elapsed_ms = (time.monotonic() - start) * 1000
-
-    cycle = OODACycle(
-        incident_id=incident.id,
-        observe=observe,
-        orient=orient,
-        decide=decide,
-        act=act,
-        cycle_time_ms=round(elapsed_ms, 3),
-    )
-    OODA_HISTORY.append(cycle)
-
-    return cycle
+class WarRoomMessage(BaseModel):
+    author: str
+    role: WarRoomRole = WarRoomRole.investigator
+    content: str
+    pinned: bool = False
+    action_item: bool = False
 
 
 # ---------------------------------------------------------------------------
-# Seed Data
+# In-Memory Stores
 # ---------------------------------------------------------------------------
 
-def _seed() -> None:
-    # Seed playbooks
-    playbook_defs = [
-        ("Prompt Injection Response", "Automated response for prompt injection attacks",
-         "prompt_injection", Severity.HIGH, ContainmentStrategy.BLOCK_PATTERN,
-         [{"step": 1, "action": "detect_pattern", "desc": "Identify injection pattern"},
-          {"step": 2, "action": "block_pattern", "desc": "Add pattern to block list"},
-          {"step": 3, "action": "scan_affected", "desc": "Scan all agents for same pattern"},
-          {"step": 4, "action": "verify_block", "desc": "Confirm pattern is blocked"}]),
-        ("Data Exfiltration Response", "Critical response for data exfiltration",
-         "data_exfiltration", Severity.CRITICAL, ContainmentStrategy.NETWORK_FENCE,
-         [{"step": 1, "action": "network_fence", "desc": "Isolate affected network segment"},
-          {"step": 2, "action": "revoke_creds", "desc": "Revoke all compromised credentials"},
-          {"step": 3, "action": "audit_data", "desc": "Determine what data was accessed"},
-          {"step": 4, "action": "notify_dpo", "desc": "Notify Data Protection Officer"}]),
-        ("Privilege Escalation Lockdown", "Immediate credential revocation and lockdown",
-         "privilege_escalation", Severity.CRITICAL, ContainmentStrategy.REVOKE_CREDENTIALS,
-         [{"step": 1, "action": "revoke_all", "desc": "Revoke all elevated credentials"},
-          {"step": 2, "action": "isolate_agent", "desc": "Quarantine affected agent"},
-          {"step": 3, "action": "audit_actions", "desc": "Audit all actions with elevated privs"},
-          {"step": 4, "action": "reset_perms", "desc": "Reset to least privilege"}]),
-        ("Resource Exhaustion Mitigation", "Rate limiting and resource control",
-         "resource_exhaustion", Severity.MEDIUM, ContainmentStrategy.RATE_LIMIT,
-         [{"step": 1, "action": "rate_limit", "desc": "Apply aggressive rate limiting"},
-          {"step": 2, "action": "identify_source", "desc": "Identify exhaustion source"},
-          {"step": 3, "action": "scale_resources", "desc": "Auto-scale if needed"},
-          {"step": 4, "action": "verify_normal", "desc": "Verify resource usage normalised"}]),
-        ("Multi-Agent Isolation", "Isolate compromised agents in multi-agent scenarios",
-         "multi_agent_manipulation", Severity.HIGH, ContainmentStrategy.ISOLATE_AGENT,
-         [{"step": 1, "action": "map_comms", "desc": "Map inter-agent communication channels"},
-          {"step": 2, "action": "isolate_compromised", "desc": "Isolate identified agents"},
-          {"step": 3, "action": "verify_peers", "desc": "Verify peer agents not compromised"},
-          {"step": 4, "action": "restore_comms", "desc": "Selectively restore communications"}]),
-    ]
-
-    for name, desc, cat, sev, strat, steps in playbook_defs:
-        pb = Playbook(
-            name=name, description=desc, category=cat,
-            severity_threshold=sev, containment_strategy=strat,
-            steps=steps,
-        )
-        PLAYBOOKS[pb.id] = pb
-
-    # Seed incidents
-    seed_incidents = [
-        ("Agent-7 Prompt Injection Detected", "Suspicious instruction override in Agent-7 input buffer",
-         "prompt_injection", ["Agent-7"], ["chatbot-platform"]),
-        ("Unusual Data Export from Agent-12", "Agent-12 attempting bulk data transfer to external endpoint",
-         "data_exfiltration", ["Agent-12"], ["production-db", "api-gateway"]),
-        ("Multi-Agent Coordination Anomaly", "Agents 3, 5, 9 exhibiting coordinated anomalous behaviour",
-         "multi_agent_manipulation", ["Agent-3", "Agent-5", "Agent-9"], ["orchestration-layer"]),
-        ("Rate Limit Bypass by Agent-22", "Agent-22 exceeding resource quotas through batched requests",
-         "resource_exhaustion", ["Agent-22"], ["compute-cluster-a"]),
-    ]
-
-    rng = random.Random(42)
-    for title, desc, cat, agents, systems in seed_incidents:
-        inc = Incident(
-            title=title, description=desc, category=cat,
-            affected_agents=agents, affected_systems=systems,
-            source="automated_detection",
-        )
-        # Auto triage
-        sev, pri, assigned = _auto_triage(inc)
-        inc.severity = sev
-        inc.priority = pri
-        inc.assigned_to = assigned
-        inc.human_approval_required = sev in (Severity.CRITICAL, Severity.HIGH)
-
-        _add_event(inc, "detected", "Incident created by automated detection system")
-
-        # Advance first two to triaged
-        if rng.random() > 0.3:
-            inc.state = IncidentState.TRIAGED
-            inc.triaged_at = _now().isoformat()
-            _add_event(inc, "triaged", f"Auto-triaged: severity={sev.value}, priority=P{pri}")
-
-        INCIDENTS[inc.id] = inc
+incidents: Dict[str, IncidentRecord] = {}
+playbooks: Dict[str, PlaybookRecord] = {}
+escalation_chains: Dict[str, EscalationChainRecord] = {}
 
 
-_seed()
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _add_timeline(inc: IncidentRecord, event: str, detail: str = ""):
+    inc.timeline.append({"event": event, "detail": detail, "timestamp": _now()})
+    inc.updated_at = _now()
 
 
 # ---------------------------------------------------------------------------
-# Endpoints
+# FastAPI App
 # ---------------------------------------------------------------------------
+
+app = FastAPI(
+    title="Autonomous Incident Commander",
+    description="Phase 21 — Incident response orchestration, playbooks, escalation, war room, post-mortems",
+    version="21.0.0",
+)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
 
 @app.get("/health")
-async def health():
-    open_incidents = sum(1 for i in INCIDENTS.values() if i.state != IncidentState.CLOSED)
-    critical = sum(1 for i in INCIDENTS.values() if i.severity == Severity.CRITICAL and i.state != IncidentState.CLOSED)
+def health():
+    active = sum(1 for i in incidents.values() if i.state not in (IncidentState.resolved, IncidentState.post_mortem))
     return {
-        "status": "healthy",
         "service": "autonomous-incident-commander",
-        "version": "1.0.0",
-        "incidents_total": len(INCIDENTS),
-        "incidents_open": open_incidents,
-        "incidents_critical": critical,
-        "playbooks": len(PLAYBOOKS),
+        "status": "healthy",
+        "phase": 21,
+        "port": 9503,
+        "stats": {
+            "total_incidents": len(incidents),
+            "active_incidents": active,
+            "playbooks": len(playbooks),
+            "escalation_chains": len(escalation_chains),
+        },
+        "timestamp": _now(),
     }
 
 
-# ---- Incidents CRUD -------------------------------------------------------
+# -- Incidents ---------------------------------------------------------------
 
-@app.post("/v1/incidents", status_code=status.HTTP_201_CREATED)
-async def create_incident(data: IncidentCreate):
-    if data.category and data.category not in AVE_CATEGORIES:
-        raise HTTPException(400, f"Invalid AVE category: {data.category}")
+@app.post("/v1/incidents", status_code=201)
+def declare_incident(body: IncidentCreate):
+    iid = f"INC-{uuid.uuid4().hex[:12]}"
+    now = _now()
+    record = IncidentRecord(**body.dict(), incident_id=iid, created_at=now, updated_at=now)
+    _add_timeline(record, "incident_declared", f"Severity {body.severity.value}: {body.title}")
 
-    inc = Incident(
-        title=data.title,
-        description=data.description,
-        category=data.category,
-        source=data.source,
-        affected_agents=data.affected_agents,
-        affected_systems=data.affected_systems,
-        metadata=data.metadata,
-    )
+    # Auto-triage
+    record.state = IncidentState.triaged
+    _add_timeline(record, "auto_triaged", f"Type: {body.incident_type.value}")
 
-    sev, pri, assigned = _auto_triage(inc)
-    inc.severity = sev
-    inc.priority = pri
-    inc.assigned_to = assigned
-    inc.human_approval_required = sev in (Severity.CRITICAL, Severity.HIGH)
+    # Auto-escalate P1/P2
+    if body.severity in (Severity.P1, Severity.P2):
+        record.state = IncidentState.escalated
+        record.current_escalation_tier = EscalationTier.team_lead if body.severity == Severity.P2 else EscalationTier.director
+        _add_timeline(record, "auto_escalated", f"Tier: {record.current_escalation_tier.value}")
 
-    _add_event(inc, "detected", f"Incident created — auto-triaged to {sev.value}/P{pri}")
-
-    INCIDENTS[inc.id] = inc
-
-    return {
-        "id": inc.id,
-        "title": inc.title,
-        "severity": inc.severity.value,
-        "priority": inc.priority,
-        "state": inc.state.value,
-        "assigned_to": inc.assigned_to,
-        "human_approval_required": inc.human_approval_required,
-    }
+    incidents[iid] = record
+    return record.dict()
 
 
 @app.get("/v1/incidents")
-async def list_incidents(
+def list_incidents(
     state: Optional[IncidentState] = None,
     severity: Optional[Severity] = None,
-    category: Optional[str] = None,
+    incident_type: Optional[IncidentType] = None,
+    limit: int = Query(default=100, ge=1, le=1000),
 ):
-    incidents = list(INCIDENTS.values())
+    results = list(incidents.values())
     if state:
-        incidents = [i for i in incidents if i.state == state]
+        results = [i for i in results if i.state == state]
     if severity:
-        incidents = [i for i in incidents if i.severity == severity]
-    if category:
-        incidents = [i for i in incidents if i.category == category]
-
-    incidents.sort(key=lambda i: i.priority)
-
-    return {
-        "count": len(incidents),
-        "incidents": [
-            {
-                "id": i.id,
-                "title": i.title,
-                "category": i.category,
-                "severity": i.severity.value,
-                "priority": i.priority,
-                "state": i.state.value,
-                "assigned_to": i.assigned_to,
-                "detected_at": i.detected_at,
-                "human_approval_required": i.human_approval_required,
-                "human_approved": i.human_approved,
-            }
-            for i in incidents
-        ],
-    }
+        results = [i for i in results if i.severity == severity]
+    if incident_type:
+        results = [i for i in results if i.incident_type == incident_type]
+    results.sort(key=lambda i: i.created_at, reverse=True)
+    return {"incidents": [i.dict() for i in results[:limit]], "total": len(results)}
 
 
-@app.get("/v1/incidents/{incident_id}")
-async def get_incident(incident_id: str):
-    if incident_id not in INCIDENTS:
+@app.get("/v1/incidents/{inc_id}")
+def get_incident(inc_id: str):
+    if inc_id not in incidents:
         raise HTTPException(404, "Incident not found")
-    return INCIDENTS[incident_id].dict()
+    return incidents[inc_id].dict()
 
 
-# ---- Incident Lifecycle Transitions ----------------------------------------
-
-@app.post("/v1/incidents/{incident_id}/triage")
-async def triage_incident(incident_id: str):
-    if incident_id not in INCIDENTS:
+@app.patch("/v1/incidents/{inc_id}/advance")
+def advance_incident(inc_id: str):
+    if inc_id not in incidents:
         raise HTTPException(404, "Incident not found")
-    inc = INCIDENTS[incident_id]
+    inc = incidents[inc_id]
+    idx = STATE_ORDER.index(inc.state)
+    if idx >= len(STATE_ORDER) - 1:
+        raise HTTPException(409, "Incident already at final state")
+    new_state = STATE_ORDER[idx + 1]
+    inc.state = new_state
+    _add_timeline(inc, "state_advanced", f"-> {new_state.value}")
 
-    if inc.state != IncidentState.DETECTED:
-        raise HTTPException(409, f"Cannot triage from state '{inc.state.value}' — must be 'detected'")
+    if new_state == IncidentState.resolved:
+        inc.resolved_at = _now()
+        try:
+            created = datetime.fromisoformat(inc.created_at)
+            resolved = datetime.fromisoformat(inc.resolved_at)
+            inc.mttr_minutes = round((resolved - created).total_seconds() / 60, 2)
+        except Exception:
+            pass
 
-    sev, pri, assigned = _auto_triage(inc)
-    inc.severity = sev
-    inc.priority = pri
-    inc.assigned_to = assigned
-    inc.state = IncidentState.TRIAGED
-    inc.triaged_at = _now().isoformat()
-    inc.human_approval_required = sev in (Severity.CRITICAL, Severity.HIGH)
-
-    _add_event(inc, "triaged", f"Triaged to {sev.value}/P{pri}, assigned to {assigned}")
-
-    return {
-        "incident_id": inc.id,
-        "state": inc.state.value,
-        "severity": inc.severity.value,
-        "priority": inc.priority,
-        "assigned_to": inc.assigned_to,
-        "sla": _check_sla(inc),
-    }
+    return {"incident_id": inc_id, "state": inc.state.value}
 
 
-@app.post("/v1/incidents/{incident_id}/escalate")
-async def escalate_incident(incident_id: str, reason: str = ""):
-    if incident_id not in INCIDENTS:
-        raise HTTPException(404, "Incident not found")
-    inc = INCIDENTS[incident_id]
+# -- Playbooks ---------------------------------------------------------------
 
-    if IncidentState.ESCALATED not in VALID_TRANSITIONS.get(inc.state, []):
-        raise HTTPException(409, f"Cannot escalate from state '{inc.state.value}'")
-
-    # Escalation chain
-    chain = ["Security Analyst", "IR Team Lead", "CISO", "CEO"]
-    current_level = len(inc.escalation_chain)
-    if current_level < len(chain):
-        escalated_to = chain[min(current_level, len(chain) - 1)]
-        inc.escalation_chain.append(escalated_to)
-    else:
-        escalated_to = "Maximum escalation reached"
-
-    inc.state = IncidentState.ESCALATED
-    inc.human_approval_required = True
-
-    _add_event(inc, "escalated", f"Escalated to {escalated_to}", details={"reason": reason})
-
-    return {
-        "incident_id": inc.id,
-        "state": inc.state.value,
-        "escalated_to": escalated_to,
-        "escalation_level": len(inc.escalation_chain),
-        "human_approval_required": True,
-    }
-
-
-@app.post("/v1/incidents/{incident_id}/contain")
-async def contain_incident(
-    incident_id: str,
-    strategy: Optional[ContainmentStrategy] = None,
-):
-    if incident_id not in INCIDENTS:
-        raise HTTPException(404, "Incident not found")
-    inc = INCIDENTS[incident_id]
-
-    if IncidentState.CONTAINED not in VALID_TRANSITIONS.get(inc.state, []):
-        raise HTTPException(409, f"Cannot contain from state '{inc.state.value}'")
-
-    # Check human approval for critical/high
-    if inc.human_approval_required and not inc.human_approved:
-        raise HTTPException(
-            403,
-            "Human approval required before containment for critical/high severity. "
-            f"Use POST /v1/incidents/{incident_id}/approve first.",
-        )
-
-    selected = strategy or _select_containment(inc)
-    inc.containment_strategy = selected
-    inc.state = IncidentState.CONTAINED
-    inc.contained_at = _now().isoformat()
-
-    # Strategy-specific details
-    details: dict[str, Any] = {
-        "strategy": selected.value,
-        "affected_agents": inc.affected_agents,
-        "affected_systems": inc.affected_systems,
-    }
-
-    if selected == ContainmentStrategy.ISOLATE_AGENT:
-        details["action"] = f"Isolated agents: {', '.join(inc.affected_agents)}"
-        details["network_access"] = "revoked"
-    elif selected == ContainmentStrategy.BLOCK_PATTERN:
-        details["action"] = f"Pattern block rule deployed for category: {inc.category}"
-        details["rule_id"] = f"BLK-{uuid.uuid4().hex[:6].upper()}"
-    elif selected == ContainmentStrategy.RATE_LIMIT:
-        details["action"] = "Rate limiting applied"
-        details["limit"] = "10 req/min"
-    elif selected == ContainmentStrategy.SANDBOX:
-        details["action"] = f"Agents sandboxed: {', '.join(inc.affected_agents)}"
-        details["sandbox_id"] = f"SBX-{uuid.uuid4().hex[:6].upper()}"
-    elif selected == ContainmentStrategy.REVOKE_CREDENTIALS:
-        details["action"] = "All credentials revoked for affected agents"
-        details["credentials_revoked"] = len(inc.affected_agents) * 3
-    elif selected == ContainmentStrategy.NETWORK_FENCE:
-        details["action"] = f"Network fence applied to: {', '.join(inc.affected_systems)}"
-        details["fence_rules"] = len(inc.affected_systems)
-
-    inc.containment_details = details
-    _add_event(inc, "contained", f"Containment applied: {selected.value}", details=details)
-
-    return {
-        "incident_id": inc.id,
-        "state": inc.state.value,
-        "containment_strategy": selected.value,
-        "details": details,
-        "sla": _check_sla(inc),
-    }
-
-
-@app.post("/v1/incidents/{incident_id}/eradicate")
-async def eradicate_incident(incident_id: str):
-    if incident_id not in INCIDENTS:
-        raise HTTPException(404, "Incident not found")
-    inc = INCIDENTS[incident_id]
-
-    if inc.state != IncidentState.CONTAINED:
-        raise HTTPException(409, f"Cannot eradicate from state '{inc.state.value}' — must be 'contained'")
-
-    inc.state = IncidentState.ERADICATED
-    inc.eradicated_at = _now().isoformat()
-
-    eradication = {
-        "category": inc.category,
-        "actions_taken": [
-            f"Removed attack vector: {inc.category}",
-            f"Patched {len(inc.affected_systems)} affected systems",
-            f"Updated detection rules for {inc.category}",
-            "Verified no persistence mechanisms remain",
-        ],
-        "indicators_removed": random.randint(3, 12),
-        "rules_updated": random.randint(1, 5),
-    }
-    inc.eradication_details = eradication
-
-    _add_event(inc, "eradicated", "Threat eradicated", details=eradication)
-
-    return {"incident_id": inc.id, "state": inc.state.value, "eradication": eradication}
-
-
-@app.post("/v1/incidents/{incident_id}/recover")
-async def recover_incident(incident_id: str):
-    if incident_id not in INCIDENTS:
-        raise HTTPException(404, "Incident not found")
-    inc = INCIDENTS[incident_id]
-
-    if inc.state != IncidentState.ERADICATED:
-        raise HTTPException(409, f"Cannot recover from state '{inc.state.value}' — must be 'eradicated'")
-
-    inc.state = IncidentState.RECOVERED
-    inc.recovered_at = _now().isoformat()
-
-    recovery = {
-        "agents_restored": inc.affected_agents,
-        "systems_restored": inc.affected_systems,
-        "verification": {
-            "baseline_check": "passed",
-            "integrity_check": "passed",
-            "functionality_check": "passed",
-            "monitoring_enhanced": True,
-        },
-        "monitoring_period": "72 hours enhanced monitoring",
-    }
-    inc.recovery_details = recovery
-
-    _add_event(inc, "recovered", "Systems recovered and verified", details=recovery)
-
-    return {"incident_id": inc.id, "state": inc.state.value, "recovery": recovery}
-
-
-@app.post("/v1/incidents/{incident_id}/close")
-async def close_incident(incident_id: str, lessons: list[str] = Field(default_factory=list)):
-    if incident_id not in INCIDENTS:
-        raise HTTPException(404, "Incident not found")
-    inc = INCIDENTS[incident_id]
-
-    if inc.state != IncidentState.RECOVERED:
-        raise HTTPException(409, f"Cannot close from state '{inc.state.value}' — must be 'recovered'")
-
-    inc.state = IncidentState.CLOSED
-    inc.closed_at = _now().isoformat()
-
-    # Calculate MTTR
-    detected = datetime.fromisoformat(inc.detected_at)
-    closed = datetime.fromisoformat(inc.closed_at)
-    inc.mttr_minutes = round((closed - detected).total_seconds() / 60, 2)
-
-    # Auto-generate lessons if none provided
-    if lessons:
-        inc.lessons_learned = lessons
-    else:
-        inc.lessons_learned = [
-            f"Detection for {inc.category} should be tuned for faster initial detection",
-            f"Containment strategy '{inc.containment_strategy.value if inc.containment_strategy else 'N/A'}' was effective",
-            f"Affected {len(inc.affected_agents)} agents — consider blast radius reduction",
-            "Post-incident monitoring period confirmed no recurrence",
-        ]
-
-    _add_event(inc, "closed", f"Incident closed — MTTR: {inc.mttr_minutes}min")
-
-    return {
-        "incident_id": inc.id,
-        "state": inc.state.value,
-        "mttr_minutes": inc.mttr_minutes,
-        "lessons_learned": inc.lessons_learned,
-    }
-
-
-@app.post("/v1/incidents/{incident_id}/approve")
-async def human_approve(incident_id: str, approver: str = "", notes: str = ""):
-    if incident_id not in INCIDENTS:
-        raise HTTPException(404, "Incident not found")
-    inc = INCIDENTS[incident_id]
-
-    if not inc.human_approval_required:
-        raise HTTPException(400, "This incident does not require human approval")
-    if inc.human_approved:
-        raise HTTPException(409, f"Already approved by {inc.human_approver}")
-
-    if not approver:
-        raise HTTPException(400, "Approver identity required")
-
-    inc.human_approved = True
-    inc.human_approver = approver
-    inc.human_approved_at = _now().isoformat()
-
-    _add_event(inc, inc.state.value, f"Human approval granted by {approver}",
-               actor="human", details={"approver": approver, "notes": notes})
-
-    return {
-        "incident_id": inc.id,
-        "approved": True,
-        "approver": approver,
-        "approved_at": inc.human_approved_at,
-    }
-
-
-# ---- Timeline / OODA ------------------------------------------------------
-
-@app.get("/v1/incidents/{incident_id}/timeline")
-async def incident_timeline(incident_id: str):
-    if incident_id not in INCIDENTS:
-        raise HTTPException(404, "Incident not found")
-    inc = INCIDENTS[incident_id]
-    return {
-        "incident_id": inc.id,
-        "state": inc.state.value,
-        "events": [e.dict() for e in inc.timeline],
-        "sla": _check_sla(inc),
-    }
-
-
-@app.post("/v1/ooda/cycle")
-async def run_ooda_cycle(incident_id: str = ""):
-    if incident_id not in INCIDENTS:
-        raise HTTPException(404, "Incident not found")
-    inc = INCIDENTS[incident_id]
-
-    if inc.state == IncidentState.CLOSED:
-        raise HTTPException(400, "Cannot run OODA on closed incident")
-
-    cycle = _run_ooda(inc)
-
-    return {
-        "cycle_id": cycle.id,
-        "incident_id": cycle.incident_id,
-        "observe": cycle.observe,
-        "orient": cycle.orient,
-        "decide": cycle.decide,
-        "act": cycle.act,
-        "cycle_time_ms": cycle.cycle_time_ms,
-    }
-
-
-# ---- Playbooks -------------------------------------------------------------
-
-@app.post("/v1/playbooks", status_code=status.HTTP_201_CREATED)
-async def create_playbook(data: PlaybookCreate):
-    if data.category and data.category not in AVE_CATEGORIES:
-        raise HTTPException(400, f"Invalid AVE category: {data.category}")
-
-    pb = Playbook(
-        name=data.name,
-        description=data.description,
-        category=data.category,
-        severity_threshold=data.severity_threshold,
-        containment_strategy=data.containment_strategy,
-        auto_execute=data.auto_execute,
-        steps=data.steps,
-    )
-    PLAYBOOKS[pb.id] = pb
-
-    return {"id": pb.id, "name": pb.name, "category": pb.category}
+@app.post("/v1/playbooks", status_code=201)
+def create_playbook(body: PlaybookCreate):
+    pid = f"PB-{uuid.uuid4().hex[:12]}"
+    record = PlaybookRecord(**body.dict(), playbook_id=pid, created_at=_now())
+    playbooks[pid] = record
+    return record.dict()
 
 
 @app.get("/v1/playbooks")
-async def list_playbooks(category: Optional[str] = None):
-    pbs = list(PLAYBOOKS.values())
-    if category:
-        pbs = [p for p in pbs if p.category == category]
+def list_playbooks(incident_type: Optional[IncidentType] = None):
+    results = list(playbooks.values())
+    if incident_type:
+        results = [p for p in results if p.incident_type == incident_type]
+    return {"playbooks": [p.dict() for p in results], "total": len(results)}
+
+
+@app.post("/v1/incidents/{inc_id}/execute")
+def execute_playbook_step(inc_id: str, step_index: int = 0):
+    if inc_id not in incidents:
+        raise HTTPException(404, "Incident not found")
+    inc = incidents[inc_id]
+    if not inc.playbook_id or inc.playbook_id not in playbooks:
+        matching = [p for p in playbooks.values() if p.incident_type == inc.incident_type]
+        if not matching:
+            raise HTTPException(404, "No matching playbook found")
+        inc.playbook_id = matching[0].playbook_id
+
+    pb = playbooks[inc.playbook_id]
+    if step_index >= len(pb.steps):
+        raise HTTPException(422, f"Step index {step_index} out of range (playbook has {len(pb.steps)} steps)")
+
+    step = pb.steps[step_index]
+    execution = {
+        "step_index": step_index,
+        "step_type": step.get("step_type", "unknown"),
+        "description": step.get("description", ""),
+        "status": "completed",
+        "executed_at": _now(),
+    }
+    inc.playbook_progress.append(execution)
+    _add_timeline(inc, "playbook_step_executed", f"Step {step_index}: {step.get('step_type', 'unknown')}")
+    inc.state = IncidentState.mitigating
+    return execution
+
+
+# -- Escalation Chains -------------------------------------------------------
+
+@app.post("/v1/escalation-chains", status_code=201)
+def create_escalation_chain(body: EscalationChainCreate):
+    cid = f"ESC-{uuid.uuid4().hex[:12]}"
+    record = EscalationChainRecord(**body.dict(), chain_id=cid, created_at=_now())
+    escalation_chains[cid] = record
+    return record.dict()
+
+
+@app.get("/v1/escalation-chains")
+def list_escalation_chains():
+    return {"chains": [c.dict() for c in escalation_chains.values()], "total": len(escalation_chains)}
+
+
+@app.post("/v1/incidents/{inc_id}/escalate")
+def escalate_incident(inc_id: str):
+    if inc_id not in incidents:
+        raise HTTPException(404, "Incident not found")
+    inc = incidents[inc_id]
+    tier_idx = TIER_ORDER.index(inc.current_escalation_tier)
+    if tier_idx >= len(TIER_ORDER) - 1:
+        raise HTTPException(409, "Already at highest escalation tier")
+    new_tier = TIER_ORDER[tier_idx + 1]
+    inc.current_escalation_tier = new_tier
+    inc.state = IncidentState.escalated
+    _add_timeline(inc, "escalated", f"-> {new_tier.value}")
+    return {"incident_id": inc_id, "escalation_tier": new_tier.value}
+
+
+# -- War Room ----------------------------------------------------------------
+
+@app.post("/v1/incidents/{inc_id}/warroom", status_code=201)
+def post_warroom_message(inc_id: str, body: WarRoomMessage):
+    if inc_id not in incidents:
+        raise HTTPException(404, "Incident not found")
+    inc = incidents[inc_id]
+    msg = {
+        "message_id": f"MSG-{uuid.uuid4().hex[:8]}",
+        "author": body.author,
+        "role": body.role.value,
+        "content": body.content,
+        "pinned": body.pinned,
+        "action_item": body.action_item,
+        "posted_at": _now(),
+    }
+    inc.warroom.append(msg)
+    _add_timeline(inc, "warroom_message", f"{body.role.value}: {body.content[:80]}")
+    return msg
+
+
+@app.get("/v1/incidents/{inc_id}/warroom")
+def get_warroom(inc_id: str):
+    if inc_id not in incidents:
+        raise HTTPException(404, "Incident not found")
+    inc = incidents[inc_id]
+    pinned = [m for m in inc.warroom if m.get("pinned")]
+    action_items = [m for m in inc.warroom if m.get("action_item")]
     return {
-        "count": len(pbs),
-        "playbooks": [
+        "incident_id": inc_id,
+        "messages": inc.warroom,
+        "total_messages": len(inc.warroom),
+        "pinned_decisions": pinned,
+        "action_items": action_items,
+    }
+
+
+# -- Post-Mortem -------------------------------------------------------------
+
+@app.post("/v1/incidents/{inc_id}/postmortem")
+def generate_postmortem(inc_id: str):
+    if inc_id not in incidents:
+        raise HTTPException(404, "Incident not found")
+    inc = incidents[inc_id]
+    if inc.state not in (IncidentState.resolved, IncidentState.post_mortem):
+        raise HTTPException(422, "Incident must be resolved before post-mortem")
+
+    inc.state = IncidentState.post_mortem
+    pinned = [m for m in inc.warroom if m.get("pinned")]
+    action_items = [m for m in inc.warroom if m.get("action_item")]
+
+    inc.post_mortem = {
+        "incident_id": inc_id,
+        "title": inc.title,
+        "severity": inc.severity.value,
+        "incident_type": inc.incident_type.value,
+        "timeline_summary": [
+            {"event": e["event"], "timestamp": e["timestamp"]}
+            for e in inc.timeline
+        ],
+        "root_cause_analysis": {
+            "template": "5 Whys",
+            "why_1": "To be completed by incident team",
+            "why_2": "",
+            "why_3": "",
+            "why_4": "",
+            "why_5": "",
+        },
+        "contributing_factors": inc.affected_services,
+        "mitigation_steps_taken": [
+            {"step": s.get("step_type", ""), "status": s.get("status", "")}
+            for s in inc.playbook_progress
+        ],
+        "remediation_items": [
+            {"description": ai.get("content", ""), "owner": ai.get("author", ""), "deadline": "TBD"}
+            for ai in action_items
+        ],
+        "key_decisions": [m.get("content", "") for m in pinned],
+        "lessons_learned": [],
+        "mttr_minutes": inc.mttr_minutes,
+        "blameless": True,
+        "generated_at": _now(),
+    }
+    _add_timeline(inc, "postmortem_generated")
+    return inc.post_mortem
+
+
+# -- Status Board -------------------------------------------------------------
+
+@app.get("/v1/status-board")
+def status_board():
+    active = [i for i in incidents.values() if i.state not in (IncidentState.resolved, IncidentState.post_mortem)]
+    resolved = [i for i in incidents.values() if i.state in (IncidentState.resolved, IncidentState.post_mortem)]
+
+    sev_active: Dict[str, int] = defaultdict(int)
+    for i in active:
+        sev_active[i.severity.value] += 1
+
+    mttrs = [i.mttr_minutes for i in resolved if i.mttr_minutes is not None]
+    avg_mttr = round(sum(mttrs) / max(len(mttrs), 1), 2) if mttrs else None
+
+    return {
+        "active_incidents": len(active),
+        "active_by_severity": dict(sev_active),
+        "resolved_incidents": len(resolved),
+        "avg_mttr_minutes": avg_mttr,
+        "active_details": [
             {
-                "id": p.id,
-                "name": p.name,
-                "category": p.category,
-                "severity_threshold": p.severity_threshold.value,
-                "containment_strategy": p.containment_strategy.value,
-                "steps": len(p.steps),
-                "auto_execute": p.auto_execute,
+                "incident_id": i.incident_id,
+                "title": i.title,
+                "severity": i.severity.value,
+                "state": i.state.value,
+                "escalation_tier": i.current_escalation_tier.value,
+                "age_events": len(i.timeline),
             }
-            for p in pbs
+            for i in active
         ],
     }
 
 
-@app.get("/v1/playbooks/{playbook_id}")
-async def get_playbook(playbook_id: str):
-    if playbook_id not in PLAYBOOKS:
-        raise HTTPException(404, "Playbook not found")
-    return PLAYBOOKS[playbook_id].dict()
-
-
-# ---- Analytics -------------------------------------------------------------
+# -- Analytics ----------------------------------------------------------------
 
 @app.get("/v1/analytics")
-async def commander_analytics():
-    incidents = list(INCIDENTS.values())
-    open_incidents = [i for i in incidents if i.state != IncidentState.CLOSED]
-    closed_incidents = [i for i in incidents if i.state == IncidentState.CLOSED]
+def analytics():
+    state_dist: Dict[str, int] = defaultdict(int)
+    sev_dist: Dict[str, int] = defaultdict(int)
+    type_dist: Dict[str, int] = defaultdict(int)
+    for i in incidents.values():
+        state_dist[i.state.value] += 1
+        sev_dist[i.severity.value] += 1
+        type_dist[i.incident_type.value] += 1
 
-    by_state = Counter(i.state.value for i in incidents)
-    by_severity = Counter(i.severity.value for i in incidents)
-    by_category = Counter(i.category for i in incidents if i.category)
-
-    mttr_values = [i.mttr_minutes for i in closed_incidents if i.mttr_minutes is not None]
-    avg_mttr = round(statistics.mean(mttr_values), 2) if mttr_values else None
-
-    # Containment strategy distribution
-    by_containment = Counter(
-        i.containment_strategy.value for i in incidents if i.containment_strategy
-    )
-
-    # Human approval stats
-    requiring_approval = sum(1 for i in incidents if i.human_approval_required)
-    approved = sum(1 for i in incidents if i.human_approved)
-
-    # SLA compliance
-    sla_results = [_check_sla(i) for i in open_incidents]
-    sla_compliant = sum(1 for s in sla_results if s["compliant"])
-
+    mttrs = [i.mttr_minutes for i in incidents.values() if i.mttr_minutes is not None]
     return {
-        "total_incidents": len(incidents),
-        "open_incidents": len(open_incidents),
-        "closed_incidents": len(closed_incidents),
-        "by_state": dict(by_state),
-        "by_severity": dict(by_severity),
-        "by_category": dict(by_category),
-        "avg_mttr_minutes": avg_mttr,
-        "by_containment_strategy": dict(by_containment),
-        "human_approvals_required": requiring_approval,
-        "human_approvals_granted": approved,
-        "sla_compliant": sla_compliant,
-        "sla_total_checked": len(sla_results),
-        "playbooks": len(PLAYBOOKS),
-        "ooda_cycles_run": len(OODA_HISTORY),
+        "incidents": {
+            "total": len(incidents),
+            "state_distribution": dict(state_dist),
+            "severity_distribution": dict(sev_dist),
+            "type_distribution": dict(type_dist),
+        },
+        "mttr": {
+            "avg_minutes": round(sum(mttrs) / max(len(mttrs), 1), 2) if mttrs else None,
+            "min_minutes": round(min(mttrs), 2) if mttrs else None,
+            "max_minutes": round(max(mttrs), 2) if mttrs else None,
+            "sample_size": len(mttrs),
+        },
+        "playbooks": len(playbooks),
+        "escalation_chains": len(escalation_chains),
     }
 
 
 # ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=9002)
+    uvicorn.run(app, host="0.0.0.0", port=9503)

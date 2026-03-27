@@ -1,73 +1,58 @@
-# 🚨 Autonomous Incident Commander
+# Autonomous Incident Commander
 
-> AI incident commander with full OODA loop — Observe, Orient,
-> Decide, Act — for automated triage, escalation, containment,
-> eradication, and recovery across multi-cloud agent deployments.
+> **Phase 21 — Service 4 of 5 · Port `9503`**
 
-**Port:** `9002`
+AI-driven incident response orchestrator with playbook execution,
+escalation chains, war-room coordination, real-time status tracking,
+and automated post-mortem generation.
 
-## Overview
-
-The Autonomous Incident Commander manages the full incident lifecycle
-from detection to post-incident review.  It continuously observes
-threat telemetry, orients by correlating signals against the 18 AVE
-categories, decides on response actions through a risk-weighted
-decision engine, and acts via automated playbooks — all with
-configurable human-on-the-loop oversight for high-severity events.
+---
 
 ## Key Capabilities
 
 | Capability | Detail |
-|-----------|--------|
-| **OODA Loop Engine** | Continuous Observe → Orient → Decide → Act cycle with configurable cadence |
-| **Incident Lifecycle** | 7 states: detected → triaged → escalated → contained → eradicated → recovered → closed |
-| **Automated Triage** | Severity + category classification with priority scoring |
-| **Escalation Engine** | Rule-based escalation with SLA timers and notification routing |
-| **Containment Playbooks** | 6 containment strategies (isolate agent, block pattern, rate limit, sandbox, revoke creds, network fence) |
-| **Eradication & Recovery** | Root cause removal + system restoration + verification checks |
-| **Human-on-the-Loop** | Mandatory human approval for critical/high-severity actions |
-| **Post-Incident Review** | Automated timeline reconstruction, lessons learned, MTTR tracking |
-| **Multi-Cloud Support** | Incident correlation across AWS, Azure, GCP, on-prem deployments |
+|------------|--------|
+| **Incident Lifecycle** | 7-state machine (`detected` → `triaged` → `escalated` → `mitigating` → `contained` → `resolved` → `post_mortem`), 4 severity levels (P1 critical / P2 high / P3 medium / P4 low), 8 incident types mapping to AVE categories |
+| **Playbook Engine** | Structured playbooks with ordered steps (`investigate` / `isolate` / `mitigate` / `verify` / `communicate` / `escalate`), conditional branching, timeout gates, automated and manual step types, per-step assignment |
+| **Escalation Chains** | Multi-tier escalation (`on_call` → `team_lead` → `director` → `ciso` → `ceo`), configurable SLA timers per severity, automatic escalation on timeout, acknowledgement tracking |
+| **War Room** | Real-time coordination space per incident with message timeline, participant roster, role assignments (commander/investigator/communicator/scribe), pinned decisions, action items |
+| **Status Board** | Live incident dashboard with MTTR/MTTD tracking, active incident count by severity, responder workload, SLA compliance, timeline visualisation |
+| **Post-Mortem Generator** | Automated post-mortem with timeline reconstruction, root cause analysis template, contributing factors, remediation items with owners + deadlines, lessons learned, blameless retrospective format |
 
-## Incident Lifecycle
+## AVE Integration
 
-```
-Detection → Triage → Escalation → Containment → Eradication → Recovery → Closure
-    ↑                                                                    ↓
-    └──────────────── Post-Incident Review ← Lessons Learned ←──────────┘
-```
+8 incident types directly map to AVE categories — `prompt_injection_incident`,
+`data_exfiltration_incident`, `privilege_escalation_incident`,
+`multi_agent_compromise`, `supply_chain_incident`, `model_extraction_incident`,
+`guardrail_bypass_incident`, `alignment_subversion_incident`.
 
-## API Endpoints
+## Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/health` | Service health + active incidents |
-| `POST` | `/v1/incidents` | Report / create a new incident |
-| `GET` | `/v1/incidents` | List incidents with status/severity/category filters |
-| `GET` | `/v1/incidents/{incident_id}` | Get full incident detail + timeline |
-| `POST` | `/v1/incidents/{incident_id}/triage` | Auto-triage an incident |
-| `POST` | `/v1/incidents/{incident_id}/escalate` | Escalate to next tier |
-| `POST` | `/v1/incidents/{incident_id}/contain` | Execute containment playbook |
-| `POST` | `/v1/incidents/{incident_id}/eradicate` | Run eradication procedures |
-| `POST` | `/v1/incidents/{incident_id}/recover` | Execute recovery and verify |
-| `POST` | `/v1/incidents/{incident_id}/close` | Close with resolution notes |
-| `POST` | `/v1/incidents/{incident_id}/approve` | Human approval for pending actions |
-| `GET` | `/v1/incidents/{incident_id}/timeline` | Full event timeline |
-| `POST` | `/v1/ooda/cycle` | Trigger one OODA cycle manually |
-| `GET` | `/v1/playbooks` | List containment playbooks |
-| `GET` | `/v1/analytics` | MTTR, MTTD, incident trends, resolution rates |
+| `GET` | `/health` | Service health |
+| `POST` | `/v1/incidents` | Declare incident |
+| `GET` | `/v1/incidents` | List incidents |
+| `GET` | `/v1/incidents/{inc_id}` | Incident detail |
+| `PATCH` | `/v1/incidents/{inc_id}/advance` | Advance to next state |
+| `POST` | `/v1/playbooks` | Create playbook |
+| `GET` | `/v1/playbooks` | List playbooks |
+| `POST` | `/v1/incidents/{inc_id}/execute` | Execute playbook step |
+| `POST` | `/v1/escalation-chains` | Create escalation chain |
+| `GET` | `/v1/escalation-chains` | List chains |
+| `POST` | `/v1/incidents/{inc_id}/escalate` | Trigger escalation |
+| `POST` | `/v1/incidents/{inc_id}/warroom` | Post war-room message |
+| `GET` | `/v1/incidents/{inc_id}/warroom` | Get war-room timeline |
+| `POST` | `/v1/incidents/{inc_id}/postmortem` | Generate post-mortem |
+| `GET` | `/v1/status-board` | Live status board |
+| `GET` | `/v1/analytics` | Comprehensive analytics |
 
-## Production Notes
-
-- OODA engine — production runs as continuous background task with configurable interval
-- Escalation — production integrates PagerDuty / Opsgenie / Slack / Teams
-- Containment — production executes via Kubernetes API, cloud provider APIs
-- Audit trail — production uses immutable event store (EventStoreDB / Kafka)
-
-## Quick Start
+## Running
 
 ```bash
 pip install fastapi uvicorn pydantic
-uvicorn server:app --host 0.0.0.0 --port 9002
-# Docs → http://localhost:9002/docs
+uvicorn server:app --host 0.0.0.0 --port 9503
 ```
+
+> **Note:** In-memory stores for development. Production should use
+> persistent event sourcing with PagerDuty/Opsgenie integration.

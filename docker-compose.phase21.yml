@@ -1,0 +1,81 @@
+###############################################################################
+# Phase 21 — Planetary-Scale Orchestration & Sovereign AI Governance
+# Services: edge-mesh (9500), data-residency (9501), ethics-tribunal (9502),
+#           incident-commander (9503), observability-fabric (9504)
+###############################################################################
+
+x-common: &common
+  restart: unless-stopped
+  networks:
+    - ave-phase21
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:$${PORT}/health')"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 15s
+
+services:
+  # ── 1. Global Edge Mesh Coordinator ──────────────────────────────────────
+  edge-mesh:
+    <<: *common
+    build:
+      context: ./edge-mesh
+      dockerfile: ../Dockerfile
+    container_name: ave-edge-mesh
+    ports:
+      - "9500:9500"
+    environment:
+      - PORT=9500
+
+  # ── 2. Sovereign Data Residency Engine ───────────────────────────────────
+  data-residency:
+    <<: *common
+    build:
+      context: ./data-residency
+      dockerfile: ../Dockerfile
+    container_name: ave-data-residency
+    ports:
+      - "9501:9501"
+    environment:
+      - PORT=9501
+
+  # ── 3. AI Ethics Tribunal ────────────────────────────────────────────────
+  ethics-tribunal:
+    <<: *common
+    build:
+      context: ./ethics-tribunal
+      dockerfile: ../Dockerfile
+    container_name: ave-ethics-tribunal
+    ports:
+      - "9502:9502"
+    environment:
+      - PORT=9502
+
+  # ── 4. Autonomous Incident Commander ─────────────────────────────────────
+  incident-commander:
+    <<: *common
+    build:
+      context: ./incident-commander
+      dockerfile: ../Dockerfile
+    container_name: ave-incident-commander
+    ports:
+      - "9503:9503"
+    environment:
+      - PORT=9503
+
+  # ── 5. Universal Observability Fabric ────────────────────────────────────
+  observability-fabric:
+    <<: *common
+    build:
+      context: ./observability-fabric
+      dockerfile: ../Dockerfile
+    container_name: ave-observability-fabric
+    ports:
+      - "9504:9504"
+    environment:
+      - PORT=9504
+
+networks:
+  ave-phase21:
+    driver: bridge
