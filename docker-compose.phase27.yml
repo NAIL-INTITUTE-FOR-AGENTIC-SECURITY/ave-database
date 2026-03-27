@@ -1,0 +1,65 @@
+version: "3.9"
+# ── Phase 27 · Predictive Security & Threat Anticipation ─────────────
+x-common: &common
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8000}/health"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+
+services:
+  attack-surface-predictor:
+    <<: *common
+    build: ./attack-surface-predictor
+    container_name: attack-surface-predictor
+    ports:
+      - "9910:9910"
+    environment:
+      - PORT=9910
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9910/health"]
+
+  threat-evolution-modeller:
+    <<: *common
+    build: ./threat-evolution-modeller
+    container_name: threat-evolution-modeller
+    ports:
+      - "9911:9911"
+    environment:
+      - PORT=9911
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9911/health"]
+
+  vulnerability-lifecycle:
+    <<: *common
+    build: ./vulnerability-lifecycle
+    container_name: vulnerability-lifecycle
+    ports:
+      - "9912:9912"
+    environment:
+      - PORT=9912
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9912/health"]
+
+  proactive-defence:
+    <<: *common
+    build: ./proactive-defence
+    container_name: proactive-defence
+    ports:
+      - "9913:9913"
+    environment:
+      - PORT=9913
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9913/health"]
+
+  security-debt-tracker:
+    <<: *common
+    build: ./security-debt-tracker
+    container_name: security-debt-tracker
+    ports:
+      - "9914:9914"
+    environment:
+      - PORT=9914
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9914/health"]
