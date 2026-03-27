@@ -1,0 +1,65 @@
+version: "3.9"
+# ── Phase 28 · Resilience Engineering & Recovery Intelligence ────────
+x-common: &common
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8000}/health"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+
+services:
+  chaos-experiment-engine:
+    <<: *common
+    build: ./chaos-experiment-engine
+    container_name: chaos-experiment-engine
+    ports:
+      - "9915:9915"
+    environment:
+      - PORT=9915
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9915/health"]
+
+  recovery-orchestrator:
+    <<: *common
+    build: ./recovery-orchestrator
+    container_name: recovery-orchestrator
+    ports:
+      - "9916:9916"
+    environment:
+      - PORT=9916
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9916/health"]
+
+  blast-radius-analyser:
+    <<: *common
+    build: ./blast-radius-analyser
+    container_name: blast-radius-analyser
+    ports:
+      - "9917:9917"
+    environment:
+      - PORT=9917
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9917/health"]
+
+  resilience-scorecard:
+    <<: *common
+    build: ./resilience-scorecard
+    container_name: resilience-scorecard
+    ports:
+      - "9918:9918"
+    environment:
+      - PORT=9918
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9918/health"]
+
+  incident-learning-engine:
+    <<: *common
+    build: ./incident-learning-engine
+    container_name: incident-learning-engine
+    ports:
+      - "9919:9919"
+    environment:
+      - PORT=9919
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9919/health"]
