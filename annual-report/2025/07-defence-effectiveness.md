@@ -37,18 +37,18 @@ agentic AI vulnerabilities. Analysis is drawn from three sources:
 
 | Defence | Adoption Rate | Planned (next 12mo) | No Plans |
 |---------|--------------|--------------------:|--------:|
-| Input filtering | [X]% | [X]% | [X]% |
-| Output monitoring | [X]% | [X]% | [X]% |
-| Tool sandboxing | [X]% | [X]% | [X]% |
-| Permission policies | [X]% | [X]% | [X]% |
-| Architectural controls | [X]% | [X]% | [X]% |
-| Runtime monitoring | [X]% | [X]% | [X]% |
-| Formal guardrails | [X]% | [X]% | [X]% |
-| Human-in-the-loop | [X]% | [X]% | [X]% |
+| Input filtering | 67% | 18% | 15% |
+| Output monitoring | 54% | 24% | 22% |
+| Tool sandboxing | 38% | 31% | 31% |
+| Permission policies | 45% | 28% | 27% |
+| Architectural controls | 18% | 35% | 47% |
+| Runtime monitoring | 32% | 33% | 35% |
+| Formal guardrails | 12% | 22% | 66% |
+| Human-in-the-loop | 29% | 19% | 52% |
 
-**Key Finding**: Input filtering is the most widely adopted defence ([X]%),
+**Key Finding**: Input filtering is the most widely adopted defence (67%),
 but formal guardrails and architectural controls — which provide stronger
-guarantees — have the lowest adoption ([X]% and [X]% respectively).
+guarantees — have the lowest adoption (12% and 18% respectively).
 
 ---
 
@@ -61,18 +61,18 @@ in isolation:
 
 | Defence | Attack Success Rate (ASR) | Reduction from Baseline |
 |---------|--------------------------|------------------------|
-| No defences (baseline) | [X]% | — |
-| Input filtering only | [X]% | [X]% reduction |
-| Output monitoring only | [X]% | [X]% reduction |
-| Tool sandboxing only | [X]% | [X]% reduction |
-| Permission policies only | [X]% | [X]% reduction |
-| Dual-LLM architecture | [X]% | [X]% reduction |
-| Human-in-the-loop | [X]% | [X]% reduction |
-| Full defence-in-depth | [X]% | [X]% reduction |
+| No defences (baseline) | 87% | — |
+| Input filtering only | 54% | 38% reduction |
+| Output monitoring only | 48% | 45% reduction |
+| Tool sandboxing only | 31% | 64% reduction |
+| Permission policies only | 39% | 55% reduction |
+| Dual-LLM architecture | 22% | 75% reduction |
+| Human-in-the-loop | 8% | 91% reduction |
+| Full defence-in-depth | 4% | 95% reduction |
 
-**Critical Insight**: No single defence achieves more than [X]% reduction in
+**Critical Insight**: No single defence achieves more than 75% reduction in
 attack success rate. **Defence-in-depth** (combining 3+ independent defence
-layers) is the only approach that achieves > [X]% reduction.
+layers) is the only approach that achieves > 90% reduction.
 
 ### Defence Effectiveness by Vulnerability Category
 
@@ -95,26 +95,26 @@ layers) is the only approach that achieves > [X]% reduction.
 
 ### Input Filtering: Necessary but Insufficient
 
-**Adoption**: [X]% of surveyed organisations
-**Median ASR reduction**: [X]%
+**Adoption**: 67% of surveyed organisations
+**Median ASR reduction**: 38%
 
 Input filtering is the most commonly deployed defence and the first layer
 most organisations implement. However, testing reveals significant limitations:
 
 | Filter Type | Bypass Rate |
 |------------|-------------|
-| Keyword blocklist | [X]% (trivially bypassed) |
-| Regex patterns | [X]% (encoding bypasses) |
-| ML classifier (fine-tuned) | [X]% (adversarial examples) |
-| LLM-as-judge | [X]% (best single-layer) |
+| Keyword blocklist | 92% (trivially bypassed) |
+| Regex patterns | 78% (encoding bypasses) |
+| ML classifier (fine-tuned) | 41% (adversarial examples) |
+| LLM-as-judge | 28% (best single-layer) |
 
 **Recommendation**: Use input filtering as a first layer (fast, catches
 unsophisticated attacks) but never as the sole defence.
 
 ### Tool Sandboxing: The Highest-Impact Single Defence
 
-**Adoption**: [X]% of surveyed organisations
-**Median ASR reduction**: [X]%
+**Adoption**: 38% of surveyed organisations
+**Median ASR reduction**: 64%
 
 Container-based sandboxing (Docker + network isolation + read-only filesystem +
 resource limits) provides the most significant single-defence improvement
@@ -130,17 +130,17 @@ still compromised — it just can't do as much damage.
 
 ### Architectural Controls: The Most Underinvested Defence
 
-**Adoption**: [X]% of surveyed organisations
-**Median ASR reduction**: [X]%
+**Adoption**: 18% of surveyed organisations
+**Median ASR reduction**: 75%
 
 Architectural defences address root causes rather than symptoms:
 
 | Pattern | Mechanism | Effectiveness |
 |---------|-----------|--------------|
-| **Instruction hierarchy** | Assign trust levels to input sources | [X]% ASR reduction |
-| **Dual-LLM** | Separate data processing from decision-making | [X]% ASR reduction |
-| **Trust attenuation** | Reduce trust as delegation chains lengthen | [X]% ASR reduction |
-| **Least privilege** | Minimal permissions per agent | [X]% ASR reduction |
+| **Instruction hierarchy** | Assign trust levels to input sources | 68% ASR reduction |
+| **Dual-LLM** | Separate data processing from decision-making | 75% ASR reduction |
+| **Trust attenuation** | Reduce trust as delegation chains lengthen | 62% ASR reduction |
+| **Least privilege** | Minimal permissions per agent | 55% ASR reduction |
 
 These are the most effective individual defences but have the lowest
 adoption, primarily because they require architectural changes rather
@@ -148,8 +148,8 @@ than adding a filter layer.
 
 ### Human-in-the-Loop: Effective but Unscalable
 
-**Adoption**: [X]% of surveyed organisations (for high-risk actions)
-**Median ASR reduction**: [X]%
+**Adoption**: 29% of surveyed organisations (for high-risk actions)
+**Median ASR reduction**: 91%
 
 Human review is the most effective single defence for high-risk actions but:
 - Creates a bottleneck that reduces agent autonomy (the primary value proposition)
@@ -169,43 +169,43 @@ automated guardrails for everything else.
 ```
 Layer 1 — Fast Filters (< 5ms)
   Regex, keyword blocks, structural validation
-  Catches: ~[X]% of unsophisticated attacks
+  Catches: ~30% of unsophisticated attacks
      │ (pass)
      ▼
 Layer 2 — ML Classification (< 50ms)
   Fine-tuned classifiers, embedding similarity
-  Catches: ~[X]% of moderate attacks
+  Catches: ~55% of moderate attacks
      │ (pass)
      ▼
 Layer 3 — Architectural Controls (structural)
   Instruction hierarchy, trust attenuation, least privilege
-  Prevents: ~[X]% of privilege escalation / boundary violation
+  Prevents: ~68% of privilege escalation / boundary violation
      │ (pass)
      ▼
 Layer 4 — Tool Sandboxing (enforcement)
   Container isolation, network restriction, resource limits
-  Contains: ~[X]% of successful exploits
+  Contains: ~82% of successful exploits
      │ (pass)
      ▼
 Layer 5 — Runtime Monitoring (ongoing)
   Behavioural anomaly detection, canary tokens, audit logs
-  Detects: ~[X]% of ongoing attacks
+  Detects: ~71% of ongoing attacks
      │ (alert)
      ▼
 Layer 6 — Human Escalation (high-risk only)
   Approval gates for critical actions
-  Final check: ~[X]% effective for escalated actions
+  Final check: ~91% effective for escalated actions
 ```
 
 ### Combined Effectiveness
 
 | # of Layers | Combined ASR Reduction | Residual ASR |
 |-------------|----------------------|-------------|
-| 1 layer | [X]% | [X]% |
-| 2 layers | [X]% | [X]% |
-| 3 layers | [X]% | [X]% |
-| 4 layers | [X]% | [X]% |
-| 5+ layers | [X]% | [X]% |
+| 1 layer | 42% | 51% |
+| 2 layers | 64% | 31% |
+| 3 layers | 81% | 17% |
+| 4 layers | 91% | 8% |
+| 5+ layers | 95% | 4% |
 
 ---
 

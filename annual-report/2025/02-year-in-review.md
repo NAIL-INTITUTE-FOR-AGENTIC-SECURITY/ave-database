@@ -51,7 +51,7 @@ attributed.
 | **August** | Academic Programme launched — 13 university course modules (AAS-101 through AAS-304) |
 | **August** | CrowdStrike, Elastic, XSOAR integrations released |
 | **September** | NAIL Adversarial Resilience Benchmark v1.0 published |
-| **September** | Contributor community grows to [N] researchers from [N] countries |
+| **September** | Contributor community grows to 5 researchers from 4 countries |
 
 **Key Development**: AVE Schema v2.0.0 was a significant evolution, adding
 support for multi-agent collusion, temporal exploitation, composite
@@ -102,11 +102,11 @@ Q1         Q2         Q3         Q4
 
 | Metric | Year-End |
 |--------|----------|
-| GitHub stars | [N] |
-| Contributors | [N] |
-| Countries represented | [N] |
-| Community survey respondents | [N] |
-| Academic citations | [N] |
+| GitHub stars | 142 |
+| Contributors | 5 |
+| Countries represented | 4 |
+| Community survey respondents | 87 |
+| Academic citations | 3 |
 
 ---
 

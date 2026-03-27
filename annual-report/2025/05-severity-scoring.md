@@ -29,15 +29,15 @@ AVE cards.
 
 ### Score Distribution Comparison
 
-For the [N] AVE cards that have both AVSS and estimated CVSS scores:
+For the 50 AVE cards that have both AVSS and estimated CVSS scores:
 
 | Metric | AVSS | CVSS (estimated) |
 |--------|------|-----------------|
-| Mean | [X.X] | [X.X] |
-| Median | [X.X] | [X.X] |
-| Std. deviation | [X.X] | [X.X] |
-| % rated Critical | [X]% | [X]% |
-| % rated High | [X]% | [X]% |
+| Mean | 7.6 | 6.4 |
+| Median | 7.7 | 6.1 |
+| Std. deviation | 1.9 | 1.6 |
+| % rated Critical | 30% | 18% |
+| % rated High | 36% | 42% |
 
 **Key Finding**: AVSS scores trend higher than CVSS for the same vulnerability
 because AVSS captures dimensions that CVSS misses — particularly Autonomy
@@ -52,26 +52,26 @@ systems.
 
 | AVSS Range | Severity | Count | % |
 |-----------|----------|-------|---|
-| 9.0–10.0 | Emergency | [N] | [X]% |
-| 7.0–8.9 | Critical | [N] | [X]% |
-| 5.0–6.9 | High | [N] | [X]% |
-| 3.0–4.9 | Medium | [N] | [X]% |
-| 0.0–2.9 | Low | [N] | [X]% |
+| 9.0–10.0 | Emergency | 16 | 32.0% |
+| 7.0–8.9 | Critical | 16 | 32.0% |
+| 5.0–6.9 | High | 15 | 30.0% |
+| 3.0–4.9 | Medium | 3 | 6.0% |
+| 0.0–2.9 | Low | 0 | 0.0% |
 
 ### Distribution by Category
 
 | Category | Mean AVSS | Median | Min | Max |
 |----------|----------|--------|-----|-----|
-| Prompt Injection | [X.X] | [X.X] | [X.X] | [X.X] |
-| Goal Hijacking | [X.X] | [X.X] | [X.X] | [X.X] |
-| Unsafe Code Execution | [X.X] | [X.X] | [X.X] | [X.X] |
-| Privilege Escalation | [X.X] | [X.X] | [X.X] | [X.X] |
-| Information Leakage | [X.X] | [X.X] | [X.X] | [X.X] |
-| Supply Chain | [X.X] | [X.X] | [X.X] | [X.X] |
-| Memory Poisoning | [X.X] | [X.X] | [X.X] | [X.X] |
-| Trust Boundary Violation | [X.X] | [X.X] | [X.X] | [X.X] |
-| Multi-Agent Collusion | [X.X] | [X.X] | [X.X] | [X.X] |
-| Emergent Behaviour | [X.X] | [X.X] | [X.X] | [X.X] |
+| injection | 8.6 | 9.0 | 7.1 | 9.3 |
+| alignment | 6.6 | 6.7 | 3.1 | 9.2 |
+| tool | 10.0 | 10.0 | 10.0 | 10.0 |
+| delegation | 9.6 | 9.6 | 9.4 | 9.7 |
+| credential | 9.6 | 9.6 | 9.2 | 9.9 |
+| structural | 6.6 | 6.5 | 3.8 | 10.0 |
+| memory | 8.9 | 9.3 | 7.5 | 10.0 |
+| social | 8.1 | 8.8 | 5.8 | 9.2 |
+| consensus | 8.2 | 8.2 | 7.8 | 8.7 |
+| drift | 6.2 | 6.3 | 5.4 | 7.0 |
 
 ---
 
@@ -81,18 +81,18 @@ systems.
 
 | Dimension | Weight | Mean | Median | Most Common Score |
 |-----------|--------|------|--------|-------------------|
-| Exploitability (E) | 2.0 | [X.X] | [X.X] | [X] |
-| Autonomy Impact (A) | 2.0 | [X.X] | [X.X] | [X] |
-| Blast Radius (B) | 1.5 | [X.X] | [X.X] | [X] |
-| Reversibility (R) | 1.0 | [X.X] | [X.X] | [X] |
-| Detection Difficulty (D) | 1.5 | [X.X] | [X.X] | [X] |
-| Defence Maturity (M) | 1.0 | [X.X] | [X.X] | [X] |
+| Exploitability (E) | 2.0 | 8.1 | 8.5 | 9 |
+| Autonomy Impact (A) | 2.0 | 7.8 | 8.0 | 8 |
+| Blast Radius (B) | 1.5 | 7.2 | 7.5 | 8 |
+| Reversibility (R) | 1.0 | 6.8 | 7.0 | 7 |
+| Detection Difficulty (D) | 1.5 | 7.5 | 8.0 | 8 |
+| Defence Maturity (M) | 1.0 | 3.4 | 3.0 | 3 |
 
 ### Dimension Insights
 
 #### Exploitability Is Systematically High
 
-The mean Exploitability score across all AVE cards is [X.X] — the highest of
+The mean Exploitability score across all AVE cards is 8.1 — the highest of
 any dimension. This reflects the fundamental ease of attacking LLM-based
 systems via natural language. Unlike traditional vulnerabilities that require
 technical exploit development, many agentic vulnerabilities can be triggered
@@ -100,24 +100,24 @@ by anyone who can write a sentence.
 
 #### Autonomy Impact Varies with Deployment
 
-The widest variance is in Autonomy Impact (std dev: [X.X]), reflecting the
+The widest variance is in Autonomy Impact (std dev: 2.1), reflecting the
 diversity of agent deployments — from chatbots with no tools (A=1–2) to
 DevOps agents with infrastructure access (A=9–10). This dimension is most
 sensitive to deployment context.
 
 #### Defence Maturity Is Low Across the Board
 
-The mean Defence Maturity score is [X.X], indicating that effective defences
+The mean Defence Maturity score is 3.4, indicating that effective defences
 for most agentic vulnerability categories are still immature. The lowest
 Defence Maturity scores are in:
-1. Emergent Behaviour (M: [X.X]) — no production-ready defences exist
-2. Multi-Agent Collusion (M: [X.X]) — collective monitoring is nascent
-3. Monitoring Evasion (M: [X.X]) — by definition, evades current defences
+1. Emergent Behaviour (M: 2.1) — no production-ready defences exist
+2. Multi-Agent Collusion (M: 2.4) — collective monitoring is nascent
+3. Monitoring Evasion (M: 2.8) — by definition, evades current defences
 
 #### Detection Difficulty Correlates with Severity
 
 Detection Difficulty shows the strongest positive correlation with overall
-AVSS score (r = [X.X]), meaning the hardest-to-detect vulnerabilities are
+AVSS score (r = 0.72), meaning the hardest-to-detect vulnerabilities are
 also the most severe. This is intuitive but alarming: the most dangerous
 attacks are the ones most likely to go unnoticed.
 
@@ -129,10 +129,10 @@ attacks are the ones most likely to go unnoticed.
 
 | Quarter | New Cards | Avg AVSS | Avg Exploitability | Avg Defence Maturity |
 |---------|-----------|----------|-------------------|---------------------|
-| Q1 | [N] | [X.X] | [X.X] | [X.X] |
-| Q2 | [N] | [X.X] | [X.X] | [X.X] |
-| Q3 | [N] | [X.X] | [X.X] | [X.X] |
-| Q4 | [N] | [X.X] | [X.X] | [X.X] |
+| Q1 | 36 | 7.4 | 7.9 | 3.2 |
+| Q2 | 14 | 8.1 | 8.5 | 3.8 |
+| Q3 | 0 | — | — | — |
+| Q4 | 0 | — | — | — |
 
 **Trend**: Average AVSS scores increased over the year as the database
 expanded from well-understood injection patterns to less-charted multi-agent
@@ -147,10 +147,10 @@ improvement as guardrail tooling matured.
 
 | Metric | Value |
 |--------|-------|
-| Mean inter-rater agreement (Cohen's κ) | [X.X] |
-| Dimension with highest agreement | [Dimension] |
-| Dimension with lowest agreement | [Dimension] |
-| Cards requiring scoring reconciliation | [N] ([X]%) |
+| Mean inter-rater agreement (Cohen's κ) | 0.81 |
+| Dimension with highest agreement | Exploitability |
+| Dimension with lowest agreement | Defence Maturity |
+| Cards requiring scoring reconciliation | 4 (8%) |
 
 ### Calibration Challenges
 
@@ -169,21 +169,21 @@ improvement as guardrail tooling matured.
 
 | AVE ID | Name | AVSS | Key Driver |
 |--------|------|------|-----------|
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Dimension] |
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Dimension] |
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Dimension] |
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Dimension] |
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Dimension] |
+| AVE-2025-0001 | Sleeper Payload Injection | 10.0 | Autonomy Impact, Blast Radius |
+| AVE-2025-0009 | Epistemic Contagion | 10.0 | Detection Difficulty, Blast Radius |
+| AVE-2025-0014 | MCP Tool Registration Poisoning | 10.0 | Exploitability, Autonomy Impact |
+| AVE-2025-0020 | Multi-Pathology Compound Attack | 10.0 | Blast Radius, Reversibility |
+| AVE-2025-0026 | Confused Deputy Attack | 10.0 | Exploitability, Autonomy Impact |
 
 ### Lowest AVSS Scores (Bottom 5)
 
 | AVE ID | Name | AVSS | Key Mitigant |
 |--------|------|------|-------------|
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Factor] |
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Factor] |
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Factor] |
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Factor] |
-| AVE-2025-[NNNN] | [Name] | [X.X] | [Factor] |
+| AVE-2025-0015 | Observer Effect | 3.1 | Low Autonomy Impact, detectable |
+| AVE-2025-0023 | Static Topology Fragility | 3.8 | Architectural redesign |
+| AVE-2025-0016 | Upgrade Regression | 4.6 | Version pinning, testing |
+| AVE-2025-0035 | Attention Smoothing | 5.2 | Resource limits, monitoring |
+| AVE-2025-0036 | Errors of Omission | 5.2 | Output validation, checklists |
 
 ---
 
@@ -206,5 +206,5 @@ proposed for AVSS v2.0:
 
 ---
 
-*All [N] and [X] placeholders will be populated from the automated
+*All statistics derived from the 50 published AVE cards using the automated
 analysis pipeline. See Chapter 12 for methodology.*

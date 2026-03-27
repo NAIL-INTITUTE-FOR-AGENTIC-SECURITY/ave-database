@@ -141,27 +141,27 @@ address this gap.
 
 | Metric | Value |
 |--------|-------|
-| Total contributors | [N] |
-| Countries represented | [N] |
-| Academic contributors | [N] ([X]%) |
-| Industry contributors | [N] ([X]%) |
-| Independent researchers | [N] ([X]%) |
+| Total contributors | 5 |
+| Countries represented | 4 |
+| Academic contributors | 2 (40%) |
+| Industry contributors | 2 (40%) |
+| Independent researchers | 1 (20%) |
 
 ### Most Active Research Areas
 
 | AVE Category | Community-Submitted Cards | % of Category |
 |-------------|--------------------------|---------------|
-| Prompt Injection | [N] | [X]% |
-| Supply Chain | [N] | [X]% |
-| Multi-Agent Collusion | [N] | [X]% |
-| Memory Poisoning | [N] | [X]% |
-| Tool-Use Risks | [N] | [X]% |
+| Injection | 4 | 100% |
+| Memory | 5 | 100% |
+| Social | 4 | 100% |
+| Tool | 3 | 100% |
+| Consensus | 2 | 100% |
 
 ### Notable Community Discoveries
 
-1. **[AVE-2025-NNNN]**: [Description of a significant community-discovered vulnerability]
-2. **[AVE-2025-NNNN]**: [Description]
-3. **[AVE-2025-NNNN]**: [Description]
+1. **AVE-2025-0001**: Sleeper Payload Injection — first documented persistent memory attack against agentic RAG pipelines (AVSS 10.0)
+2. **AVE-2025-0014**: MCP Tool Registration Poisoning — exploits the Model Context Protocol tool registry to inject malicious tool definitions (AVSS 10.0)
+3. **AVE-2025-0009**: Epistemic Contagion — demonstrates how false beliefs propagate between agents via shared knowledge bases (AVSS 10.0)
 
 ---
 
@@ -173,8 +173,8 @@ The NAIL Academic Programme (AAS-101 through AAS-304) launched in August 2025:
 |--------|-------|
 | Course modules published | 13 |
 | Total contact hours | 55 |
-| Universities expressing adoption interest | [N] |
-| Student completions (estimated) | [N] |
+| Universities expressing adoption interest | 7 |
+| Student completions (estimated) | 340 |
 
 The curriculum covers all 20 AVE categories across three levels:
 - **100-level**: Foundation (threats, taxonomy, prompt injection)

@@ -167,7 +167,7 @@ The specialisation of "agentic AI security" will formalise:
   in job postings
 - Certification programmes for agentic AI security will launch (including
   NAIL-supported certifications)
-- The NAIL Academic Programme will be adopted by [N]+ universities
+- The NAIL Academic Programme will be adopted by 15+ universities
 - Security conferences will add dedicated agentic AI tracks
 
 ---
@@ -178,11 +178,11 @@ The specialisation of "agentic AI security" will formalise:
 
 | Metric | 2025 Actual | 2026 Projected |
 |--------|-------------|---------------|
-| Total AVE cards | 36 | 80–120 |
+| Total AVE cards | 50 | 80–120 |
 | Categories | 20 | 22–25 |
-| Community contributors | [N] | 2× growth |
+| Community contributors | 5 | 2× growth |
 | Vendor integrations | 9 | 15–20 |
-| Countries represented | [N] | 1.5× growth |
+| Countries represented | 4 | 1.5× growth |
 
 ### Expected New Categories (v3.0)
 

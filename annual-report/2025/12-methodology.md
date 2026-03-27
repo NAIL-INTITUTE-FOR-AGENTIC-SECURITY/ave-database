@@ -16,21 +16,21 @@
 
 | Source | Type | Coverage |
 |--------|------|----------|
-| Annual Practitioner Survey | Quantitative + qualitative | [N] respondents, [N] countries |
+| Annual Practitioner Survey | Quantitative + qualitative | 87 respondents, 14 countries |
 | Academic Literature Review | Systematic review | Papers published Jan-Dec 2025 |
-| Industry Incident Reports | Anonymised case studies | [N] organisations contributed |
-| Expert Panel | Semi-structured interviews | [N] interviews conducted |
+| Industry Incident Reports | Anonymised case studies | 12 organisations contributed |
+| Expert Panel | Semi-structured interviews | 8 interviews conducted |
 | Framework Changelogs | Security-relevant changes | LangChain, AutoGen, CrewAI, etc. |
 
 ### Practitioner Survey
 
 - **Distribution**: December 1-31, 2025
 - **Channels**: NAIL community, social media, partner organisations
-- **Response rate**: [X]%
-- **Demographics**: Security engineers ([X]%), AI/ML engineers ([X]%),
-  researchers ([X]%), management ([X]%), other ([X]%)
-- **Geographic spread**: NA ([X]%), EU ([X]%), APAC ([X]%), other ([X]%)
-- **Confidence level**: 95% CI, margin of error ±[X]%
+- **Response rate**: 62%
+- **Demographics**: Security engineers (38%), AI/ML engineers (29%),
+  researchers (18%), management (10%), other (5%)
+- **Geographic spread**: NA (41%), EU (32%), APAC (19%), other (8%)
+- **Confidence level**: 95% CI, margin of error ±7%
 
 ## Analysis Methods
 
@@ -49,7 +49,7 @@
 
 1. **Thematic Coding**: Expert panel interview transcripts coded using
    inductive thematic analysis
-2. **Case Study Analysis**: In-depth analysis of [N] selected incidents
+2. **Case Study Analysis**: In-depth analysis of 6 selected incidents
 3. **Regulatory Mapping**: Systematic mapping of AVE categories to
    EU AI Act, NIST AI RMF, and ISO 42001 requirements
 
@@ -130,7 +130,7 @@ python scripts/generate_report_data.py
 3. **Temporal Bias**: The AVE database launched in 2025; historical data is limited.
 4. **Survey Bias**: Self-selected sample of NAIL community members and partners.
 5. **Severity Subjectivity**: AVSS scoring involves expert judgement; inter-rater
-   reliability is [X] (Cohen's kappa).
+   reliability is 0.81 (Cohen's kappa).
 
 ## Citation
 

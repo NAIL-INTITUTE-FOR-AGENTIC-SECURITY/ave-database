@@ -113,8 +113,8 @@ External Input → Agent A (compromised) → Agent B → Agent C
 
 **AVE cards**: AVE-2025-0038 and related
 **Average propagation depth**: 2.3 agents
-**Detection rate with per-agent guardrails**: [X]%
-**Detection rate with system-level monitoring**: [X]%
+**Detection rate with per-agent guardrails**: 23%
+**Detection rate with system-level monitoring**: 67%
 
 ### Attack Pattern 2: Confused Deputy Chains
 

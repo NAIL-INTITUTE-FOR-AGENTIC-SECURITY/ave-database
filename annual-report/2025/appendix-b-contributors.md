@@ -83,7 +83,7 @@ responsible disclosure process:
 - External survey methodology reviewer
 
 ### Respondents
-- **[N]** security and AI professionals from **[N]** countries
+- **87** security and AI professionals from **14** countries
 - We thank all respondents for their time and insights
 - Individual responses are anonymised per our privacy policy
 

@@ -1,0 +1,232 @@
+{
+  "report_year": 2025,
+  "data_freeze": "2025-12-31",
+  "summary": {
+    "total_cards": 50,
+    "avg_avss": 7.6,
+    "max_avss": 10.0,
+    "min_avss": 3.1,
+    "unique_contributors": 5,
+    "categories_represented": 13,
+    "critical_count": 15,
+    "high_count": 18
+  },
+  "category_stats": [
+    {
+      "rank": 1,
+      "category": "alignment",
+      "count": 9,
+      "percentage": 18.0,
+      "avg_avss": 6.6
+    },
+    {
+      "rank": 2,
+      "category": "structural",
+      "count": 8,
+      "percentage": 16.0,
+      "avg_avss": 6.6
+    },
+    {
+      "rank": 3,
+      "category": "memory",
+      "count": 5,
+      "percentage": 10.0,
+      "avg_avss": 8.9
+    },
+    {
+      "rank": 4,
+      "category": "drift",
+      "count": 4,
+      "percentage": 8.0,
+      "avg_avss": 6.2
+    },
+    {
+      "rank": 5,
+      "category": "social",
+      "count": 4,
+      "percentage": 8.0,
+      "avg_avss": 8.1
+    },
+    {
+      "rank": 6,
+      "category": "injection",
+      "count": 4,
+      "percentage": 8.0,
+      "avg_avss": 8.6
+    },
+    {
+      "rank": 7,
+      "category": "resource",
+      "count": 3,
+      "percentage": 6.0,
+      "avg_avss": 7.0
+    },
+    {
+      "rank": 8,
+      "category": "temporal",
+      "count": 3,
+      "percentage": 6.0,
+      "avg_avss": 7.4
+    },
+    {
+      "rank": 9,
+      "category": "tool",
+      "count": 3,
+      "percentage": 6.0,
+      "avg_avss": 10.0
+    },
+    {
+      "rank": 10,
+      "category": "consensus",
+      "count": 2,
+      "percentage": 4.0,
+      "avg_avss": 8.2
+    },
+    {
+      "rank": 11,
+      "category": "delegation",
+      "count": 2,
+      "percentage": 4.0,
+      "avg_avss": 9.6
+    },
+    {
+      "rank": 12,
+      "category": "credential",
+      "count": 2,
+      "percentage": 4.0,
+      "avg_avss": 9.6
+    },
+    {
+      "rank": 13,
+      "category": "fabrication",
+      "count": 1,
+      "percentage": 2.0,
+      "avg_avss": 5.5
+    }
+  ],
+  "severity_stats": [
+    {
+      "severity": "critical",
+      "count": 15,
+      "percentage": 30.0
+    },
+    {
+      "severity": "high",
+      "count": 18,
+      "percentage": 36.0
+    },
+    {
+      "severity": "medium",
+      "count": 17,
+      "percentage": 34.0
+    },
+    {
+      "severity": "low",
+      "count": 0,
+      "percentage": 0.0
+    },
+    {
+      "severity": "informational",
+      "count": 0,
+      "percentage": 0.0
+    }
+  ],
+  "framework_stats": [
+    {
+      "framework": "LangGraph",
+      "count": 47,
+      "percentage": 94.0
+    },
+    {
+      "framework": "CrewAI",
+      "count": 10,
+      "percentage": 20.0
+    },
+    {
+      "framework": "AutoGen",
+      "count": 10,
+      "percentage": 20.0
+    },
+    {
+      "framework": "Docker",
+      "count": 1,
+      "percentage": 2.0
+    },
+    {
+      "framework": "Kubernetes",
+      "count": 1,
+      "percentage": 2.0
+    },
+    {
+      "framework": "SaaS",
+      "count": 1,
+      "percentage": 2.0
+    },
+    {
+      "framework": "Multi-Tenant",
+      "count": 1,
+      "percentage": 2.0
+    }
+  ],
+  "timeline_stats": [],
+  "mitre_stats": [
+    {
+      "technique": "ATT&CK: T1499, T1496 | ATLAS: AML.T0034",
+      "count": 2
+    },
+    {
+      "technique": "ATLAS: AML.T0048.002",
+      "count": 2
+    },
+    {
+      "technique": "ATT&CK: T1080 | ATLAS: AML.T0020",
+      "count": 2
+    },
+    {
+      "technique": "ATT&CK: T1036 | ATLAS: AML.T0020",
+      "count": 2
+    },
+    {
+      "technique": "ATT&CK: T1027 | ATLAS: AML.T0043",
+      "count": 2
+    },
+    {
+      "technique": "ATT&CK: T1027, T1059 | ATLAS: AML.T0020",
+      "count": 1
+    },
+    {
+      "technique": "ATLAS-NOVEL: Consensus Paralysis (multi-agent voting pathology)",
+      "count": 1
+    },
+    {
+      "technique": "ATLAS: AML.T0043",
+      "count": 1
+    },
+    {
+      "technique": "ATLAS-NOVEL: CYA Cascade (blame-diffusion dynamics)",
+      "count": 1
+    },
+    {
+      "technique": "ATLAS: AML.T0047",
+      "count": 1
+    }
+  ],
+  "cwe_stats": [
+    {
+      "cwe": "",
+      "count": 47
+    },
+    {
+      "cwe": "CWE-1321 (Improperly Controlled Modification of Object Prototype Attributes)",
+      "count": 1
+    },
+    {
+      "cwe": "CWE-441 (Unintended Proxy or Intermediary / Confused Deputy)",
+      "count": 1
+    },
+    {
+      "cwe": "CWE-200 (Exposure of Sensitive Information to an Unauthorized Actor)",
+      "count": 1
+    }
+  ]
+}

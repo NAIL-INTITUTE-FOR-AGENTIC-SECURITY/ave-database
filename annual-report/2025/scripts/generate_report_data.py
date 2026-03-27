@@ -40,7 +40,7 @@ def load_all_cards(db_path: Path) -> list[dict[str, Any]]:
 
 def filter_published(cards: list[dict]) -> list[dict]:
     """Filter to published/proven cards only."""
-    valid_statuses = {"published", "proven", "proven_mitigated"}
+    valid_statuses = {"published", "proven", "proven_mitigated", "theoretical", "not_proven"}
     return [c for c in cards if c.get("status") in valid_statuses]
 
 
@@ -53,9 +53,9 @@ def compute_category_stats(cards: list[dict]) -> list[dict]:
     for rank, (cat, count) in enumerate(categories.most_common(), 1):
         cat_cards = [c for c in cards if c.get("category") == cat]
         avss_scores = [
-            c["avss_score"]["base"]
+            c["avss_score"]["overall_score"]
             for c in cat_cards
-            if c.get("avss_score", {}).get("base") is not None
+            if c.get("avss_score", {}).get("overall_score") is not None
         ]
         avg_avss = sum(avss_scores) / len(avss_scores) if avss_scores else 0
 
@@ -151,9 +151,9 @@ def compute_cwe_stats(cards: list[dict]) -> list[dict]:
 def compute_summary(cards: list[dict]) -> dict:
     """Compute summary metrics."""
     avss_scores = [
-        c["avss_score"]["base"]
+        c["avss_score"]["overall_score"]
         for c in cards
-        if c.get("avss_score", {}).get("base") is not None
+        if c.get("avss_score", {}).get("overall_score") is not None
     ]
     contributors = set(c.get("contributor", "") for c in cards if c.get("contributor"))
     categories_used = set(c.get("category") for c in cards)

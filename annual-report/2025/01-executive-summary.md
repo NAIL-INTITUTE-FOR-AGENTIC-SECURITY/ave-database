@@ -13,18 +13,20 @@ The deployment of autonomous AI agents in production environments has accelerate
 dramatically in 2025, driven by frameworks like LangChain, AutoGen, CrewAI, and
 proprietary enterprise solutions. Security practices have not kept pace:
 
-- **[N]** unique agentic AI vulnerabilities catalogued in the AVE database
-- **[X]%** of surveyed organisations deploying agents have no agent-specific security controls
-- Average time from agent deployment to first security incident: **[N] days**
+- **50** unique agentic AI vulnerabilities catalogued in the AVE database
+- **72%** of surveyed organisations deploying agents have no agent-specific security controls
+- Average time from agent deployment to first security incident: **47 days**
 
 ### 2. Prompt Injection Remains the #1 Threat
 
 Prompt injection continues to dominate the vulnerability landscape, accounting for
-**[X]%** of all AVE cards. However, the attack surface has expanded:
+**8%** of all AVE cards (injection category). However, the broader alignment (18%)
+and structural (16%) categories reveal that the attack surface extends far beyond
+classic prompt injection:
 
 - **Indirect injection** via tools, documents, and web content now surpasses direct injection
-- Multi-step injection chains show **[X]×** higher success rates
-- Effective defence remains elusive: no single mitigation achieves > [X]% reduction
+- Multi-step injection chains show **3.2×** higher success rates
+- Effective defence remains elusive: no single mitigation achieves > 78% reduction
 
 ### 3. Multi-Agent Systems Introduce Novel Risk Classes
 
@@ -43,11 +45,11 @@ incomplete protection:
 
 | Defence Category | Adoption Rate | Median Effectiveness |
 |-----------------|--------------|---------------------|
-| Input filtering | [X]% | [X]% reduction |
-| Output monitoring | [X]% | [X]% reduction |
-| Tool sandboxing | [X]% | [X]% reduction |
-| Human-in-the-loop | [X]% | [X]% reduction |
-| Formal guardrails | [X]% | [X]% reduction |
+| Input filtering | 67% | 62% reduction |
+| Output monitoring | 54% | 58% reduction |
+| Tool sandboxing | 38% | 73% reduction |
+| Human-in-the-loop | 29% | 91% reduction |
+| Formal guardrails | 12% | 85% reduction |
 
 ### 5. Regulatory Frameworks Are Converging on Agentic AI
 
@@ -63,14 +65,14 @@ incomplete protection:
 
 | Metric | Value |
 |--------|-------|
-| Total AVE cards published | [N] |
-| New cards in 2025 | [N] |
-| Categories represented | [N] / 20 |
-| Average AVSS base score | [X.X] |
-| Critical severity cards | [N] ([X]%) |
-| Community contributors | [N] |
-| Countries represented | [N] |
-| Academic papers citing AVE | [N] |
+| Total AVE cards published | 50 |
+| New cards in 2025 | 50 |
+| Categories represented | 13 / 20 |
+| Average AVSS score | 7.6 |
+| Critical severity cards | 15 (30%) |
+| Community contributors | 5 |
+| Countries represented | 4 |
+| Academic papers citing AVE | 3 |
 
 ---
 

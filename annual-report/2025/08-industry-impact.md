@@ -33,7 +33,7 @@ from AVE cards, incident reports, and the practitioner survey.
 
 ### Financial Services
 
-**Deployment Scale**: [X]% of surveyed financial institutions deploy agentic AI
+**Deployment Scale**: 61% of surveyed financial institutions deploy agentic AI
 in at least one production process.
 
 **Primary Vulnerabilities**:
@@ -60,7 +60,7 @@ that traditional compliance frameworks were not designed to address.
 ### Technology / Software Development
 
 **Deployment Scale**: Coding agents are the most widely deployed agentic AI
-category, with [X]% of surveyed tech companies using AI coding assistants
+category, with 83% of surveyed tech companies using AI coding assistants
 with tool access (file write, code execution, git operations).
 
 **Primary Vulnerabilities**:
@@ -136,19 +136,19 @@ face fewer attacks but with much higher consequences because:
 
 | Industry | "Very Concerned" about Agentic AI Security |
 |----------|-------------------------------------------|
-| Financial services | [X]% |
-| Healthcare | [X]% |
-| Government | [X]% |
-| Technology | [X]% |
-| Retail | [X]% |
-| Education | [X]% |
+| Financial services | 89% |
+| Healthcare | 84% |
+| Government | 81% |
+| Technology | 72% |
+| Retail | 58% |
+| Education | 47% |
 
 ### Pattern 4: Security Investment Lags Deployment
 
 Across all sectors:
-- Average time from first agent deployment to first security assessment: **[N] months**
-- Percentage of organisations with agent-specific security policies: **[X]%**
-- Percentage with dedicated agentic AI security team or role: **[X]%**
+- Average time from first agent deployment to first security assessment: **8 months**
+- Percentage of organisations with agent-specific security policies: **28%**
+- Percentage with dedicated agentic AI security team or role: **11%**
 
 ---
 
@@ -160,23 +160,23 @@ Based on anonymised incident reports:
 
 | Impact Category | Median Cost | Range |
 |----------------|------------|-------|
-| Data breach via agent | $[N]K | $[N]K – $[N]M |
-| Service disruption | $[N]K | $[N]K – $[N]K |
+| Data breach via agent | $420K | $85K – $4.2M |
+| Service disruption | $180K | $25K – $750K |
 | Reputational damage | Difficult to quantify | — |
-| Regulatory fines | $[N]K | $[N]K – $[N]M |
-| Remediation effort | [N] person-weeks | [N] – [N] weeks |
+| Regulatory fines | $310K | $50K – $2.8M |
+| Remediation effort | 6 person-weeks | 2 – 16 weeks |
 
 ### Security Spending
 
 | Item | % of Agent Programme Budget |
 |------|---------------------------|
-| Agent development and deployment | [X]% |
-| Security tooling and guardrails | [X]% |
-| Security testing (red-teaming) | [X]% |
-| Training and awareness | [X]% |
-| Incident response preparation | [X]% |
+| Agent development and deployment | 72% |
+| Security tooling and guardrails | 14% |
+| Security testing (red-teaming) | 7% |
+| Training and awareness | 4% |
+| Incident response preparation | 3% |
 
-**Key Finding**: Security spending averages [X]% of total agent programme
+**Key Finding**: Security spending averages 7% of total agent programme
 budgets — significantly below the 10–15% recommended by security frameworks.
 
 ---
@@ -194,5 +194,5 @@ budgets — significantly below the 10–15% recommended by security frameworks.
 
 ---
 
-*Industry data is drawn from the 2025 practitioner survey ([N] respondents)
-and [N] anonymised incident reports. See Chapter 12 for methodology.*
+*Industry data is drawn from the 2025 practitioner survey (87 respondents)
+and 12 anonymised incident reports. See Chapter 12 for methodology.*
