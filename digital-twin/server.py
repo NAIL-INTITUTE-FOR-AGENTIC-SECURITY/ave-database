@@ -1,746 +1,526 @@
 """
-AVE Digital Twin — Core digital twin server.
+Digital Twin Simulation Engine — Phase 20 Service 4 of 5
+Port: 9403
 
-Virtual replica of an organisation's AI/agent stack that enables
-red-team / blue-team exercises, policy testing, compliance rehearsal,
-snapshot diffing, and what-if analysis — all without touching
-production infrastructure.
+Full-fidelity digital twin with topology modelling, attack
+simulation (5 types, probabilistic outcomes), defence validation,
+what-if scenario comparison, and drift detection.
 """
 
 from __future__ import annotations
 
-import copy
-import hashlib
-import json
 import random
-import statistics
 import uuid
-from collections import Counter, defaultdict
-from datetime import datetime, timedelta, timezone
+from collections import defaultdict
+from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional, Set, Tuple
 
-from fastapi import FastAPI, HTTPException, Query, status
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-
-# ---------------------------------------------------------------------------
-# App
-# ---------------------------------------------------------------------------
-
-app = FastAPI(
-    title="NAIL AVE Digital Twin",
-    description=(
-        "Virtual replica of an AI/agent stack enabling red/blue exercises, "
-        "policy testing, compliance rehearsal, and snapshot diffing."
-    ),
-    version="1.0.0",
-    docs_url="/docs",
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
-
-AVE_CATEGORIES = [
-    "prompt_injection", "tool_misuse", "memory_poisoning", "goal_hijacking",
-    "identity_spoofing", "privilege_escalation", "data_exfiltration",
-    "resource_exhaustion", "multi_agent_manipulation", "context_overflow",
-    "guardrail_bypass", "output_manipulation", "supply_chain_compromise",
-]
-
-AGENT_TYPES = ["planner", "executor", "retriever", "tool_caller", "evaluator", "coordinator"]
-DEFENCE_TYPES = ["input_filter", "output_validator", "tool_sandbox", "memory_guard", "rate_limiter"]
 
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------
 
-
-class TwinStatus(str, Enum):
-    ACTIVE = "active"
-    PAUSED = "paused"
-    ARCHIVED = "archived"
-
-
-class ExerciseType(str, Enum):
-    RED_TEAM = "red_team"
-    BLUE_TEAM = "blue_team"
-    PURPLE_TEAM = "purple_team"
-    CHAOS = "chaos"
-    COMPLIANCE = "compliance"
+class TwinState(str, Enum):
+    provisioning = "provisioning"
+    synced = "synced"
+    drifted = "drifted"
+    archived = "archived"
 
 
-class ExerciseStatus(str, Enum):
-    CREATED = "created"
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
+class AttackType(str, Enum):
+    injection = "injection"
+    lateral_movement = "lateral_movement"
+    privilege_escalation = "privilege_escalation"
+    data_exfiltration = "data_exfiltration"
+    coordinated_multi_agent = "coordinated_multi_agent"
 
 
-class ComplianceFramework(str, Enum):
-    ISO_42001 = "ISO_42001"
-    NIST_AI_RMF = "NIST_AI_RMF"
-    EU_AI_ACT = "EU_AI_ACT"
-    SOC2_TYPE_II = "SOC2_Type_II"
-    GDPR = "GDPR"
-    PCI_DSS_4 = "PCI_DSS_4"
+class SimState(str, Enum):
+    pending = "pending"
+    running = "running"
+    completed = "completed"
+    failed = "failed"
 
 
-class PolicyVerdict(str, Enum):
-    PASS = "pass"
-    FAIL = "fail"
-    WARNING = "warning"
+class DriftType(str, Enum):
+    topology = "topology"
+    configuration = "configuration"
+    policy = "policy"
+    behaviour = "behaviour"
 
+
+AVE_CATEGORIES: list[str] = [
+    "prompt_injection", "tool_misuse", "memory_poisoning",
+    "goal_hijacking", "identity_spoofing", "privilege_escalation",
+    "data_exfiltration", "resource_exhaustion", "multi_agent_manipulation",
+    "context_overflow", "guardrail_bypass", "output_manipulation",
+    "supply_chain_compromise", "model_extraction", "reward_hacking",
+    "capability_elicitation", "alignment_subversion", "delegation_abuse",
+]
 
 # ---------------------------------------------------------------------------
 # Pydantic Models
 # ---------------------------------------------------------------------------
 
-
-class AgentSpec(BaseModel):
-    name: str
-    agent_type: str = "executor"
-    model: str = "gpt-4"
-    tools: list[str] = Field(default_factory=list)
-    defences: list[str] = Field(default_factory=list)
-    config: dict[str, Any] = Field(default_factory=dict)
-
-
-class TwinDefinition(BaseModel):
-    id: str = Field(default_factory=lambda: f"TWIN-{uuid.uuid4().hex[:8].upper()}")
-    name: str
-    description: str = ""
-    agents: list[AgentSpec] = Field(default_factory=list)
-    defences: list[str] = Field(default_factory=list)
-    topology: dict[str, list[str]] = Field(default_factory=dict)  # agent → downstream agents
-    policies: list[dict[str, Any]] = Field(default_factory=list)
-    status: TwinStatus = TwinStatus.ACTIVE
-    version: int = 1
-    snapshots: list[str] = Field(default_factory=list)  # snapshot IDs
-    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-
-
 class TwinCreate(BaseModel):
     name: str
     description: str = ""
-    agents: list[AgentSpec] = Field(default_factory=list)
-    defences: list[str] = Field(default_factory=list)
-    topology: dict[str, list[str]] = Field(default_factory=dict)
-    policies: list[dict[str, Any]] = Field(default_factory=list)
+    environment: str = "production"
+    metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
-class Snapshot(BaseModel):
-    id: str = Field(default_factory=lambda: f"SNAP-{uuid.uuid4().hex[:8].upper()}")
+class TwinRecord(TwinCreate):
     twin_id: str
-    version: int
-    state_hash: str = ""
-    agent_count: int = 0
-    defence_count: int = 0
-    topology_edges: int = 0
-    policy_count: int = 0
-    state_data: dict[str, Any] = Field(default_factory=dict)
-    taken_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    state: TwinState = TwinState.provisioning
+    agent_ids: List[str] = Field(default_factory=list)
+    connection_ids: List[str] = Field(default_factory=list)
+    snapshot_count: int = 0
+    created_at: str
+    updated_at: str
 
 
-class SnapshotDiff(BaseModel):
-    snapshot_a: str
-    snapshot_b: str
-    agents_added: list[str] = Field(default_factory=list)
-    agents_removed: list[str] = Field(default_factory=list)
-    agents_modified: list[str] = Field(default_factory=list)
-    defences_added: list[str] = Field(default_factory=list)
-    defences_removed: list[str] = Field(default_factory=list)
-    topology_changes: list[str] = Field(default_factory=list)
-    policies_added: int = 0
-    policies_removed: int = 0
+class TwinAgent(BaseModel):
+    name: str
+    role: str
+    capabilities: List[str] = Field(default_factory=list)
+    trust_score: float = Field(default=0.5, ge=0.0, le=1.0)
+    services: List[str] = Field(default_factory=list)
+    policy_bindings: List[str] = Field(default_factory=list)
+    defences: List[str] = Field(default_factory=list)
 
 
-class ExerciseCreate(BaseModel):
+class TwinAgentRecord(TwinAgent):
+    agent_id: str
     twin_id: str
-    exercise_type: ExerciseType = ExerciseType.RED_TEAM
-    attack_categories: list[str] = Field(default_factory=lambda: ["prompt_injection"])
-    rounds: int = 5
-    intensity: str = "medium"  # low, medium, high
 
 
-class Exercise(BaseModel):
-    id: str = Field(default_factory=lambda: f"EX-{uuid.uuid4().hex[:8].upper()}")
+class ConnectionCreate(BaseModel):
+    source_agent: str
+    target_agent: str
+    connection_type: str = "data_flow"  # data_flow | control | trust | dependency
+    policies: List[str] = Field(default_factory=list)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+
+
+class ConnectionRecord(ConnectionCreate):
+    connection_id: str
     twin_id: str
-    exercise_type: ExerciseType
-    status: ExerciseStatus = ExerciseStatus.CREATED
-    attack_categories: list[str] = Field(default_factory=list)
-    rounds: int = 5
-    intensity: str = "medium"
-    results: list[dict[str, Any]] = Field(default_factory=list)
-    summary: dict[str, Any] = Field(default_factory=dict)
-    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    completed_at: Optional[str] = None
 
 
-class PolicyTest(BaseModel):
-    policy_name: str
-    policy_type: str = "guardrail_check"  # guardrail_check, access_control, data_flow
-    rules: list[dict[str, Any]] = Field(default_factory=list)
+class SimulationCreate(BaseModel):
+    twin_id: str
+    attack_type: AttackType
+    entry_point: str  # agent_id
+    attacker_capability: float = Field(default=0.7, ge=0.0, le=1.0)
+    kill_chain_stages: List[str] = Field(default_factory=lambda: [
+        "reconnaissance", "weaponisation", "delivery", "exploitation", "installation", "c2", "action_on_objectives"
+    ])
+    max_steps: int = Field(default=20, ge=1, le=100)
 
 
-class ComplianceAuditRequest(BaseModel):
-    framework: ComplianceFramework = ComplianceFramework.NIST_AI_RMF
+class SimulationRecord(BaseModel):
+    sim_id: str
+    twin_id: str
+    attack_type: AttackType
+    state: SimState
+    entry_point: str
+    steps: List[Dict[str, Any]] = Field(default_factory=list)
+    blast_radius: List[str] = Field(default_factory=list)
+    stages_reached: List[str] = Field(default_factory=list)
+    success_probability: float = 0.0
+    created_at: str
+
+
+class DefenceValidation(BaseModel):
+    twin_id: str
+    attack_types: List[AttackType] = Field(default_factory=lambda: list(AttackType))
+
+
+class ScenarioCompare(BaseModel):
+    twin_id: str
+    baseline_changes: Dict[str, Any] = Field(default_factory=dict)
+    proposed_changes: Dict[str, Any] = Field(default_factory=dict)
+    attack_type: AttackType = AttackType.injection
+
+
+class DriftRecord(BaseModel):
+    drift_id: str
+    twin_id: str
+    drift_type: DriftType
+    severity: str
+    description: str
+    detected_at: str
 
 
 # ---------------------------------------------------------------------------
-# In-Memory Stores  (production → PostgreSQL + object storage)
+# In-Memory Stores
 # ---------------------------------------------------------------------------
 
-TWINS: dict[str, TwinDefinition] = {}
-SNAPSHOTS: dict[str, Snapshot] = {}
-EXERCISES: dict[str, Exercise] = {}
+twins: Dict[str, TwinRecord] = {}
+twin_agents: Dict[str, TwinAgentRecord] = {}
+connections: Dict[str, ConnectionRecord] = {}
+simulations: Dict[str, SimulationRecord] = {}
+drift_records: Dict[str, List[DriftRecord]] = defaultdict(list)
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Simulation Helpers
 # ---------------------------------------------------------------------------
 
-_now = lambda: datetime.now(timezone.utc)  # noqa: E731
+def _get_twin_agents(twin_id: str) -> List[TwinAgentRecord]:
+    return [a for a in twin_agents.values() if a.twin_id == twin_id]
 
 
-def _state_hash(twin: TwinDefinition) -> str:
-    raw = json.dumps({
-        "agents": [a.dict() for a in twin.agents],
-        "defences": twin.defences,
-        "topology": twin.topology,
-        "policies": twin.policies,
-    }, sort_keys=True)
-    return hashlib.sha256(raw.encode()).hexdigest()[:16]
+def _get_twin_connections(twin_id: str) -> List[ConnectionRecord]:
+    return [c for c in connections.values() if c.twin_id == twin_id]
 
 
-def _take_snapshot(twin: TwinDefinition) -> Snapshot:
-    edges = sum(len(v) for v in twin.topology.values())
-    snap = Snapshot(
-        twin_id=twin.id,
-        version=twin.version,
-        state_hash=_state_hash(twin),
-        agent_count=len(twin.agents),
-        defence_count=len(twin.defences),
-        topology_edges=edges,
-        policy_count=len(twin.policies),
-        state_data={
-            "agents": [a.dict() for a in twin.agents],
-            "defences": twin.defences[:],
-            "topology": copy.deepcopy(twin.topology),
-            "policies": copy.deepcopy(twin.policies),
-        },
-    )
-    SNAPSHOTS[snap.id] = snap
-    twin.snapshots.append(snap.id)
-    return snap
+def _run_simulation(sim: SimulationCreate) -> SimulationRecord:
+    """Probabilistic attack simulation."""
+    sid = f"SIM-{uuid.uuid4().hex[:12]}"
+    agents_in_twin = _get_twin_agents(sim.twin_id)
+    conns = _get_twin_connections(sim.twin_id)
+    agent_map = {a.agent_id: a for a in agents_in_twin}
 
+    if sim.entry_point not in agent_map:
+        raise HTTPException(404, "Entry point agent not found in twin")
 
-def _diff_snapshots(a: Snapshot, b: Snapshot) -> SnapshotDiff:
-    agents_a = {ag["name"] for ag in a.state_data.get("agents", [])}
-    agents_b = {ag["name"] for ag in b.state_data.get("agents", [])}
+    steps = []
+    compromised: Set[str] = set()
+    current_agent = sim.entry_point
+    stages_reached = []
 
-    defs_a = set(a.state_data.get("defences", []))
-    defs_b = set(b.state_data.get("defences", []))
+    for stage_idx, stage in enumerate(sim.kill_chain_stages):
+        if stage_idx >= sim.max_steps:
+            break
+        agent = agent_map.get(current_agent)
+        if not agent:
+            break
+        # Defence check: does this agent have defences?
+        defence_strength = len(agent.defences) * 0.15
+        attack_roll = random.random() * sim.attacker_capability
+        defend_roll = random.random() * (agent.trust_score + defence_strength)
+        success = attack_roll > defend_roll
 
-    topo_a = json.dumps(a.state_data.get("topology", {}), sort_keys=True)
-    topo_b = json.dumps(b.state_data.get("topology", {}), sort_keys=True)
-
-    # Find modified agents (same name, different config)
-    agent_map_a = {ag["name"]: ag for ag in a.state_data.get("agents", [])}
-    agent_map_b = {ag["name"]: ag for ag in b.state_data.get("agents", [])}
-    modified = [
-        name for name in agents_a & agents_b
-        if json.dumps(agent_map_a[name], sort_keys=True) != json.dumps(agent_map_b[name], sort_keys=True)
-    ]
-
-    return SnapshotDiff(
-        snapshot_a=a.id,
-        snapshot_b=b.id,
-        agents_added=sorted(agents_b - agents_a),
-        agents_removed=sorted(agents_a - agents_b),
-        agents_modified=sorted(modified),
-        defences_added=sorted(defs_b - defs_a),
-        defences_removed=sorted(defs_a - defs_b),
-        topology_changes=["topology_changed"] if topo_a != topo_b else [],
-        policies_added=max(0, len(b.state_data.get("policies", [])) - len(a.state_data.get("policies", []))),
-        policies_removed=max(0, len(a.state_data.get("policies", [])) - len(b.state_data.get("policies", []))),
-    )
-
-
-def _run_exercise(twin: TwinDefinition, ex: Exercise) -> dict[str, Any]:
-    """Simulate red/blue/purple exercise rounds."""
-    agent_names = [a.name for a in twin.agents]
-    rounds: list[dict[str, Any]] = []
-
-    intensity_multiplier = {"low": 0.5, "medium": 1.0, "high": 1.5}
-    mult = intensity_multiplier.get(ex.intensity, 1.0)
-
-    for r in range(1, ex.rounds + 1):
-        cat = random.choice(ex.attack_categories) if ex.attack_categories else "prompt_injection"
-        target_agent = random.choice(agent_names) if agent_names else "default"
-
-        # Simulate attack success/defence based on defences present
-        defence_strength = len(twin.defences) * 0.1
-        attack_strength = mult * random.uniform(0.3, 0.9)
-        defended = defence_strength > attack_strength
-        damage = 0.0 if defended else round(attack_strength - defence_strength, 4)
-
-        round_result = {
-            "round": r,
-            "attack_category": cat,
-            "target_agent": target_agent,
-            "attack_strength": round(attack_strength, 4),
-            "defence_strength": round(defence_strength, 4),
-            "defended": defended,
-            "damage_score": damage,
-            "exercise_type": ex.exercise_type.value,
+        step = {
+            "stage": stage,
+            "target_agent": current_agent,
+            "attack_roll": round(attack_roll, 4),
+            "defend_roll": round(defend_roll, 4),
+            "success": success,
+            "defences_present": agent.defences,
         }
+        steps.append(step)
 
-        if ex.exercise_type == ExerciseType.BLUE_TEAM:
-            round_result["detection_time_ms"] = round(random.uniform(10, 5000), 1)
-            round_result["response_effective"] = random.random() > 0.3
-        elif ex.exercise_type == ExerciseType.CHAOS:
-            round_result["chaos_event"] = random.choice(["agent_crash", "latency_spike", "memory_corrupt", "tool_timeout"])
-            round_result["recovery_time_ms"] = round(random.uniform(100, 30000), 1)
-
-        rounds.append(round_result)
-
-    # Summarise
-    total_defended = sum(1 for r in rounds if r["defended"])
-    total_damage = sum(r["damage_score"] for r in rounds)
-
-    summary = {
-        "total_rounds": len(rounds),
-        "attacks_defended": total_defended,
-        "attacks_breached": len(rounds) - total_defended,
-        "defence_rate": round(total_defended / len(rounds), 4) if rounds else 0.0,
-        "total_damage": round(total_damage, 4),
-        "avg_damage_per_breach": round(
-            total_damage / (len(rounds) - total_defended), 4
-        ) if (len(rounds) - total_defended) > 0 else 0.0,
-        "categories_tested": list(set(r["attack_category"] for r in rounds)),
-        "agents_targeted": list(set(r["target_agent"] for r in rounds)),
-    }
-
-    return {"rounds": rounds, "summary": summary}
-
-
-def _policy_test(twin: TwinDefinition, policy: PolicyTest) -> dict[str, Any]:
-    """Evaluate a policy against the twin's current config."""
-    results: list[dict[str, Any]] = []
-    overall_verdict = PolicyVerdict.PASS
-
-    for i, rule in enumerate(policy.rules):
-        rule_name = rule.get("name", f"rule_{i}")
-        check_type = rule.get("check", "exists")
-        target = rule.get("target", "")
-        expected = rule.get("expected", True)
-
-        passed = True
-        detail = ""
-
-        if check_type == "agent_has_defence":
-            agent = next((a for a in twin.agents if a.name == target), None)
-            if agent:
-                defence = rule.get("defence", "")
-                passed = defence in agent.defences
-                detail = f"Agent '{target}' {'has' if passed else 'missing'} defence '{defence}'"
+        if success:
+            compromised.add(current_agent)
+            stages_reached.append(stage)
+            # Move laterally
+            reachable = [c.target_agent for c in conns if c.source_agent == current_agent and c.target_agent not in compromised]
+            if reachable:
+                current_agent = random.choice(reachable)
             else:
-                passed = False
-                detail = f"Agent '{target}' not found"
-        elif check_type == "min_defences":
-            min_count = rule.get("min", 1)
-            passed = len(twin.defences) >= min_count
-            detail = f"Defences: {len(twin.defences)} (min: {min_count})"
-        elif check_type == "topology_connected":
-            passed = len(twin.topology) > 0
-            detail = f"Topology has {len(twin.topology)} connections"
-        elif check_type == "no_direct_external":
-            external_agents = [a for a in twin.agents if "external" in a.name.lower()]
-            passed = len(external_agents) == 0
-            detail = f"External agents: {len(external_agents)}"
+                break
         else:
-            passed = random.random() > 0.3
-            detail = f"Custom check '{check_type}' simulated"
+            step["blocked_by"] = agent.defences[:1] if agent.defences else ["trust_threshold"]
+            break
 
-        verdict = PolicyVerdict.PASS if passed else PolicyVerdict.FAIL
-        if not passed:
-            overall_verdict = PolicyVerdict.FAIL
+    success_prob = len(stages_reached) / max(len(sim.kill_chain_stages), 1)
 
-        results.append({
-            "rule": rule_name,
-            "check": check_type,
-            "verdict": verdict.value,
-            "detail": detail,
-        })
-
-    return {
-        "policy_name": policy.policy_name,
-        "overall_verdict": overall_verdict.value,
-        "rules_evaluated": len(results),
-        "rules_passed": sum(1 for r in results if r["verdict"] == "pass"),
-        "rules_failed": sum(1 for r in results if r["verdict"] == "fail"),
-        "results": results,
-        "timestamp": _now().isoformat(),
-    }
-
-
-def _compliance_audit(twin: TwinDefinition, framework: ComplianceFramework) -> dict[str, Any]:
-    """Simulate compliance rehearsal audit."""
-    controls: dict[str, list[dict[str, Any]]] = {
-        ComplianceFramework.NIST_AI_RMF: [
-            {"id": "MAP-1", "name": "Intended Purpose", "check": "has_description", "weight": 1},
-            {"id": "MAP-2", "name": "Stakeholder Analysis", "check": "has_agents", "weight": 1},
-            {"id": "MEASURE-1", "name": "Risk Metrics", "check": "has_defences", "weight": 2},
-            {"id": "MEASURE-2", "name": "Testing Coverage", "check": "has_policies", "weight": 2},
-            {"id": "MANAGE-1", "name": "Incident Response", "check": "has_topology", "weight": 2},
-            {"id": "GOVERN-1", "name": "Accountability", "check": "has_agents", "weight": 1},
-        ],
-        ComplianceFramework.EU_AI_ACT: [
-            {"id": "ART-9", "name": "Risk Management System", "check": "has_defences", "weight": 2},
-            {"id": "ART-10", "name": "Data Governance", "check": "has_policies", "weight": 2},
-            {"id": "ART-11", "name": "Technical Documentation", "check": "has_description", "weight": 1},
-            {"id": "ART-13", "name": "Transparency", "check": "has_agents", "weight": 1},
-            {"id": "ART-14", "name": "Human Oversight", "check": "has_topology", "weight": 2},
-            {"id": "ART-15", "name": "Accuracy & Robustness", "check": "has_defences", "weight": 2},
-        ],
-        ComplianceFramework.ISO_42001: [
-            {"id": "6.1", "name": "Risk Assessment", "check": "has_defences", "weight": 2},
-            {"id": "6.2", "name": "AI Objectives", "check": "has_description", "weight": 1},
-            {"id": "7.1", "name": "Resources", "check": "has_agents", "weight": 1},
-            {"id": "8.1", "name": "Operational Planning", "check": "has_topology", "weight": 2},
-            {"id": "9.1", "name": "Monitoring", "check": "has_policies", "weight": 2},
-            {"id": "10.1", "name": "Improvement", "check": "has_defences", "weight": 1},
-        ],
-    }
-
-    framework_controls = controls.get(framework, controls[ComplianceFramework.NIST_AI_RMF])
-    findings: list[dict[str, Any]] = []
-    total_weight = 0
-    achieved_weight = 0
-
-    for ctrl in framework_controls:
-        check = ctrl["check"]
-        weight = ctrl["weight"]
-        total_weight += weight
-
-        passed = False
-        if check == "has_description":
-            passed = len(twin.description) > 10
-        elif check == "has_agents":
-            passed = len(twin.agents) >= 1
-        elif check == "has_defences":
-            passed = len(twin.defences) >= 2
-        elif check == "has_policies":
-            passed = len(twin.policies) >= 1
-        elif check == "has_topology":
-            passed = len(twin.topology) >= 1
-        else:
-            passed = random.random() > 0.4
-
-        if passed:
-            achieved_weight += weight
-
-        findings.append({
-            "control_id": ctrl["id"],
-            "control_name": ctrl["name"],
-            "verdict": "pass" if passed else "fail",
-            "weight": weight,
-            "recommendation": "" if passed else f"Implement {ctrl['name']} controls",
-        })
-
-    score = round(achieved_weight / total_weight * 100, 1) if total_weight else 0.0
-
-    return {
-        "framework": framework.value,
-        "twin_id": twin.id,
-        "overall_score": score,
-        "verdict": "pass" if score >= 70 else ("warning" if score >= 50 else "fail"),
-        "controls_evaluated": len(findings),
-        "controls_passed": sum(1 for f in findings if f["verdict"] == "pass"),
-        "controls_failed": sum(1 for f in findings if f["verdict"] == "fail"),
-        "findings": findings,
-        "timestamp": _now().isoformat(),
-    }
-
-
-# ---------------------------------------------------------------------------
-# Seed Data
-# ---------------------------------------------------------------------------
-
-def _seed() -> None:
-    agents = [
-        AgentSpec(name="planner-01", agent_type="planner", model="gpt-4", tools=["search", "calendar"],
-                  defences=["input_filter", "rate_limiter"]),
-        AgentSpec(name="executor-01", agent_type="executor", model="gpt-4-turbo", tools=["code_exec", "file_write"],
-                  defences=["tool_sandbox", "output_validator"]),
-        AgentSpec(name="retriever-01", agent_type="retriever", model="gpt-3.5-turbo", tools=["vector_search", "web_scrape"],
-                  defences=["memory_guard", "input_filter"]),
-        AgentSpec(name="evaluator-01", agent_type="evaluator", model="gpt-4", tools=["scoring"],
-                  defences=["output_validator"]),
-    ]
-
-    topology = {
-        "planner-01": ["executor-01", "retriever-01"],
-        "retriever-01": ["executor-01"],
-        "executor-01": ["evaluator-01"],
-    }
-
-    policies = [
-        {"name": "min-defences", "type": "guardrail_check", "rules": [
-            {"check": "min_defences", "min": 3}
-        ]},
-        {"name": "no-external-agents", "type": "access_control", "rules": [
-            {"check": "no_direct_external"}
-        ]},
-    ]
-
-    twin = TwinDefinition(
-        name="Production AI Stack — Replica",
-        description="Digital twin of the production multi-agent AI pipeline "
-                    "including planner, executor, retriever, and evaluator agents "
-                    "with defence guardrails and topology constraints.",
-        agents=agents,
-        defences=["input_filter", "output_validator", "tool_sandbox", "memory_guard", "rate_limiter"],
-        topology=topology,
-        policies=policies,
+    return SimulationRecord(
+        sim_id=sid,
+        twin_id=sim.twin_id,
+        attack_type=sim.attack_type,
+        state=SimState.completed,
+        entry_point=sim.entry_point,
+        steps=steps,
+        blast_radius=list(compromised),
+        stages_reached=stages_reached,
+        success_probability=round(success_prob, 4),
+        created_at=_now(),
     )
-    TWINS[twin.id] = twin
-    _take_snapshot(twin)
-
-
-_seed()
 
 
 # ---------------------------------------------------------------------------
-# Endpoints
+# FastAPI App
 # ---------------------------------------------------------------------------
+
+app = FastAPI(
+    title="Digital Twin Simulation Engine",
+    description="Phase 20 — Digital twin, attack simulation, defence validation, scenario comparison, drift detection",
+    version="20.0.0",
+)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
 
 @app.get("/health")
-async def health():
+def health():
     return {
+        "service": "digital-twin-simulation-engine",
         "status": "healthy",
-        "service": "ave-digital-twin",
-        "version": "1.0.0",
-        "twins": len(TWINS),
-        "snapshots": len(SNAPSHOTS),
-        "exercises": len(EXERCISES),
+        "phase": 20,
+        "port": 9403,
+        "stats": {
+            "twins": len(twins),
+            "agents_modelled": len(twin_agents),
+            "simulations_run": len(simulations),
+        },
+        "timestamp": _now(),
     }
 
 
-# ---- Twin CRUD -----------------------------------------------------------
+# -- Twins ------------------------------------------------------------------
 
-@app.post("/v1/twins", status_code=status.HTTP_201_CREATED)
-async def create_twin(data: TwinCreate):
-    twin = TwinDefinition(
-        name=data.name,
-        description=data.description,
-        agents=data.agents,
-        defences=data.defences,
-        topology=data.topology,
-        policies=data.policies,
-    )
-    TWINS[twin.id] = twin
-    snap = _take_snapshot(twin)
-    return {"id": twin.id, "name": twin.name, "snapshot_id": snap.id}
+@app.post("/v1/twins", status_code=201)
+def create_twin(body: TwinCreate):
+    tid = f"TWIN-{uuid.uuid4().hex[:12]}"
+    now = _now()
+    record = TwinRecord(**body.dict(), twin_id=tid, state=TwinState.synced, created_at=now, updated_at=now)
+    twins[tid] = record
+    return record.dict()
 
 
 @app.get("/v1/twins")
-async def list_twins():
-    return {
-        "count": len(TWINS),
-        "twins": [
-            {
-                "id": t.id,
-                "name": t.name,
-                "agents": len(t.agents),
-                "defences": len(t.defences),
-                "status": t.status.value,
-                "version": t.version,
-                "created_at": t.created_at,
-            }
-            for t in TWINS.values()
-        ],
-    }
+def list_twins(state: Optional[TwinState] = None):
+    results = list(twins.values())
+    if state:
+        results = [t for t in results if t.state == state]
+    return {"twins": [t.dict() for t in results], "total": len(results)}
 
 
 @app.get("/v1/twins/{twin_id}")
-async def get_twin(twin_id: str):
-    if twin_id not in TWINS:
+def get_twin(twin_id: str):
+    if twin_id not in twins:
         raise HTTPException(404, "Twin not found")
-    return TWINS[twin_id].dict()
+    t = twins[twin_id]
+    agents = [a.dict() for a in twin_agents.values() if a.twin_id == twin_id]
+    conns = [c.dict() for c in connections.values() if c.twin_id == twin_id]
+    return {**t.dict(), "agents": agents, "connections": conns}
 
 
-# ---- Snapshots -----------------------------------------------------------
-
-@app.post("/v1/twins/{twin_id}/snapshot", status_code=status.HTTP_201_CREATED)
-async def take_snapshot(twin_id: str):
-    if twin_id not in TWINS:
+@app.delete("/v1/twins/{twin_id}")
+def archive_twin(twin_id: str):
+    if twin_id not in twins:
         raise HTTPException(404, "Twin not found")
-    twin = TWINS[twin_id]
-    snap = _take_snapshot(twin)
-    return {"id": snap.id, "state_hash": snap.state_hash, "version": snap.version}
+    twins[twin_id].state = TwinState.archived
+    twins[twin_id].updated_at = _now()
+    return {"archived": twin_id}
 
 
-@app.get("/v1/twins/{twin_id}/snapshots")
-async def list_snapshots(twin_id: str):
-    if twin_id not in TWINS:
+# -- Twin Agents -------------------------------------------------------------
+
+@app.post("/v1/twins/{twin_id}/agents", status_code=201)
+def add_agent_to_twin(twin_id: str, body: TwinAgent):
+    if twin_id not in twins:
         raise HTTPException(404, "Twin not found")
-    snaps = [SNAPSHOTS[sid] for sid in TWINS[twin_id].snapshots if sid in SNAPSHOTS]
-    return {
-        "count": len(snaps),
-        "snapshots": [
-            {
-                "id": s.id,
-                "version": s.version,
-                "state_hash": s.state_hash,
-                "agents": s.agent_count,
-                "defences": s.defence_count,
-                "taken_at": s.taken_at,
-            }
-            for s in snaps
-        ],
-    }
+    aid = f"TA-{uuid.uuid4().hex[:12]}"
+    record = TwinAgentRecord(**body.dict(), agent_id=aid, twin_id=twin_id)
+    twin_agents[aid] = record
+    twins[twin_id].agent_ids.append(aid)
+    twins[twin_id].updated_at = _now()
+    return record.dict()
 
 
-# ---- Diff ----------------------------------------------------------------
+# -- Connections --------------------------------------------------------------
 
-@app.get("/v1/twins/{twin_id}/diff")
-async def diff_snapshots(
-    twin_id: str,
-    snapshot_a: str = Query(...),
-    snapshot_b: str = Query(...),
-):
-    if twin_id not in TWINS:
+@app.post("/v1/twins/{twin_id}/connections", status_code=201)
+def add_connection(twin_id: str, body: ConnectionCreate):
+    if twin_id not in twins:
         raise HTTPException(404, "Twin not found")
-    if snapshot_a not in SNAPSHOTS:
-        raise HTTPException(404, f"Snapshot {snapshot_a} not found")
-    if snapshot_b not in SNAPSHOTS:
-        raise HTTPException(404, f"Snapshot {snapshot_b} not found")
+    cid = f"CONN-{uuid.uuid4().hex[:12]}"
+    record = ConnectionRecord(**body.dict(), connection_id=cid, twin_id=twin_id)
+    connections[cid] = record
+    twins[twin_id].connection_ids.append(cid)
+    twins[twin_id].updated_at = _now()
+    return record.dict()
 
-    return _diff_snapshots(SNAPSHOTS[snapshot_a], SNAPSHOTS[snapshot_b]).dict()
 
+# -- Simulations --------------------------------------------------------------
 
-# ---- Exercises -----------------------------------------------------------
-
-@app.post("/v1/exercises", status_code=status.HTTP_201_CREATED)
-async def create_exercise(data: ExerciseCreate):
-    if data.twin_id not in TWINS:
+@app.post("/v1/simulations", status_code=201)
+def run_simulation(body: SimulationCreate):
+    if body.twin_id not in twins:
         raise HTTPException(404, "Twin not found")
-    for cat in data.attack_categories:
-        if cat not in AVE_CATEGORIES:
-            raise HTTPException(400, f"Invalid attack category: {cat}")
-
-    twin = TWINS[data.twin_id]
-    ex = Exercise(
-        twin_id=data.twin_id,
-        exercise_type=data.exercise_type,
-        attack_categories=data.attack_categories,
-        rounds=data.rounds,
-        intensity=data.intensity,
-        status=ExerciseStatus.RUNNING,
-    )
-
-    result = _run_exercise(twin, ex)
-    ex.results = result["rounds"]
-    ex.summary = result["summary"]
-    ex.status = ExerciseStatus.COMPLETED
-    ex.completed_at = _now().isoformat()
-
-    EXERCISES[ex.id] = ex
-    return {
-        "id": ex.id,
-        "exercise_type": ex.exercise_type.value,
-        "status": ex.status.value,
-        "summary": ex.summary,
-    }
+    result = _run_simulation(body)
+    simulations[result.sim_id] = result
+    return result.dict()
 
 
-@app.get("/v1/exercises")
-async def list_exercises(twin_id: Optional[str] = None):
-    exs = list(EXERCISES.values())
+@app.get("/v1/simulations/{sim_id}")
+def get_simulation(sim_id: str):
+    if sim_id not in simulations:
+        raise HTTPException(404, "Simulation not found")
+    return simulations[sim_id].dict()
+
+
+@app.get("/v1/simulations")
+def list_simulations(twin_id: Optional[str] = None, limit: int = Query(default=50, ge=1, le=500)):
+    results = list(simulations.values())
     if twin_id:
-        exs = [e for e in exs if e.twin_id == twin_id]
+        results = [s for s in results if s.twin_id == twin_id]
+    results.sort(key=lambda s: s.created_at, reverse=True)
+    return {"simulations": [s.dict() for s in results[:limit]], "total": len(results)}
+
+
+# -- Defence Validation -------------------------------------------------------
+
+@app.post("/v1/defence-validation")
+def validate_defences(body: DefenceValidation):
+    if body.twin_id not in twins:
+        raise HTTPException(404, "Twin not found")
+    agents = _get_twin_agents(body.twin_id)
+    if not agents:
+        raise HTTPException(422, "Twin has no agents")
+
+    results_per_attack: Dict[str, Dict] = {}
+    for at in body.attack_types:
+        # Run 5 simulations per attack type for statistical confidence
+        outcomes = []
+        for _ in range(5):
+            entry = random.choice(agents)
+            sim_req = SimulationCreate(twin_id=body.twin_id, attack_type=at, entry_point=entry.agent_id)
+            result = _run_simulation(sim_req)
+            outcomes.append(result)
+        avg_success = sum(o.success_probability for o in outcomes) / len(outcomes)
+        avg_blast = sum(len(o.blast_radius) for o in outcomes) / len(outcomes)
+        results_per_attack[at.value] = {
+            "avg_success_probability": round(avg_success, 4),
+            "avg_blast_radius": round(avg_blast, 2),
+            "simulations_run": len(outcomes),
+        }
+
+    # Coverage matrix
+    all_defences = set()
+    for a in agents:
+        all_defences.update(a.defences)
+    coverage = {
+        "total_agents": len(agents),
+        "agents_with_defences": sum(1 for a in agents if a.defences),
+        "unique_defences": list(all_defences),
+    }
+    # Gaps: agents with no defences
+    gaps = [a.agent_id for a in agents if not a.defences]
+
     return {
-        "count": len(exs),
-        "exercises": [
-            {
-                "id": e.id,
-                "twin_id": e.twin_id,
-                "type": e.exercise_type.value,
-                "status": e.status.value,
-                "rounds": e.rounds,
-                "defence_rate": e.summary.get("defence_rate", 0),
-                "completed_at": e.completed_at,
-            }
-            for e in exs
-        ],
+        "twin_id": body.twin_id,
+        "attack_results": results_per_attack,
+        "coverage": coverage,
+        "undefended_agents": gaps,
     }
 
 
-@app.get("/v1/exercises/{ex_id}")
-async def get_exercise(ex_id: str):
-    if ex_id not in EXERCISES:
-        raise HTTPException(404, "Exercise not found")
-    return EXERCISES[ex_id].dict()
+# -- Scenario Comparison ------------------------------------------------------
 
-
-# ---- Policy Test ---------------------------------------------------------
-
-@app.post("/v1/twins/{twin_id}/policy-test")
-async def test_policy(twin_id: str, policy: PolicyTest):
-    if twin_id not in TWINS:
+@app.post("/v1/scenarios/compare")
+def compare_scenarios(body: ScenarioCompare):
+    if body.twin_id not in twins:
         raise HTTPException(404, "Twin not found")
-    return _policy_test(TWINS[twin_id], policy)
+    agents = _get_twin_agents(body.twin_id)
+    if not agents:
+        raise HTTPException(422, "Twin has no agents")
+
+    # Baseline simulation
+    entry = random.choice(agents)
+    baseline_sim = SimulationCreate(twin_id=body.twin_id, attack_type=body.attack_type, entry_point=entry.agent_id)
+    baseline_result = _run_simulation(baseline_sim)
+
+    # Apply proposed changes (simulate by temporarily boosting defences)
+    added_defence = body.proposed_changes.get("add_defence", "")
+    if added_defence:
+        for a in agents:
+            a.defences.append(added_defence)
+
+    proposed_result = _run_simulation(baseline_sim)
+
+    # Revert
+    if added_defence:
+        for a in agents:
+            if added_defence in a.defences:
+                a.defences.remove(added_defence)
+
+    improvement = baseline_result.success_probability - proposed_result.success_probability
+    return {
+        "twin_id": body.twin_id,
+        "attack_type": body.attack_type.value,
+        "baseline": {
+            "success_probability": baseline_result.success_probability,
+            "blast_radius": len(baseline_result.blast_radius),
+            "stages_reached": len(baseline_result.stages_reached),
+        },
+        "proposed": {
+            "success_probability": proposed_result.success_probability,
+            "blast_radius": len(proposed_result.blast_radius),
+            "stages_reached": len(proposed_result.stages_reached),
+            "changes_applied": body.proposed_changes,
+        },
+        "improvement": round(improvement, 4),
+    }
 
 
-# ---- Compliance Audit ----------------------------------------------------
+# -- Drift Detection ----------------------------------------------------------
 
-@app.post("/v1/twins/{twin_id}/compliance-audit")
-async def compliance_audit(twin_id: str, req: ComplianceAuditRequest):
-    if twin_id not in TWINS:
+@app.get("/v1/drift/{twin_id}")
+def check_drift(twin_id: str):
+    if twin_id not in twins:
         raise HTTPException(404, "Twin not found")
-    return _compliance_audit(TWINS[twin_id], req.framework)
+    # Simulated drift detection
+    drifts = drift_records.get(twin_id, [])
+    twin = twins[twin_id]
+    if drifts:
+        twin.state = TwinState.drifted
+    return {
+        "twin_id": twin_id,
+        "state": twin.state.value,
+        "drifts": [d.dict() for d in drifts],
+        "drift_count": len(drifts),
+    }
 
 
-# ---- Analytics -----------------------------------------------------------
+@app.post("/v1/drift/{twin_id}/sync")
+def sync_twin(twin_id: str):
+    if twin_id not in twins:
+        raise HTTPException(404, "Twin not found")
+    drift_records[twin_id] = []
+    twins[twin_id].state = TwinState.synced
+    twins[twin_id].updated_at = _now()
+    return {"synced": twin_id, "state": "synced"}
+
+
+# -- Analytics -----------------------------------------------------------------
 
 @app.get("/v1/analytics")
-async def twin_analytics():
-    twins = list(TWINS.values())
-    exs = list(EXERCISES.values())
-
-    total_agents = sum(len(t.agents) for t in twins)
-    total_defences = sum(len(t.defences) for t in twins)
-    by_ex_type = Counter(e.exercise_type.value for e in exs)
-
-    defence_rates = [e.summary.get("defence_rate", 0) for e in exs if e.summary]
-    avg_defence_rate = round(statistics.mean(defence_rates), 4) if defence_rates else 0.0
-
+def analytics():
+    state_dist: Dict[str, int] = defaultdict(int)
+    for t in twins.values():
+        state_dist[t.state.value] += 1
+    attack_dist: Dict[str, int] = defaultdict(int)
+    for s in simulations.values():
+        attack_dist[s.attack_type.value] += 1
+    avg_success = round(
+        sum(s.success_probability for s in simulations.values()) / max(len(simulations), 1), 4
+    )
     return {
-        "total_twins": len(twins),
-        "total_agents": total_agents,
-        "total_defences": total_defences,
-        "total_snapshots": len(SNAPSHOTS),
-        "total_exercises": len(exs),
-        "by_exercise_type": dict(by_ex_type),
-        "avg_defence_rate": avg_defence_rate,
+        "twins": {"total": len(twins), "state_distribution": dict(state_dist)},
+        "agents_modelled": len(twin_agents),
+        "connections_modelled": len(connections),
+        "simulations": {
+            "total": len(simulations),
+            "attack_distribution": dict(attack_dist),
+            "avg_success_probability": avg_success,
+        },
+        "drifts_detected": sum(len(d) for d in drift_records.values()),
     }
 
 
 # ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
-
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8802)
+    uvicorn.run(app, host="0.0.0.0", port=9403)

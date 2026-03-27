@@ -1,0 +1,100 @@
+###############################################################################
+# Phase 20 — Quantum-Resilient Security & Universal Interoperability
+# docker-compose.phase20.yml
+#
+# Services (ports 9400-9404):
+#   1. Post-Quantum Cryptographic Vault   — 9400
+#   2. Universal Agent Protocol Bridge     — 9401
+#   3. Federated Threat Intelligence Exchange — 9402
+#   4. Digital Twin Simulation Engine      — 9403
+#   5. Autonomous Compliance Auditor       — 9404
+#
+# Usage:
+#   docker compose -f docker-compose.phase20.yml up --build
+###############################################################################
+
+x-common: &common
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:${PORT}/health')"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 15s
+  networks:
+    - ave-phase20
+
+services:
+  # ── 1. Post-Quantum Cryptographic Vault ───────────────────────────────────
+  post-quantum-vault:
+    <<: *common
+    build:
+      context: ./post-quantum-vault
+      dockerfile: ../Dockerfile.service
+    container_name: ave-post-quantum-vault
+    ports:
+      - "9400:9400"
+    environment:
+      - PORT=9400
+      - SERVICE_NAME=post-quantum-vault
+      - PHASE=20
+
+  # ── 2. Universal Agent Protocol Bridge ────────────────────────────────────
+  agent-protocol-bridge:
+    <<: *common
+    build:
+      context: ./agent-protocol-bridge
+      dockerfile: ../Dockerfile.service
+    container_name: ave-agent-protocol-bridge
+    ports:
+      - "9401:9401"
+    environment:
+      - PORT=9401
+      - SERVICE_NAME=agent-protocol-bridge
+      - PHASE=20
+
+  # ── 3. Federated Threat Intelligence Exchange ─────────────────────────────
+  federated-threat-intel:
+    <<: *common
+    build:
+      context: ./federated-threat-intel
+      dockerfile: ../Dockerfile.service
+    container_name: ave-federated-threat-intel
+    ports:
+      - "9402:9402"
+    environment:
+      - PORT=9402
+      - SERVICE_NAME=federated-threat-intel
+      - PHASE=20
+
+  # ── 4. Digital Twin Simulation Engine ─────────────────────────────────────
+  digital-twin:
+    <<: *common
+    build:
+      context: ./digital-twin
+      dockerfile: ../Dockerfile.service
+    container_name: ave-digital-twin-simulation
+    ports:
+      - "9403:9403"
+    environment:
+      - PORT=9403
+      - SERVICE_NAME=digital-twin
+      - PHASE=20
+
+  # ── 5. Autonomous Compliance Auditor ──────────────────────────────────────
+  compliance-auditor:
+    <<: *common
+    build:
+      context: ./compliance-auditor
+      dockerfile: ../Dockerfile.service
+    container_name: ave-compliance-auditor
+    ports:
+      - "9404:9404"
+    environment:
+      - PORT=9404
+      - SERVICE_NAME=compliance-auditor
+      - PHASE=20
+
+networks:
+  ave-phase20:
+    driver: bridge
