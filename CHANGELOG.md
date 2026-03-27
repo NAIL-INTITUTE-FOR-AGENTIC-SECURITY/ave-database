@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [6.1.0] — 2026-03-27
+
+### Added
+- **50 New AVE Cards** (AVE-2025-0051 through AVE-2025-0100) — Database doubled from 50 → 100 cards across 20 categories, including 7 new v2 schema categories: multi_agent_collusion, temporal_exploitation, composite, model_extraction, reward_hacking, environmental_manipulation, model_poisoning
+- **Full Category Coverage** — All 20 AVE categories now populated with real cards
+
+### Changed
+- **README.md** — Updated badge (100 cards), At a Glance table (20 categories, 32 critical / 42 high / 26 medium, mean AVSS 7.9), and footer
+- **Annual Report** — Regenerated report-data-2025.json from 100 cards; updated chapters 01, 03, 04, 05, 11 with 100-card statistics, severity distribution, category tables, and timeline
+- **VS Code Extension README** — Updated card count reference
+
+---
+
 ## [6.0.0] — 2026-03-27
 
 ### Added

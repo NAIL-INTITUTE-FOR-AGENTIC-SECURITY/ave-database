@@ -1,0 +1,74 @@
+{
+  "ave_id": "AVE-2025-0052",
+  "name": "Coordination Protocol Spoofing",
+  "aliases": [
+    "Handshake Hijack"
+  ],
+  "category": "multi_agent_collusion",
+  "severity": "high",
+  "status": "proven",
+  "summary": "Attacker impersonates the coordination layer between agents, redirecting task assignments to compromised agents.",
+  "mechanism": "Man-in-the-middle on inter-agent message bus. [Available in NAIL SDK]",
+  "blast_radius": "Arbitrary task routing to malicious agents.",
+  "prerequisite": "Inter-agent communication without mutual authentication.",
+  "environment": {
+    "frameworks": [
+      "CrewAI",
+      "AutoGen"
+    ],
+    "models_tested": [
+      "[Available in NAIL SDK]"
+    ],
+    "multi_agent": true,
+    "tools_required": false,
+    "memory_required": false
+  },
+  "evidence": [
+    {
+      "experiment_id": "[Available in NAIL SDK]",
+      "key_metric": "[Available in NAIL SDK]",
+      "key_value": "[Available in NAIL SDK]",
+      "data_file": "",
+      "p_value": null,
+      "sample_size": null,
+      "cross_model": false
+    }
+  ],
+  "defences": [],
+  "date_discovered": "2026-03",
+  "date_published": "",
+  "cwe_mapping": "",
+  "mitre_mapping": "ATLAS-NOVEL: Coordination Protocol Spoofing",
+  "references": [],
+  "related_aves": [
+    "AVE-2025-0038"
+  ],
+  "avss_score": {
+    "overall_score": 8.5,
+    "severity_label": "high",
+    "vector_string": "[Available in NAIL SDK]",
+    "base_score": null,
+    "temporal_score": null,
+    "agentic_score": null,
+    "vector": null
+  },
+  "poc": null,
+  "timeline": null,
+  "_meta": {
+    "schema_version": "2.0.0",
+    "generated_at": "2026-03-27T22:41:24Z",
+    "generator": "NAIL Institute AVE Toolkit",
+    "license": "CC-BY-SA-4.0",
+    "access_tier": "public",
+    "redacted_fields": [
+      "avss_score",
+      "defences",
+      "evidence",
+      "mechanism",
+      "poc",
+      "timeline"
+    ],
+    "full_access": "https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database"
+  },
+  "contributor": "j.okafor"
+}

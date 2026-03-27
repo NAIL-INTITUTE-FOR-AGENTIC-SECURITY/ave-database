@@ -7,7 +7,7 @@ Vulnerability Enumeration (AVE) database directly from VS Code.
 
 ## Features
 
-- **Tree View** — Browse all 50+ AVE cards grouped by category or severity
+- **Tree View** — Browse all 100 AVE cards grouped by category or severity
 - **Search** — Full-text search across card names, summaries, MITRE mappings
 - **Card Details** — Rich webview showing full card information
 - **MITRE Links** — One-click navigation to MITRE ATT&CK/ATLAS technique pages

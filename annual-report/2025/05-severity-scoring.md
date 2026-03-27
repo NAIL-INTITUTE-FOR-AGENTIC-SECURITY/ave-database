@@ -29,7 +29,7 @@ AVE cards.
 
 ### Score Distribution Comparison
 
-For the 50 AVE cards that have both AVSS and estimated CVSS scores:
+For the 100 AVE cards that have both AVSS and estimated CVSS scores:
 
 | Metric | AVSS | CVSS (estimated) |
 |--------|------|-----------------|
@@ -206,5 +206,5 @@ proposed for AVSS v2.0:
 
 ---
 
-*All statistics derived from the 50 published AVE cards using the automated
+*All statistics derived from the 100 published AVE cards using the automated
 analysis pipeline. See Chapter 12 for methodology.*

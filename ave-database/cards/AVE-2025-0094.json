@@ -1,0 +1,74 @@
+{
+  "ave_id": "AVE-2025-0094",
+  "name": "Emotional Manipulation of Agent",
+  "aliases": [
+    "Guilt Tripping",
+    "Urgency Exploitation"
+  ],
+  "category": "social",
+  "severity": "medium",
+  "status": "proven",
+  "summary": "Agent's safety guardrails are weakened by emotional appeals, urgency claims, or guilt-inducing prompts.",
+  "mechanism": "RLHF training makes agents susceptible to emotional manipulation that overrides safety training. [Available in NAIL SDK]",
+  "blast_radius": "Safety guardrails bypassed through emotional context.",
+  "prerequisite": "Agent with RLHF-tuned model.",
+  "environment": {
+    "frameworks": [
+      "LangGraph"
+    ],
+    "models_tested": [
+      "[Available in NAIL SDK]"
+    ],
+    "multi_agent": false,
+    "tools_required": false,
+    "memory_required": false
+  },
+  "evidence": [
+    {
+      "experiment_id": "[Available in NAIL SDK]",
+      "key_metric": "[Available in NAIL SDK]",
+      "key_value": "[Available in NAIL SDK]",
+      "data_file": "",
+      "p_value": null,
+      "sample_size": null,
+      "cross_model": false
+    }
+  ],
+  "defences": [],
+  "date_discovered": "2026-03",
+  "date_published": "",
+  "cwe_mapping": "",
+  "mitre_mapping": "ATLAS-NOVEL: Emotional Manipulation of Agent",
+  "references": [],
+  "related_aves": [
+    "AVE-2025-0010"
+  ],
+  "avss_score": {
+    "overall_score": 6.8,
+    "severity_label": "medium",
+    "vector_string": "[Available in NAIL SDK]",
+    "base_score": null,
+    "temporal_score": null,
+    "agentic_score": null,
+    "vector": null
+  },
+  "poc": null,
+  "timeline": null,
+  "_meta": {
+    "schema_version": "2.0.0",
+    "generated_at": "2026-03-27T22:41:24Z",
+    "generator": "NAIL Institute AVE Toolkit",
+    "license": "CC-BY-SA-4.0",
+    "access_tier": "public",
+    "redacted_fields": [
+      "avss_score",
+      "defences",
+      "evidence",
+      "mechanism",
+      "poc",
+      "timeline"
+    ],
+    "full_access": "https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database"
+  },
+  "contributor": "m.torres"
+}

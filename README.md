@@ -1,6 +1,6 @@
 # 🛡️ NAIL Institute — AVE Database
 
-[![AVE Cards](https://img.shields.io/badge/AVE_Cards-50-blue)](./ave-database/)
+[![AVE Cards](https://img.shields.io/badge/AVE_Cards-100-blue)](./ave-database/)
 [![Micro‑Services](https://img.shields.io/badge/Services-155-purple)](./AVE-PLATFORM-OVERVIEW.md)
 [![Phases](https://img.shields.io/badge/Phases-31%2F31-brightgreen)](./ROADMAP.md)
 [![License](https://img.shields.io/badge/License-CC--BY--SA--4.0-green)](https://creativecommons.org/licenses/by-sa/4.0/)
@@ -19,9 +19,9 @@
 
 | Metric | Value |
 |--------|-------|
-| **AVE Cards** | 50 across 13 categories |
-| **Severity** | 15 Critical · 18 High · 17 Medium |
-| **AVSS Range** | 3.1 – 10.0 (mean 7.6) |
+| **AVE Cards** | 100 across 20 categories |
+| **Severity** | 32 Critical · 42 High · 26 Medium |
+| **AVSS Range** | 3.1 – 10.0 (mean 7.9) |
 | **Phases** | 31 (all complete ✅) |
 | **Micro-Services** | 155 FastAPI services (ports 9780–9934) |
 | **Vendor Integrations** | 9 (Splunk, Sentinel, ServiceNow, CrowdStrike, Elastic, Palo Alto XSOAR, Tenable, Jira, Snyk) |
@@ -48,7 +48,7 @@ known failure mode of autonomous AI agents:
 - ⏰ **Temporal attacks** — Sleeper payloads, chronological desynchronisation
 - 💸 **Resource exhaustion** — Token embezzlement, EDoS attacks
 - 🤝 **Social failures** — Agent collusion, consensus paralysis
-- …and 30 more documented vulnerabilities
+- …and 80 more documented vulnerabilities
 
 Beyond the vulnerability database, the AVE platform includes **autonomous
 defence agents**, **real-time threat intelligence**, **compliance automation**,
@@ -263,5 +263,5 @@ Free to use, share, and build upon — with attribution.
 <p align="center">
   <b>Built by the <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY">NAIL Institute</a></b><br>
   <i>Building the safety infrastructure for agentic AI.</i><br>
-  <i>155 services · 50 vulnerability cards · 31 phases · 100% open</i>
+  <i>155 services · 100 vulnerability cards · 31 phases · 100% open</i>
 </p>

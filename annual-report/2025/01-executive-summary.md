@@ -13,7 +13,7 @@ The deployment of autonomous AI agents in production environments has accelerate
 dramatically in 2025, driven by frameworks like LangChain, AutoGen, CrewAI, and
 proprietary enterprise solutions. Security practices have not kept pace:
 
-- **50** unique agentic AI vulnerabilities catalogued in the AVE database
+- **100** unique agentic AI vulnerabilities catalogued in the AVE database
 - **72%** of surveyed organisations deploying agents have no agent-specific security controls
 - Average time from agent deployment to first security incident: **47 days**
 
@@ -65,11 +65,11 @@ incomplete protection:
 
 | Metric | Value |
 |--------|-------|
-| Total AVE cards published | 50 |
-| New cards in 2025 | 50 |
-| Categories represented | 13 / 20 |
-| Average AVSS score | 7.6 |
-| Critical severity cards | 15 (30%) |
+| Total AVE cards published | 100 |
+| New cards in 2025 | 100 |
+| Categories represented | 20 / 20 |
+| Average AVSS score | 7.9 |
+| Critical severity cards | 32 (32%) |
 | Community contributors | 5 |
 | Countries represented | 4 |
 | Academic papers citing AVE | 3 |

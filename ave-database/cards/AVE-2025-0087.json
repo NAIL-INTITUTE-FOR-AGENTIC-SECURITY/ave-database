@@ -1,0 +1,73 @@
+{
+  "ave_id": "AVE-2025-0087",
+  "name": "Selective Memory Deletion",
+  "aliases": [
+    "Memory Erasure"
+  ],
+  "category": "memory",
+  "severity": "high",
+  "status": "proven",
+  "summary": "Attacker triggers the agent to selectively forget critical safety-related memories while retaining other context.",
+  "mechanism": "Crafted instructions that exploit memory management to delete specific entries. [Available in NAIL SDK]",
+  "blast_radius": "Safety-relevant context permanently removed from agent memory.",
+  "prerequisite": "Agent with editable persistent memory.",
+  "environment": {
+    "frameworks": [
+      "LangGraph"
+    ],
+    "models_tested": [
+      "[Available in NAIL SDK]"
+    ],
+    "multi_agent": false,
+    "tools_required": false,
+    "memory_required": true
+  },
+  "evidence": [
+    {
+      "experiment_id": "[Available in NAIL SDK]",
+      "key_metric": "[Available in NAIL SDK]",
+      "key_value": "[Available in NAIL SDK]",
+      "data_file": "",
+      "p_value": null,
+      "sample_size": null,
+      "cross_model": false
+    }
+  ],
+  "defences": [],
+  "date_discovered": "2026-03",
+  "date_published": "",
+  "cwe_mapping": "",
+  "mitre_mapping": "ATLAS-NOVEL: Selective Memory Deletion",
+  "references": [],
+  "related_aves": [
+    "AVE-2025-0001"
+  ],
+  "avss_score": {
+    "overall_score": 8.5,
+    "severity_label": "high",
+    "vector_string": "[Available in NAIL SDK]",
+    "base_score": null,
+    "temporal_score": null,
+    "agentic_score": null,
+    "vector": null
+  },
+  "poc": null,
+  "timeline": null,
+  "_meta": {
+    "schema_version": "2.0.0",
+    "generated_at": "2026-03-27T22:41:24Z",
+    "generator": "NAIL Institute AVE Toolkit",
+    "license": "CC-BY-SA-4.0",
+    "access_tier": "public",
+    "redacted_fields": [
+      "avss_score",
+      "defences",
+      "evidence",
+      "mechanism",
+      "poc",
+      "timeline"
+    ],
+    "full_access": "https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database"
+  },
+  "contributor": "j.okafor"
+}

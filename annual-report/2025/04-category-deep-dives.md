@@ -300,5 +300,5 @@ Information Leakage — was observed in 34% of red-team engagements.
 
 ---
 
-*All statistics derived from the 50 published AVE cards using the automated
+*All statistics derived from the 100 published AVE cards using the automated
 analysis pipeline. See Chapter 12 for methodology.*

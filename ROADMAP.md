@@ -55,7 +55,7 @@
 - [x] **arXiv Pre-print** — Full research paper published (publications/arxiv/)
 - [x] **API Deployment** — Public API live at api.nailinstitute.org (Fly.io)
 - [x] **API Hardening** — Rate limiting, security headers, metrics, input validation (v2.1.0)
-- [x] **Database Expansion** — 50 AVE cards across 13 categories
+- [x] **Database Expansion** — 100 AVE cards across 20 categories
 - [x] **Companion Ebook** — 13-chapter accessible guide (publications/ebook/)
 - [x] **First CTF Event Design** — "Breaking the Hive" event defined (research/CTF_EVENT_001.md)
 - [x] **Test Coverage Expansion** — 76 tests (30 API hardening + 46 AVE toolkit + DB integrity)
@@ -65,7 +65,7 @@
 - [x] **Quantum Multi-Agent Coordination** — QAOA task allocator validated at 6-agent scale
 - [x] **Quantum Risk Scoring** — VQC achieves 85% on 4-tier underwriting classification
 - [x] **Quantum Research Publication** — Full paper, results, visualizations, staging configs
-- [x] **AVE-to-MITRE Mapping** — All 50 cards mapped to MITRE ATT&CK / ATLAS techniques (research/AVE_MITRE_MAPPING.md)
+- [x] **AVE-to-MITRE Mapping** — All 100 cards mapped to MITRE ATT&CK / ATLAS techniques (research/AVE_MITRE_MAPPING.md)
 - [x] **Framework Integration Guides** — Hardening guides for LangChain, CrewAI, AutoGen, LlamaIndex (research/framework-guides/)
 
 ### Phase 6: Industry Adoption (Complete)
@@ -421,7 +421,7 @@ micro-services spanning ports 9780–9934. Current priorities:
 |--------|---------|-------------------|
 | Phases Complete | 31 | 31 |
 | Micro-Services | 155 | 155 |
-| AVE Cards | 50 | 100+ |
+| AVE Cards | 100 | 200+ |
 | AVE Categories (v1 + v2) | 20 | 24+ |
 | Contributors | 5 | 50+ |
 | GitHub Stars | — | 1,000+ |

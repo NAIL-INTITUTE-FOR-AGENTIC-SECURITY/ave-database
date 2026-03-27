@@ -178,7 +178,7 @@ The specialisation of "agentic AI security" will formalise:
 
 | Metric | 2025 Actual | 2026 Projected |
 |--------|-------------|---------------|
-| Total AVE cards | 50 | 80–120 |
+| Total AVE cards | 100 | 150–200 |
 | Categories | 20 | 22–25 |
 | Community contributors | 5 | 2× growth |
 | Vendor integrations | 9 | 15–20 |
