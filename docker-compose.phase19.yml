@@ -1,0 +1,107 @@
+###############################################################################
+# Docker Compose — Phase 19: Intelligence Amplification & Autonomous Governance
+# Services: Knowledge Graph Engine (9300), Autonomous Policy Engine (9301),
+#            Collective Intelligence Swarm (9302), Cognitive Load Balancer (9303),
+#            Meta-Governance Council (9304)
+###############################################################################
+
+x-common: &common
+  restart: unless-stopped
+  networks:
+    - nail-network
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:$${PORT}/health')"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 15s
+
+services:
+  # ── Service 1: Knowledge Graph Engine ─────────────────────────────────────
+  knowledge-graph-engine:
+    <<: *common
+    build:
+      context: ./knowledge-graph
+      dockerfile: ../Dockerfile
+    container_name: nail-knowledge-graph-engine
+    ports:
+      - "9300:9300"
+    environment:
+      - PORT=9300
+      - SERVICE_NAME=knowledge-graph-engine
+      - PHASE=19
+    volumes:
+      - ./knowledge-graph:/app
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "9300"]
+
+  # ── Service 2: Autonomous Policy Engine ───────────────────────────────────
+  autonomous-policy-engine:
+    <<: *common
+    build:
+      context: ./policy-engine
+      dockerfile: ../Dockerfile
+    container_name: nail-autonomous-policy-engine
+    ports:
+      - "9301:9301"
+    environment:
+      - PORT=9301
+      - SERVICE_NAME=autonomous-policy-engine
+      - PHASE=19
+    volumes:
+      - ./policy-engine:/app
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "9301"]
+
+  # ── Service 3: Collective Intelligence Swarm ──────────────────────────────
+  collective-intelligence-swarm:
+    <<: *common
+    build:
+      context: ./swarm-intelligence
+      dockerfile: ../Dockerfile
+    container_name: nail-collective-intelligence-swarm
+    ports:
+      - "9302:9302"
+    environment:
+      - PORT=9302
+      - SERVICE_NAME=collective-intelligence-swarm
+      - PHASE=19
+    volumes:
+      - ./swarm-intelligence:/app
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "9302"]
+
+  # ── Service 4: Cognitive Load Balancer ────────────────────────────────────
+  cognitive-load-balancer:
+    <<: *common
+    build:
+      context: ./cognitive-load-balancer
+      dockerfile: ../Dockerfile
+    container_name: nail-cognitive-load-balancer
+    ports:
+      - "9303:9303"
+    environment:
+      - PORT=9303
+      - SERVICE_NAME=cognitive-load-balancer
+      - PHASE=19
+    volumes:
+      - ./cognitive-load-balancer:/app
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "9303"]
+
+  # ── Service 5: Meta-Governance Council ────────────────────────────────────
+  meta-governance-council:
+    <<: *common
+    build:
+      context: ./meta-governance
+      dockerfile: ../Dockerfile
+    container_name: nail-meta-governance-council
+    ports:
+      - "9304:9304"
+    environment:
+      - PORT=9304
+      - SERVICE_NAME=meta-governance-council
+      - PHASE=19
+    volumes:
+      - ./meta-governance:/app
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "9304"]
+
+networks:
+  nail-network:
+    driver: bridge

@@ -1,228 +1,87 @@
-# AVE Knowledge Graph — Neo4j Graph Database
+# Knowledge Graph Engine
 
-A graph database linking AVE cards, MITRE techniques, CWEs, frameworks,
-defences, research papers, and real-world incidents into a navigable
-knowledge network.
+> Graph-based knowledge representation linking threats, defences, incidents, agents, and standards into a queryable ontology with inference and reasoning.
+
+**Port:** 9300
 
 ## Overview
 
-The AVE Knowledge Graph transforms the flat AVE card catalogue into a
-richly interconnected graph, enabling:
+The Knowledge Graph Engine is the connective tissue of the NAIL AVE platform. Every threat, defence, incident, agent, standard, and vulnerability is represented as a typed node in a property graph, and their relationships — causal, temporal, defensive, organisational — form edges that enable deep structural queries, pattern discovery, and automated inference. The graph serves as the single source of truth for cross-domain reasoning across all NAIL microservices.
 
-- **Impact analysis**: "Which frameworks are affected by this vulnerability?"
-- **Defence coverage**: "What defences cover this attack chain?"
-- **Attack path discovery**: "What multi-step attack chains exist?"
-- **Research mapping**: "Which papers address this category?"
-- **Trend analysis**: "How has this category evolved over time?"
+## Core Capabilities
 
-## Graph Schema
+### 1. Typed Node Registry
 
-```
-                    ┌──────────────┐
-                    │   AVE Card   │
-                    │ (Vulnerability│
-                    │  node)       │
-                    └──────┬───────┘
-                           │
-           ┌───────────────┼───────────────┐
-           │               │               │
-    ┌──────▼───────┐ ┌─────▼──────┐ ┌─────▼──────┐
-    │  Category    │ │  Severity  │ │  Status    │
-    │  (label)     │ │  (level)   │ │  (state)   │
-    └──────────────┘ └────────────┘ └────────────┘
-           │
-    ┌──────▼───────┐
-    │  MITRE       │─────── maps_to ──── ┌────────────┐
-    │  Technique   │                      │  MITRE     │
-    └──────────────┘                      │  Tactic    │
-                                          └────────────┘
-    ┌──────────────┐
-    │  CWE         │─────── weakens ──── ┌────────────┐
-    │  Weakness    │                      │  CWE       │
-    └──────────────┘                      │  Category  │
-                                          └────────────┘
-    ┌──────────────┐
-    │  Framework   │─────── version_of ── ┌────────────┐
-    │  Version     │                       │  Framework │
-    └──────────────┘                       └────────────┘
+- **8 node types**: threat, defence, incident, agent, standard, vulnerability, organisation, technique
+- Per-node properties: name, description, category, severity, confidence, metadata, tags, timestamps
+- Unique identity with namespace-qualified IDs (`THREAT-*`, `DEF-*`, `INC-*`, `AGENT-*`, etc.)
+- Full CRUD with merge-on-conflict for idempotent upserts
+- Node versioning with property change history
 
-    ┌──────────────┐
-    │  Defence     │─────── mitigates ──── AVE Card
-    │  Technique   │
-    └──────────────┘
+### 2. Typed Edge Registry
 
-    ┌──────────────┐
-    │  Research    │─────── analyses ──── AVE Card
-    │  Paper       │
-    └──────────────┘
+- **12 edge types**: causes, mitigates, exploits, detects, relates_to, escalates_to, depends_on, belongs_to, implements, violates, precedes, co_occurs_with
+- Weighted edges with confidence scores (0.0–1.0)
+- Temporal validity windows (valid_from, valid_until)
+- Bidirectional traversal support
+- Edge property bags for contextual metadata
 
-    ┌──────────────┐
-    │  Incident    │─────── exploited ─── AVE Card
-    │  Report      │
-    └──────────────┘
-```
+### 3. Graph Query Engine
 
-## Node Types
+- Multi-hop path traversal with configurable depth limits (1–10 hops)
+- Shortest-path computation between any two nodes (BFS)
+- Neighbourhood expansion returning all nodes within N hops
+- Subgraph extraction by node type, category, or tag filter
+- Aggregation queries: degree centrality, connected component count, cluster coefficients
 
-| Node Label | Properties | Description |
-|-----------|------------|-------------|
-| `AVECard` | ave_id, title, description, severity, avss_score, status, created_at, updated_at | Core vulnerability card |
-| `Category` | name, description | AVE category (e.g., prompt_injection) |
-| `MITRETechnique` | technique_id, name, url | MITRE ATT&CK / ATLAS technique |
-| `MITRETactic` | tactic_id, name | MITRE tactic (e.g., Initial Access) |
-| `CWE` | cwe_id, name, url | Common Weakness Enumeration entry |
-| `Framework` | name, vendor | Agent framework (e.g., LangChain) |
-| `FrameworkVersion` | version, release_date | Specific framework release |
-| `Defence` | name, description, effectiveness | Mitigation technique |
-| `Paper` | doi, title, authors, year, url | Research publication |
-| `Incident` | incident_id, title, date, description | Real-world incident |
-| `Organization` | name, type | Contributing organization |
+### 4. Inference & Reasoning Engine
 
-## Relationship Types
+- **Transitive closure**: if A causes B and B causes C, infer A transitively causes C
+- **Defence gap analysis**: identify threats with no mitigating defence edge
+- **Impact propagation**: forward-propagate severity through causal chains with configurable decay
+- **Pattern detection**: identify cliques, hub nodes, bridge nodes, and isolated subgraphs
+- **Similarity scoring**: Jaccard similarity between node neighbourhoods for related-entity discovery
 
-| Relationship | From → To | Description |
-|-------------|-----------|-------------|
-| `BELONGS_TO` | AVECard → Category | Card's vulnerability category |
-| `HAS_SEVERITY` | AVECard → Severity | Card's severity level |
-| `MAPS_TO_TECHNIQUE` | AVECard → MITRETechnique | MITRE mapping |
-| `MAPS_TO_CWE` | AVECard → CWE | CWE mapping |
-| `AFFECTS` | AVECard → FrameworkVersion | Affected framework version |
-| `MITIGATED_BY` | AVECard → Defence | Defence that addresses this vuln |
-| `ANALYSED_BY` | AVECard → Paper | Research paper about this vuln |
-| `EXPLOITED_IN` | AVECard → Incident | Real-world exploitation |
-| `DISCOVERED_BY` | AVECard → Organization | Who discovered it |
-| `VERSION_OF` | FrameworkVersion → Framework | Version–framework link |
-| `TECHNIQUE_OF` | MITRETechnique → MITRETactic | MITRE technique–tactic |
-| `CHILD_OF` | CWE → CWE | CWE hierarchy |
-| `ENABLES` | AVECard → AVECard | One vuln enables another |
-| `SUPERSEDES` | AVECard → AVECard | Card supersedes another |
-| `RELATED_TO` | AVECard → AVECard | General relationship |
+### 5. Ontology Management
 
-## API
+- Schema-level type constraints: valid source/target node types per edge type
+- Cardinality enforcement (e.g., an incident must have ≥1 related threat)
+- Namespace management for multi-tenant graph isolation
+- Ontology versioning with backward-compatible evolution
+- Import/export in JSON-LD and RDF/Turtle formats
 
-### Graph Queries
+### 6. Analytics & Visualisation Data
 
-```
-GET  /v1/graph/node/{id}                    Get node with relationships
-GET  /v1/graph/search?q={text}              Full-text search across nodes
-GET  /v1/graph/path?from={id}&to={id}       Shortest path between nodes
-GET  /v1/graph/neighbours/{id}?depth={n}    N-hop neighbours
-GET  /v1/graph/subgraph?category={cat}      Category subgraph
-```
+- Degree distribution across node types
+- Most-connected nodes (hub analysis)
+- Cluster detection with modularity scoring
+- Temporal graph evolution (nodes/edges added per time window)
+- Cross-domain bridge analysis (nodes connecting different categories)
 
-### Impact Analysis
+## API Endpoints
 
-```
-GET  /v1/analysis/impact/{ave_id}           Impact analysis for a card
-GET  /v1/analysis/attack-chains             Multi-step attack chains
-GET  /v1/analysis/defence-coverage          Defence coverage matrix
-GET  /v1/analysis/framework-risk/{name}     Risk profile for a framework
-```
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/v1/nodes` | Create or upsert a node |
+| GET | `/v1/nodes` | List/search nodes with type, category, tag filters |
+| GET | `/v1/nodes/{node_id}` | Get node with all edges |
+| DELETE | `/v1/nodes/{node_id}` | Remove node and incident edges |
+| POST | `/v1/edges` | Create a typed edge between nodes |
+| GET | `/v1/edges` | List/search edges with type, source, target filters |
+| DELETE | `/v1/edges/{edge_id}` | Remove an edge |
+| POST | `/v1/query/paths` | Find paths between two nodes |
+| POST | `/v1/query/neighbours` | Expand neighbourhood of a node |
+| POST | `/v1/query/subgraph` | Extract filtered subgraph |
+| GET | `/v1/inference/transitive/{node_id}` | Transitive closure from a node |
+| GET | `/v1/inference/gaps` | Defence gap analysis |
+| POST | `/v1/inference/impact` | Impact propagation simulation |
+| GET | `/v1/inference/similar/{node_id}` | Find similar nodes |
+| GET | `/v1/ontology` | Get ontology schema |
+| GET | `/v1/analytics` | Graph-wide analytics |
+| GET | `/health` | Health check |
 
-### Statistics
+## Design Decisions
 
-```
-GET  /v1/stats/overview                     Graph-wide statistics
-GET  /v1/stats/categories                   Per-category breakdown
-GET  /v1/stats/trends?period={period}       Temporal trends
-```
-
-### Data Management
-
-```
-POST /v1/ingest/ave                         Ingest AVE card into graph
-POST /v1/ingest/batch                       Batch ingest
-POST /v1/ingest/paper                       Add research paper
-POST /v1/ingest/incident                    Add incident report
-```
-
-## Example Queries
-
-### Cypher — All critical vulns with no defence
-
-```cypher
-MATCH (v:AVECard {severity: 'critical'})
-WHERE NOT (v)-[:MITIGATED_BY]->(:Defence)
-RETURN v.ave_id, v.title, v.category
-ORDER BY v.avss_score DESC
-```
-
-### Cypher — Attack chain discovery
-
-```cypher
-MATCH path = (v1:AVECard)-[:ENABLES*1..3]->(v2:AVECard)
-WHERE v1.category = 'prompt_injection'
-  AND v2.severity IN ['critical', 'high']
-RETURN path
-LIMIT 20
-```
-
-### Cypher — Framework risk profile
-
-```cypher
-MATCH (fw:Framework {name: 'LangChain'})<-[:VERSION_OF]-(fv:FrameworkVersion)<-[:AFFECTS]-(v:AVECard)
-RETURN fv.version, count(v) AS vuln_count,
-       collect(DISTINCT v.severity) AS severities,
-       collect(DISTINCT v.category) AS categories
-ORDER BY fv.version DESC
-```
-
-### Cypher — Defence coverage gaps
-
-```cypher
-MATCH (c:Category)<-[:BELONGS_TO]-(v:AVECard)
-OPTIONAL MATCH (v)-[:MITIGATED_BY]->(d:Defence)
-WITH c.name AS category,
-     count(v) AS total_vulns,
-     count(d) AS defended_vulns
-RETURN category,
-       total_vulns,
-       defended_vulns,
-       total_vulns - defended_vulns AS undefended,
-       round(toFloat(defended_vulns) / total_vulns * 100, 1) AS coverage_pct
-ORDER BY undefended DESC
-```
-
-### Cypher — Research coverage
-
-```cypher
-MATCH (c:Category)
-OPTIONAL MATCH (c)<-[:BELONGS_TO]-(v:AVECard)-[:ANALYSED_BY]->(p:Paper)
-WITH c.name AS category,
-     count(DISTINCT p) AS paper_count
-RETURN category, paper_count
-ORDER BY paper_count ASC
-```
-
-## Requirements
-
-- Python 3.11+
-- Neo4j 5.x (graph database)
-- FastAPI (API server)
-- neo4j Python driver
-
-## Setup
-
-```bash
-# Start Neo4j (Docker)
-docker run -d \
-  --name neo4j-ave \
-  -p 7474:7474 -p 7687:7687 \
-  -e NEO4J_AUTH=neo4j/nail-ave-graph \
-  neo4j:5
-
-# Initialize schema
-python graph_server.py --init-schema
-
-# Ingest existing AVE cards
-python graph_server.py --ingest-all
-
-# Start API server
-uvicorn graph_server:app --host 0.0.0.0 --port 8500
-```
-
-## Contact
-
-- **Email**: knowledge-graph@nailinstitute.org
-- **Neo4j Browser**: `bolt://graph.nailinstitute.org:7687`
-- **Slack**: `#knowledge-graph`
+- **Adjacency-list in-memory graph** — Production would use Neo4j, Amazon Neptune, or Apache TinkerPop; simulation uses dict-of-dicts for O(1) lookup
+- **Typed nodes + typed edges** — Strongly-typed schema enables constraint enforcement and targeted queries
+- **Inference is on-demand** — Transitive closure and gap analysis computed at query time, not pre-materialised, to avoid stale derived data
