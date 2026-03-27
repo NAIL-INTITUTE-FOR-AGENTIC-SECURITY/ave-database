@@ -1,0 +1,87 @@
+###############################################################################
+# Phase 31 – Autonomous Governance & Policy Intelligence
+# Services: policy-synthesis-engine, governance-audit-trail,
+#           ethical-constraint-enforcer, regulatory-mapping-agent,
+#           decision-accountability-tracker
+# Ports:    9930-9934
+###############################################################################
+
+x-common: &common
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8000}/health"]
+    interval: 30s
+    timeout: 5s
+    retries: 3
+
+services:
+
+  policy-synthesis-engine:
+    <<: *common
+    build: ./policy-synthesis-engine
+    container_name: policy-synthesis-engine
+    ports:
+      - "9930:9930"
+    environment:
+      - PORT=9930
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9930/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  governance-audit-trail:
+    <<: *common
+    build: ./governance-audit-trail
+    container_name: governance-audit-trail
+    ports:
+      - "9931:9931"
+    environment:
+      - PORT=9931
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9931/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  ethical-constraint-enforcer:
+    <<: *common
+    build: ./ethical-constraint-enforcer
+    container_name: ethical-constraint-enforcer
+    ports:
+      - "9932:9932"
+    environment:
+      - PORT=9932
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9932/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  regulatory-mapping-agent:
+    <<: *common
+    build: ./regulatory-mapping-agent
+    container_name: regulatory-mapping-agent
+    ports:
+      - "9933:9933"
+    environment:
+      - PORT=9933
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9933/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  decision-accountability-tracker:
+    <<: *common
+    build: ./decision-accountability-tracker
+    container_name: decision-accountability-tracker
+    ports:
+      - "9934:9934"
+    environment:
+      - PORT=9934
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9934/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
