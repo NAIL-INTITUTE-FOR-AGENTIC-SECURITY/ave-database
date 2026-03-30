@@ -1,8 +1,9 @@
 # 🛡️ NAIL Institute — AVE Database
 
 [![AVE Cards](https://img.shields.io/badge/AVE_Cards-100-blue)](./ave-database/)
-[![Micro‑Services](https://img.shields.io/badge/Services-155-purple)](./AVE-PLATFORM-OVERVIEW.md)
-[![Phases](https://img.shields.io/badge/Phases-31%2F31-brightgreen)](./ROADMAP.md)
+[![Production Packages](https://img.shields.io/badge/Production_Packages-12-brightgreen)](./AVE-PLATFORM-OVERVIEW.md)
+[![Service Blueprints](https://img.shields.io/badge/Service_Blueprints-117-purple)](./AVE-PLATFORM-OVERVIEW.md)
+[![Phases](https://img.shields.io/badge/Phases-31%2F31_designed-yellow)](./ROADMAP.md)
 [![License](https://img.shields.io/badge/License-CC--BY--SA--4.0-green)](https://creativecommons.org/licenses/by-sa/4.0/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-orange)](./CONTRIBUTING.md)
 [![Hall of Fame](https://img.shields.io/badge/Hall_of_Fame-🏆-gold)](./HALL_OF_FAME.md)
@@ -10,8 +11,8 @@
 > **The MITRE ATT&CK of the Agentic Era.**
 >
 > An open, community-driven catalogue of AI agent vulnerabilities — plus
-> 155 micro-services for autonomous defence, threat intelligence, compliance,
-> and governance of agentic AI systems.
+> 12 production-tested packages and 117 service blueprints for autonomous
+> defence, threat intelligence, compliance, and governance of agentic AI systems.
 
 ---
 
@@ -22,8 +23,9 @@
 | **AVE Cards** | 100 across 20 categories |
 | **Severity** | 32 Critical · 42 High · 26 Medium |
 | **AVSS Range** | 3.1 – 10.0 (mean 7.9) |
-| **Phases** | 31 (all complete ✅) |
-| **Micro-Services** | 155 FastAPI services (ports 9780–9934) |
+| **Production Packages** | 12 tested packages (~44K lines, 29 test files) |
+| **Service Blueprints** | 117 single-file FastAPI prototypes (designed, not yet tested) |
+| **Phases** | 31 designed · 10 production-tested · 21 blueprinted |
 | **Vendor Integrations** | 9 (Splunk, Sentinel, ServiceNow, CrowdStrike, Elastic, Palo Alto XSOAR, Tenable, Jira, Snyk) |
 | **Academic Modules** | 13 courses (AAS-101 → AAS-304) |
 | **Annual Report** | 14-chapter inaugural edition (2025) |
@@ -90,10 +92,34 @@ python -m ave leaderboard                # Top contributors
 docker compose -f docker-compose.phase11.yml up -d   # Ports 9780–9784
 ```
 
-## The Platform (155 Services)
+## The Platform
+
+### Production Packages (12 — tested, importable, used in production)
+
+| Package | Lines | Tests | Description |
+|---------|------:|:-----:|-------------|
+| **ave** | 8,040 | 4 | AVE card schema, scoring, registry, CLI |
+| **nail_monitor** | 4,701 | 1 | 20 pathology detectors (deployed in NAIL SaaS) |
+| **integration** | 6,019 | 7 | Cross-package integration harness |
+| **canary** | 4,424 | 3 | Canary deployment & smoke testing |
+| **arena** | 4,268 | 3 | Adversarial battle arena |
+| **ctf** | 3,482 | 2 | Capture-the-flag framework |
+| **threatfeed** | 2,857 | 2 | Threat intelligence feed |
+| **rmap** | 2,506 | 5 | Regulatory mapping |
+| **horizon** | 2,086 | 1 | Horizon scanning & campaign runner |
+| **dese** | 1,950 | 1 | Deterministic entropy simulation engine |
+| **diagnostic** | 1,950 | 1 | System diagnostic toolkit |
+| **nail_harness** | — | — | Agent test harness (Ollama + VQC) |
+
+### Service Blueprints (117 — designed, not yet integration-tested)
+
+108 single-file FastAPI prototypes + 9 multi-file services. Each contains
+real endpoint logic and Pydantic models, but they have **no tests, no
+pyproject.toml, and have not been run against production data**. They
+represent the *design intent* for the full platform.
 
 The AVE Database is the core of a much larger security platform. All 31
-phases are complete:
+phases have been designed:
 
 | Phase Range | Focus | Services |
 |:-----------:|-------|:--------:|
@@ -263,5 +289,5 @@ Free to use, share, and build upon — with attribution.
 <p align="center">
   <b>Built by the <a href="https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY">NAIL Institute</a></b><br>
   <i>Building the safety infrastructure for agentic AI.</i><br>
-  <i>155 services · 100 vulnerability cards · 31 phases · 100% open</i>
+  <i>12 production packages · 117 blueprints · 100 vulnerability cards · 100% open</i>
 </p>
