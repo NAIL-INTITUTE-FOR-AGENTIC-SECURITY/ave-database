@@ -182,6 +182,25 @@ commercial use, with attribution.
 
 ---
 
+
+## 📖 Citing the AVE Database
+
+If you use the AVE Database in academic work, please cite:
+
+```bibtex
+@misc{nail-ave-database-2025,
+  title        = {{AVE Database}: An Open Taxonomy of Agentic AI Vulnerabilities},
+  author       = {Leigh, Dillman and {NAIL Institute Contributors}},
+  year         = {2025},
+  howpublished = {\url{https://github.com/NAIL-INSTITUTE-FOR-AGENTIC-SECURITY/ave-database}},
+  note         = {Version 1.0.0. Licensed under CC-BY-SA-4.0}
+}
+```
+
+A machine-readable `CITATION.cff` file is included in the repository root.
+
+---
+
 ## 🔗 Related Resources
 
 - [CONTRIBUTING.md](./CONTRIBUTING.md) — Full contributor guide
