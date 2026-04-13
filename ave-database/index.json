@@ -1,5 +1,5 @@
 {
-  "total": 100,
+  "total": 106,
   "cards": {
     "AVE-2025-0001": {
       "name": "Sleeper Payload Injection",
@@ -600,6 +600,42 @@
       "category": "credential",
       "severity": "critical",
       "status": "proven"
+    },
+    "AVE-2025-0101": {
+      "name": "Serialization Confused Deputy",
+      "category": "injection",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0102": {
+      "name": "Fail-Open Sandbox Degradation",
+      "category": "structural",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0103": {
+      "name": "Approval Display Divergence",
+      "category": "delegation",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0104": {
+      "name": "Environment Inheritance Leak",
+      "category": "credential",
+      "severity": "high",
+      "status": "proven"
+    },
+    "AVE-2025-0105": {
+      "name": "State Persistence Deserialization",
+      "category": "memory",
+      "severity": "critical",
+      "status": "proven"
+    },
+    "AVE-2025-0106": {
+      "name": "Checkpoint Injection Chain",
+      "category": "structural",
+      "severity": "high",
+      "status": "theoretical"
     }
   },
   "categories": [

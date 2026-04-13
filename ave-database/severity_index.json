@@ -10,7 +10,25 @@
     "AVE-2025-0029",
     "AVE-2025-0032",
     "AVE-2025-0033",
-    "AVE-2025-0034"
+    "AVE-2025-0034",
+    {
+      "ave_id": "AVE-2025-0101",
+      "name": "Serialization Confused Deputy",
+      "category": "injection",
+      "status": "proven"
+    },
+    {
+      "ave_id": "AVE-2025-0102",
+      "name": "Fail-Open Sandbox Degradation",
+      "category": "structural",
+      "status": "proven"
+    },
+    {
+      "ave_id": "AVE-2025-0105",
+      "name": "State Persistence Deserialization",
+      "category": "memory",
+      "status": "proven"
+    }
   ],
   "high": [
     "AVE-2025-0002",
@@ -24,7 +42,25 @@
     "AVE-2025-0025",
     "AVE-2025-0027",
     "AVE-2025-0030",
-    "AVE-2025-0031"
+    "AVE-2025-0031",
+    {
+      "ave_id": "AVE-2025-0103",
+      "name": "Approval Display Divergence",
+      "category": "delegation",
+      "status": "proven"
+    },
+    {
+      "ave_id": "AVE-2025-0104",
+      "name": "Environment Inheritance Leak",
+      "category": "credential",
+      "status": "proven"
+    },
+    {
+      "ave_id": "AVE-2025-0106",
+      "name": "Checkpoint Injection Chain",
+      "category": "structural",
+      "status": "theoretical"
+    }
   ],
   "medium": [
     "AVE-2025-0004",
